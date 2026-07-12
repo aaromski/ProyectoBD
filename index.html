@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decarrerita - Transporte Local Seguro</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS vía CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Lucide Icons -->
+  <script src="js/lucide.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .serif-title {
+      font-family: 'Playfair Display', serif;
+    }
+
+    .bg-map-image {
+      background-color: #ffffff; /* Cambiado a blanco puro para mejorar el contraste */
+      background-image: url('./img/mapa.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      position: relative;
+    }
+
+    /* ANIMACIÓN 3D PARA LA TARJETA (FLIP) */
+    .flip-card {
+      perspective: 1000px;
+    }
+    .flip-card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card:hover .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col justify-between">
+
+<!-- Navegación: Totalmente limpia -->
+<nav class="w-full bg-slate-50 relative z-20">
+  <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+    <div class="flex justify-between items-center h-20">
+      <!-- Logo -->
+      <div class="flex items-center gap-2">
+        <i data-lucide="car" class="h-6 w-6 text-[#1e40af]"></i>
+        <span class="text-2xl font-bold tracking-tight text-[#0f172a] serif-title">Decarrerita</span>
+      </div>
+
+      <!-- Menú Derecho -->
+      <div class="flex items-center gap-6 text-sm font-medium">
+        <a href="login.html" class="text-slate-700 hover:text-black transition-colors">Iniciar Sesión</a>
+        <a href="login.html?tab=register" class="text-slate-700 hover:text-black transition-colors">Registrarse</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Contenido Principal -->
+<main class="flex-grow flex flex-col">
+
+  <!-- CONTENEDOR DEL HERO CON DEGRADADO PARA LEGIBILIDAD -->
+  <section class="bg-map-image w-full pt-12 pb-20 border-b border-slate-200 relative overflow-hidden">
+
+    <!-- Capa de diseño: Degradado blanco de izquierda a derecha -->
+    <div class="absolute inset-0 bg-gradient-to-r from-white via-white/85 sm:via-white/70 to-transparent pointer-events-none z-0"></div>
+
+    <!-- Contenedor del contenido (le añadimos z-10 para que quede por encima del degradado) -->
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 w-full relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+
+        <!-- Columna Texto (Ahora con contraste perfecto) -->
+        <div class="lg:col-span-7 space-y-6">
+          <div class="flex items-center gap-2 text-sm font-medium text-slate-800">
+            <span class="h-2 w-2 rounded-full bg-[#2563eb]"></span>
+            Servicio 100%, Local y Confiable
+          </div>
+
+          <h1 class="text-4xl sm:text-5xl md:text-[54px] font-semibold text-[#0f172a] leading-[1.15] serif-title">
+            Tu transporte urbano<br>de forma rápida
+          </h1>
+
+          <p class="text-slate-800 text-base md:text-lg max-w-xl font-medium leading-relaxed">
+            Conecta con conductores verificados de la flota más liviana y segura. Solicita traslados al instante usando tu saldo prepagado.
+          </p>
+
+          <!-- Botones contorneados -->
+          <div class="pt-4 flex flex-wrap gap-4">
+            <a href="login.html?tab=register" class="border border-slate-900 text-slate-900 bg-white/80 backdrop-blur-xs px-6 py-2.5 rounded-full text-sm font-medium transition-all hover:bg-slate-900 hover:text-white">
+              Viajar como Cliente
+            </a>
+            <a href="login.html?tab=register" class="border border-slate-900 text-slate-900 bg-white/80 backdrop-blur-xs px-6 py-2.5 rounded-full text-sm font-medium transition-all hover:bg-slate-900 hover:text-white">
+              Postularme como Chofer
+            </a>
+          </div>
+        </div>
+
+        <!-- Columna Tarjeta Azul con Animación de Giro 3D -->
+        <div class="lg:col-span-5 flex justify-center lg:justify-end">
+          <div class="w-full max-w-md aspect-square flip-card cursor-pointer">
+            <div class="flip-card-inner">
+
+              <!-- CARA FRONTAL -->
+              <div class="flip-card-front bg-gradient-to-br from-blue-500 via-blue-600 to-blue-800 text-white rounded-[32px] rounded-br-[80px] shadow-2xl flex flex-col items-center justify-center p-8 overflow-hidden">
+                <div class="absolute inset-0 bg-white/5 pointer-events-none"></div>
+                <div class="mb-6 opacity-90">
+                  <i data-lucide="route" class="h-32 w-32 text-white"></i>
+                </div>
+                <p class="text-xl font-medium tracking-wide text-center">Viajes Directos Punto A a Punto B</p>
+              </div>
+
+              <!-- CARA TRASERA -->
+              <div class="flip-card-back bg-gradient-to-br from-slate-800 via-slate-900 to-black text-white rounded-[32px] rounded-tl-[80px] shadow-2xl flex flex-col items-center justify-center p-8 overflow-hidden">
+                <div class="absolute inset-0 bg-white/5 pointer-events-none"></div>
+                <div class="mb-6 opacity-90 text-blue-400">
+                  <i data-lucide="navigation" class="h-24 w-24"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2 serif-title text-blue-400">¿Listo para salir?</h3>
+                <p class="text-sm text-slate-300 max-w-[240px] text-center leading-relaxed">
+                  Ingresa o regístrate para trazar tu ruta en tiempo real con la tarifa más baja.
+                </p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE CARACTERÍSTICAS -->
+  <section class="w-full bg-slate-50 pt-16 pb-20">
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+      <h2 class="text-3xl font-bold text-center text-slate-950 mb-14 serif-title">¿Por qué elegir Decarrerita?</h2>
+
+      <div class="relative border-b border-slate-300 pb-10 grid grid-cols-1 md:grid-cols-3 gap-8 items-end">
+        <!-- Bloque 1 -->
+        <div class="flex items-start gap-4 relative z-10">
+          <div class="p-3 bg-white border border-slate-300 rounded-xl text-slate-800 shadow-xs flex-shrink-0">
+            <i data-lucide="shield-check" class="h-6 w-6"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Seguridad Estricta</h3>
+            <p class="text-xs text-slate-600 mt-1 max-w-[200px]">Verificación rigurosa de identidad y antecedentes para cada conductor de la plataforma.</p>
+          </div>
+        </div>
+
+        <!-- Bloque 2 -->
+        <div class="flex items-start gap-4 relative z-10 md:translate-y-4">
+          <div class="p-3 bg-white border border-slate-300 rounded-xl text-slate-800 shadow-xs flex-shrink-0">
+            <i data-lucide="wallet" class="h-6 w-6"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Monedero Digital</h3>
+            <p class="text-xs text-slate-600 mt-1 max-w-[220px]">Controla tus gastos recargando tu saldo prepagado de forma rápida y sin efectivo.</p>
+          </div>
+        </div>
+
+        <!-- Bloque 3 -->
+        <div class="flex items-start gap-4 relative z-10 md:translate-y-8">
+          <div class="p-3 bg-white border border-slate-300 rounded-xl text-slate-800 shadow-xs flex-shrink-0">
+            <i data-lucide="scale" class="h-6 w-6"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-base">Trato Justo</h3>
+            <p class="text-xs text-slate-600 mt-1 max-w-[220px]">Tarifas transparentes calculadas de mutuo acuerdo para beneficiar tanto al usuario como al chofer.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer class="w-full py-6 bg-slate-50 border-t border-slate-200 text-center text-xs text-slate-500">
+  <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-center items-center gap-4">
+    <span>&copy; 2026 Decarrerita C.A. Sistema local de control operativo. Proyecto Académico.</span>
+  </div>
+</footer>
+
+<script>
+  lucide.createIcons();
+</script>
+</body>
+</html>

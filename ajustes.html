@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ajustes de Perfil - Decarrerita</title>
+  <script src="js/tailwind.js"></script>
+  <script src="js/lucide.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
+    .custom-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; }
+  </style>
+</head>
+<body class="flex h-screen">
+
+<!-- Sidebar (Igual al anterior) -->
+<!-- Sidebar -->
+<aside class="w-64 bg-white border-r border-slate-300 flex flex-col p-6">
+  <!-- Logo -->
+  <div class="flex items-center gap-2 mb-10">
+    <i data-lucide="car" class="h-6 w-6"></i>
+    <span class="text-lg font-bold tracking-tight">Decarrerita</span>
+  </div>
+
+  <!-- Navegación Principal -->
+  <nav class="space-y-2 flex-grow">
+    <a href="dashboard-cliente.php" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-[#64748b] hover:bg-slate-50 rounded-lg">
+      <i data-lucide="layout-grid" class="h-4 w-4"></i> Panel Principal
+    </a>
+
+    <a href="dashboard-cliente.php?vista=recargas" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-[#64748b] hover:bg-slate-50 rounded-lg">
+      <i data-lucide="receipt" class="h-4 w-4"></i> Historial de Recargas
+    </a>
+
+    <a href="dashboard-cliente.php?vista=traslados" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-[#64748b] hover:bg-slate-50 rounded-lg">
+      <i data-lucide="history" class="h-4 w-4"></i> Mis Traslados
+    </a>
+  </nav>
+
+  <!-- Bloque inferior: Perfil + Cerrar Sesión -->
+  <div class="mt-auto border-t border-slate-200 pt-6 space-y-4">
+
+    <!-- Perfil -->
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-sm">
+        <i data-lucide="user" class="w-5 h-5"></i>
+      </div>
+      <div>
+        <p id="nombre-usuario" class="text-sm font-bold capitalize">Cargando...</p>
+        <p id="ci-usuario" class="text-[10px] text-slate-400">...</p>
+      </div>
+    </div>
+
+    <!-- Cerrar Sesión (Ahora está dentro del bloque inferior) -->
+    <a href="logout.php" class="flex items-center gap-3 px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+      <i data-lucide="log-out" class="h-4 w-4"></i> Cerrar Sesión
+    </a>
+  </div>
+</aside>
+
+<!-- Contenido de Ajustes -->
+<main class="flex-1 p-8 overflow-y-auto">
+  <h1 class="text-xl font-bold uppercase tracking-tight mb-8">Ajustes de Cuenta</h1>
+
+  <div class="max-w-2xl custom-card p-8">
+    <h2 class="text-lg font-bold mb-6">Información Personal</h2>
+
+    <!-- En tu formulario de ajustes.html -->
+    <form id="form-ajustes" class="space-y-6">
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-[#64748b]">Nombres</label>
+          <!-- Campo bloqueado (readonly) -->
+          <input type="text" id="ajuste-nombres" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-[#64748b]">Apellidos</label>
+          <input type="text" id="ajuste-apellidos" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500">
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[10px] font-bold uppercase text-[#64748b]">Cédula de Identidad</label>
+        <input type="text" id="ajuste-cedula" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500">
+      </div>
+
+      <!-- Estos sí se pueden editar -->
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Correo Electrónico</label>
+        <input type="email" id="ajuste-correo" required
+               pattern=".+@(gmail\.com|hotmail\.com|outlook\.com|yahoo\.com|icloud\.com)$"
+               title="Usa un correo válido: @gmail.com, @hotmail.com, etc."
+               class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0f172a] outline-none">
+      </div>
+      <!-- ... resto de campos ... -->
+      <div>
+        <label class="block text-[10px] font-bold uppercase text-[#64748b]">Teléfono</label>
+        <input type="tel" id="ajuste-tlf" class="mt-1 w-full border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none">
+      </div>
+      <button type="button" onclick="guardarCambios()" class="bg-[#0f172a] text-white px-6 py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors">
+        Guardar Cambios
+      </button>
+    </form>
+  </div>
+</main>
+
+<script>
+  lucide.createIcons();
+
+  window.addEventListener('DOMContentLoaded', () => {
+    fetch('get-usuario.php')
+      .then(response => response.json())
+      .then(data => {
+        if (data.nombres) {
+          // Función para poner la primera letra en mayúscula
+          const toTitleCase = (str) => {
+            return str.toLowerCase().replace(/(^|\s)\S/g, (L) => L.toUpperCase());
+          };
+
+          // Asignamos el valor formateado a los inputs
+          document.getElementById('ajuste-nombres').value = toTitleCase(data.nombres);
+          document.getElementById('ajuste-apellidos').value = toTitleCase(data.apellidos);
+
+          // El resto de tus campos
+          document.getElementById('ajuste-cedula').value = data.ci;
+          document.getElementById('ajuste-correo').value = data.correo;
+          document.getElementById('ajuste-tlf').value = data.tlf;
+
+          // Nombre en el sidebar (donde sí puedes usar la clase capitalize o el mismo formateo)
+          const primerNombre = data.nombres.split(' ')[0];
+          const primerApellido = data.apellidos.split(' ')[0];
+          document.getElementById('nombre-usuario').innerText = toTitleCase(primerNombre + ' ' + primerApellido);
+          document.getElementById('ci-usuario').innerText = 'ID: ' + data.ci;
+        }
+      })
+      .catch(error => console.error('Error:', error));
+  });
+
+
+
+  function guardarCambios() {
+    const inputCorreo = document.getElementById('ajuste-correo');
+    const tlf = document.getElementById('ajuste-tlf').value;
+
+    // 1. Validar correo usando la lógica nativa del HTML (pattern)
+    if (!inputCorreo.checkValidity()) {
+      // Esto mostrará el mensaje definido en el atributo 'title' de tu HTML
+      alert(inputCorreo.title || "Por favor, ingresa un correo electrónico válido.");
+      return;
+    }
+
+    // 2. Validar teléfono (usando regex, ya que no tiene pattern en HTML)
+    const regexTlf = /^\d{11}$/;
+    if (!regexTlf.test(tlf)) {
+      alert("El teléfono debe tener 11 dígitos exactos, sin espacios ni guiones.");
+      return;
+    }
+
+    // 3. Enviar datos al servidor
+    fetch('update_usuario.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `correo=${encodeURIComponent(inputCorreo.value)}&tlf=${encodeURIComponent(tlf)}`
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert("¡Cambios guardados correctamente!");
+          // Opcional: recargar la página para ver los cambios reflejados
+          // window.location.reload();
+        } else {
+          alert("Error: " + (data.message || "No se pudieron guardar los cambios."));
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert("Ocurrió un error al conectar con el servidor.");
+      });
+  }
+</script>
+</body>
+</html>
