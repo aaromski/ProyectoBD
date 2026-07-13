@@ -16,8 +16,7 @@ if (!is_numeric($nuevaTasa) || floatval($nuevaTasa) <= 0) {
 }
 
 $tasaBCV = number_format(floatval($nuevaTasa), 2, '.', '');
-$contenido = "<?php\n// config_tasa.php\n$tasaBCV = $tasaBCV; // Este valor será modificado por el admin\n?>\n";
-
+$contenido = "<?php\n// config_tasa.php\n\$tasaBCV = " . $tasaBCV . "; // Este valor será modificado por el admin\n?>\n";
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
 
 if (file_put_contents('config_tasa.php', $contenido) === false) {

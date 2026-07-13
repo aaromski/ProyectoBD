@@ -48,7 +48,7 @@
 
     <div>
       <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Reportes</p>
-      <a href="#" onclick="cambiarVista('vista-reportes', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600  rounded-lg">
+      <a href="#" onclick="cambiarVista('vista-reportes-ganancias', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600  rounded-lg">
         <i data-lucide="pie-chart" class="h-4 w-4"></i> Informes de Ganancias
       </a>
       <a href="#" onclick="cambiarVista('vista-reportes-pagos', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600  rounded-lg">
@@ -65,14 +65,14 @@
 
   </nav>
 
-  <div class="relative group mt-auto">
-    <button id="btn-perfil" class="flex items-center gap-3 w-full p-2 hover:bg-slate-100 rounded-lg transition-all">
-      <div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-sm text-[#475569] border border-slate-300">U</div>
-      <div class="text-left">
-        <p id="nombre-usuario" class="text-sm font-bold truncate w-26 capitalize">Cargando...</p>
+  <div class="relative group mt-auto min-w-0 w-full">
+    <button id="btn-perfil" class="flex items-center gap-3 w-full p-2 hover:bg-slate-100 rounded-lg transition-all min-w-0">
+      <div class="h-10 w-10 shrink-0 rounded-full bg-slate-100 flex items-center justify-center font-bold text-sm text-[#475569] border border-slate-300">U</div>
+      <div class="text-left min-w-0 flex-1">
+        <p id="nombre-usuario" class="text-sm font-bold truncate w-full capitalize" title="">Cargando...</p>
         <p id="ci-usuario" class="text-xs text-[#64748b]">...</p>
       </div>
-      <i data-lucide="chevron-up" class="h-4 w-4 ml-auto text-slate-400"></i>
+      <i data-lucide="chevron-up" class="h-4 w-4 ml-auto text-slate-400 shrink-0"></i>
     </button>
     <div id="menu-perfil" class="hidden absolute bottom-full left-0 w-full mb-2 bg-white border border-slate-300 rounded-lg shadow-xl p-2 z-50">
       <a href="logout.php" class="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 rounded">
@@ -116,29 +116,47 @@
     </div>
   </section>
 
-  <section id="vista-reportes" class="vista-seccion hidden p-6">
-    <h2 class="text-lg font-bold text-slate-900 mb-6">Informes de Ganancias (Empresa)</h2>
+  <section id="vista-reportes-ganancias" class="vista-seccion hidden p-8">
+    <h2 class="text-xl font-bold mb-6">Reporte de Ganancias de la Plataforma</h2>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
       <div class="bg-white border border-slate-300 rounded-xl p-6 shadow-sm">
-        <h3 class="text-sm font-bold mb-4 uppercase text-slate-500">Recaudación Total</h3>
-        <p class="text-3xl font-extrabold text-emerald-600">$2,100.00</p>
-        <p class="text-xs text-slate-400 mt-2">Comisión acumulada (30% sobre traslados)</p>
+        <p class="text-[10px] font-bold uppercase text-slate-400 mb-2">Ganancia Total Histórica</p>
+        <h3 id="stat-ganancia-historica" class="text-3xl font-extrabold text-emerald-600">Bs. 0.00</h3>
+        <p class="text-[10px] text-slate-400 mt-2">Comisión acumulada (30% sobre traslados)</p>
       </div>
-
       <div class="bg-white border border-slate-300 rounded-xl p-6 shadow-sm">
-        <h3 class="text-sm font-bold mb-4 uppercase text-slate-500">Filtrar Ganancias por Periodo</h3>
-        <form class="flex gap-4 items-end" onsubmit="event.preventDefault();">
-          <div class="flex-1">
-            <label class="block text-[10px] font-bold text-slate-400 mb-1">FECHA INICIO</label>
-            <input type="date" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50">
-          </div>
-          <div class="flex-1">
-            <label class="block text-[10px] font-bold text-slate-400 mb-1">FECHA FIN</label>
-            <input type="date" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50">
-          </div>
-          <button class="bg-[#0f172a] text-white px-4 py-2 rounded-lg text-sm font-bold">Filtrar</button>
-        </form>
+        <p class="text-[10px] font-bold uppercase text-slate-400 mb-2">Ganancia Mes Actual</p>
+        <h3 id="stat-ganancia-mes" class="text-3xl font-extrabold text-slate-900">Bs. 0.00</h3>
+        <p class="text-[10px] text-slate-400 mt-2">Recaudado en el mes en curso</p>
+      </div>
+      <div class="bg-white border border-slate-300 rounded-xl p-6 shadow-sm">
+        <p class="text-[10px] font-bold uppercase text-slate-400 mb-2">Carreras Completadas</p>
+        <h3 id="stat-carreras" class="text-3xl font-extrabold text-blue-600">0</h3>
+        <p class="text-[10px] text-slate-400 mt-2">Viajes que generaron ganancia</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-300 p-6 shadow-sm">
+      <h3 class="text-sm font-bold mb-4 uppercase text-slate-500">Filtrar Ganancias por Periodo</h3>
+      <form id="form-filtrar-ganancias" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" onsubmit="event.preventDefault(); filtrarGanancias();">
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 mb-1">DESDE</label>
+          <input type="month" id="ganancia-desde" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50" required>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 mb-1">HASTA</label>
+          <input type="month" id="ganancia-hasta" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50" required>
+        </div>
+        <div class="flex items-end">
+          <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition">
+            Filtrar Ganancias
+          </button>
+        </div>
+      </form>
+
+      <div id="resultados-ganancias" class="border-t border-slate-200 pt-4">
+        <p class="text-center text-slate-400 text-sm italic">Seleccione un rango de meses y haga clic en "Filtrar Ganancias" para ver el reporte.</p>
       </div>
     </div>
   </section>
@@ -148,26 +166,25 @@
 
     <div class="bg-white rounded-xl border border-slate-300 p-6 shadow-sm">
       <h3 class="text-sm font-bold mb-4 uppercase text-slate-500">Auditoría de Pagos</h3>
-      <form class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" onsubmit="event.preventDefault();">
-        <div>
+      <form id="form-reporte-pagos" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" onsubmit="event.preventDefault(); generarInformePagos();">
+        <div class="relative">
           <label class="block text-[10px] font-bold text-slate-400 mb-1">SELECCIONAR CHOFER</label>
-          <select class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50">
-            <option>Carlos Mendoza (#8829)</option>
-            <option>Ana Perdomo (#9012)</option>
-          </select>
+          <input type="text" id="buscador-chofer" placeholder="Escriba nombre o ID..." autocomplete="off" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50">
+          <input type="hidden" id="buscador-chofer-id">
+          <div id="dropdown-choferes" class="hidden absolute z-10 w-full bg-white border border-slate-300 rounded-lg mt-1 shadow-lg max-h-48 overflow-y-auto"></div>
         </div>
         <div>
           <label class="block text-[10px] font-bold text-slate-400 mb-1">MES DE CONSULTA</label>
-          <input type="month" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50">
+          <input type="month" id="mes-reporte-pagos" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50">
         </div>
         <div class="flex items-end">
-          <button class="w-full bg-[#0f172a] text-white py-2 rounded-lg text-sm font-bold hover:bg-black">
+          <button type="submit" class="w-full bg-[#0f172a] text-white py-2 rounded-lg text-sm font-bold hover:bg-black">
             Generar Informe
           </button>
         </div>
       </form>
 
-      <div class="border-t border-slate-200 pt-4">
+      <div id="resultados-reporte-pagos" class="border-t border-slate-200 pt-4">
         <p class="text-center text-slate-400 text-sm italic">Seleccione un chofer y fecha para ver el histórico de pagos.</p>
       </div>
     </div>
@@ -209,19 +226,21 @@
   </section>
 
   <section id="vista-pruebas" class="vista-seccion hidden p-8">
-    <h2 class="text-xl font-bold mb-6">Registro de Pruebas Psicológicas</h2>
-    <div class="bg-white rounded-xl border border-slate-300 p-6">
-      <form class="grid grid-cols-2 gap-6">
-        <div>
-          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Seleccionar Postulante</label>
-          <select class="w-full border border-slate-300 rounded-lg p-3 text-sm"><option>Juan Pérez</option></select>
-        </div>
-        <div>
-          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nota Obtenida (0-100)</label>
-          <input type="number" min="0" max="100" class="w-full border border-slate-300 rounded-lg p-3 text-sm">
-        </div>
-        <button class="col-span-2 bg-blue-600 text-white font-bold py-3 rounded-lg text-sm">Guardar Calificación</button>
-      </form>
+    <h2 class="text-2xl font-bold mb-6">Postulantes Pendientes de Evaluación Psicológica</h2>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <table class="w-full text-left">
+        <thead class="bg-slate-50 border-b border-slate-200">
+        <tr>
+          <th class="p-4 text-sm font-semibold text-slate-700">Chofer</th>
+          <th class="p-4 text-sm font-semibold text-slate-700">ID Usuario</th>
+          <th class="p-4 text-sm font-semibold text-slate-700">Fecha Solicitud</th>
+          <th class="p-4 text-sm font-semibold text-slate-700 text-center">Acción</th>
+        </tr>
+        </thead>
+        <tbody id="tabla-pruebas-pendientes">
+        </tbody>
+      </table>
     </div>
   </section>
 
@@ -236,18 +255,18 @@
         <div class="grid grid-cols-2 gap-6">
           <div>
             <label class="block text-[10px] font-bold uppercase text-[#64748b]">Nombres</label>
-            <input type="text" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed" value="Cargando...">
+            <input type="text" id="ajuste-nombres" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed" value="Cargando...">
           </div>
           <div>
             <label class="block text-[10px] font-bold uppercase text-[#64748b]">Apellidos</label>
-            <input type="text" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed" value="Cargando...">
+            <input type="text" id="ajuste-apellidos" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed" value="Cargando...">
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-6">
           <div>
             <label class="block text-[10px] font-bold uppercase text-[#64748b]">Cédula de Identidad</label>
-            <input type="text" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed" value="Cargando...">
+            <input type="text" id="ajuste-cedula" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed" value="Cargando...">
           </div>
           <div>
             <label class="block text-[10px] font-bold uppercase text-[#64748b]">Teléfono</label>
@@ -301,6 +320,26 @@
     </div>
   </div>
 
+  <div id="modal-psicologico" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-xl w-96 shadow-xl">
+      <h3 class="text-lg font-bold mb-4">Evaluación Psicológica</h3>
+      <form id="form-psicologico">
+        <input type="hidden" id="id-psicologico-input">
+
+        <label class="block text-sm font-medium mb-1">Calificación (0-100):</label>
+        <input type="number" id="nota-psicologica" class="w-full border rounded p-2 mb-3" min="0" max="100" required>
+
+        <label class="block text-sm font-medium mb-1">Observaciones:</label>
+        <textarea id="observacion-psicologica" class="w-full border rounded p-2 mb-4" placeholder="Detalles de la entrevista o conducta detectada..."></textarea>
+
+        <div class="flex justify-end gap-2">
+          <button type="button" onclick="cerrarModalPsicologico()" class="bg-slate-200 px-4 py-2 rounded">Cancelar</button>
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Guardar Evaluación</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -344,10 +383,37 @@
   });
 
   window.addEventListener('DOMContentLoaded', () => {
+    cargarDatosPersonal();
     cargarEstadisticas();
     cargarVehiculosPendientes();
     cargarPagosPendientes();
+    cargarPruebasPendientes();
+    cargarEstadisticasGanancias();
   });
+
+  function cargarDatosPersonal() {
+    fetch('get-usuario.php')
+      .then(res => res.json())
+      .then(data => {
+        if (data.error || (data.rol !== 'personal' && data.rol !== 'admin')) {
+          window.location.href = 'login.html';
+
+          return;
+        }
+
+        const u = data.data;
+
+        document.getElementById('nombre-usuario').innerText = u.nombres.split(' ')[0] + ' ' + u.apellidos.split(' ')[0];
+        const nombreCompletoReal = u.nombres + ' ' + u.apellidos;
+        document.getElementById('nombre-usuario').setAttribute('title', nombreCompletoReal);
+        document.getElementById('ci-usuario').innerText = `CI: ${u.cedula}`;
+        document.getElementById('ajuste-nombres').value = u.nombres;
+        document.getElementById('ajuste-apellidos').value = u.apellidos;
+        document.getElementById('ajuste-cedula').value = u.cedula;
+        document.getElementById('ajuste-tlf').value = u.telefono || '';
+        document.getElementById('ajuste-correo').value = u.correo || '';
+      });
+  }
 
   function cargarEstadisticas() {
     fetch('get-estadisticas-personal.php')
@@ -470,10 +536,261 @@
       .then(res => {
         if(res.success) {
           cerrarModal();
-          cargarVehiculosPendientes(); // Recarga la tabla
+          cargarVehiculosPendientes();
+          cargarEstadisticas();
         }
       });
   });
+
+  function cargarPruebasPendientes() {
+    fetch('get-pruebas-pendientes.php')
+      .then(res => res.json())
+      .then(res => {
+        const tbody = document.getElementById('tabla-pruebas-pendientes');
+        tbody.innerHTML = '';
+
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(p => {
+            tbody.innerHTML += `
+                <tr class="border-b border-slate-100 hover:bg-slate-50">
+                    <td class="p-4">${p.nombres.split(' ')[0]} ${p.apellidos.split(' ')[0]}</td>
+                    <td class="p-4 font-mono font-bold">#${String(p.id_usuario).padStart(3, '0')}</td>
+                    <td class="p-4 text-sm text-slate-600">${p.fecha}</td>
+                    <td class="p-4 text-center">
+                        <button onclick="evaluarChoferPsicologico(${p.id_evaluacion})"
+                                class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition">
+                            Evaluar
+                        </button>
+                    </td>
+                </tr>
+            `;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">No hay postulantes pendientes de evaluación psicológica.</td></tr>';
+        }
+      });
+  }
+
+  function evaluarChoferPsicologico(id) {
+    document.getElementById('id-psicologico-input').value = id;
+    document.getElementById('nota-psicologica').value = '';
+    document.getElementById('observacion-psicologica').value = '';
+    document.getElementById('modal-psicologico').classList.remove('hidden');
+  }
+
+  function cerrarModalPsicologico() {
+    document.getElementById('modal-psicologico').classList.add('hidden');
+  }
+
+  document.getElementById('form-psicologico').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const data = {
+      id: document.getElementById('id-psicologico-input').value,
+      nota: document.getElementById('nota-psicologica').value,
+      observacion: document.getElementById('observacion-psicologica').value
+    };
+
+    fetch('procesar-prueba-psicologica.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          cerrarModalPsicologico();
+          cargarPruebasPendientes();
+          cargarEstadisticas();
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  });
+
+  // --- BUSCADOR DE CHOFERES (AUTOCOMPLETE) ---
+  const inputBuscador = document.getElementById('buscador-chofer');
+  const inputBuscadorId = document.getElementById('buscador-chofer-id');
+  const dropdownChof = document.getElementById('dropdown-choferes');
+  let debounceTimer;
+
+  inputBuscador.addEventListener('input', function() {
+    const q = this.value.trim();
+    inputBuscadorId.value = '';
+
+    if (q.length < 1) {
+      dropdownChof.classList.add('hidden');
+      return;
+    }
+
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      fetch(`get-choferes-buscar.php?q=${encodeURIComponent(q)}`)
+        .then(res => res.json())
+        .then(res => {
+          dropdownChof.innerHTML = '';
+          if (res.success && res.data.length > 0) {
+            res.data.forEach(c => {
+              const div = document.createElement('div');
+              div.className = 'px-3 py-2 text-sm cursor-pointer hover:bg-slate-100';
+              div.innerHTML = `<span class="font-semibold">${c.nombres.split(' ')[0]} ${c.apellidos.split(' ')[0]}</span> <span class="text-slate-400 text-xs">#${String(c.id_usuario).padStart(3, '0')}</span>`;
+              div.addEventListener('click', () => {
+                inputBuscador.value = `${c.nombres.split(' ')[0]} ${c.apellidos.split(' ')[0]} (#${String(c.id_usuario).padStart(3, '0')})`;
+                inputBuscadorId.value = c.id_usuario;
+                dropdownChof.classList.add('hidden');
+              });
+              dropdownChof.appendChild(div);
+            });
+            dropdownChof.classList.remove('hidden');
+          } else {
+            dropdownChof.innerHTML = '<div class="px-3 py-2 text-sm text-slate-400 italic">Sin resultados</div>';
+            dropdownChof.classList.remove('hidden');
+          }
+        });
+    }, 300);
+  });
+
+  inputBuscador.addEventListener('focus', function() {
+    if (this.value.trim().length >= 1 && dropdownChof.children.length > 0) {
+      dropdownChof.classList.remove('hidden');
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!inputBuscador.contains(e.target) && !dropdownChof.contains(e.target)) {
+      dropdownChof.classList.add('hidden');
+    }
+  });
+
+  // --- GENERAR INFORME DE PAGOS ---
+  function generarInformePagos() {
+    const idUsuario = inputBuscadorId.value;
+    const mes = document.getElementById('mes-reporte-pagos').value;
+    const container = document.getElementById('resultados-reporte-pagos');
+
+    if (!idUsuario) {
+      alert('Seleccione un chofer válido del buscador.');
+      return;
+    }
+    if (!mes) {
+      alert('Seleccione un mes de consulta.');
+      return;
+    }
+
+    fetch(`get-reporte-pagos.php?id_usuario=${idUsuario}&mes=${mes}`)
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data.length > 0) {
+          let totalMonto = 0;
+          let html = `
+            <table class="w-full text-sm text-left">
+              <thead class="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th class="p-3 text-xs font-semibold text-slate-700">Referencia</th>
+                <th class="p-3 text-xs font-semibold text-slate-700">Monto</th>
+                <th class="p-3 text-xs font-semibold text-slate-700">Fecha de Pago</th>
+                <th class="p-3 text-xs font-semibold text-slate-700">Estado</th>
+              </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">`;
+
+          res.data.forEach(p => {
+            totalMonto += parseFloat(p.monto);
+            const estadoColor = p.estado === 'finalizado' ? 'text-emerald-600 bg-emerald-50' : 'text-amber-600 bg-amber-50';
+            html += `
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-mono text-xs">${p.nro_ref}</td>
+                <td class="p-3 font-semibold">Bs. ${parseFloat(p.monto).toFixed(2)}</td>
+                <td class="p-3 text-slate-600">${p.fecha}</td>
+                <td class="p-3"><span class="px-2 py-1 rounded-full text-[10px] font-bold uppercase ${estadoColor}">${p.estado}</span></td>
+              </tr>`;
+          });
+
+          html += `</tbody></table>
+            <div class="mt-4 pt-3 border-t border-slate-200 flex justify-end">
+              <span class="text-sm font-bold text-slate-700">Total: <span class="text-emerald-600">Bs. ${totalMonto.toFixed(2)}</span></span>
+            </div>`;
+          container.innerHTML = html;
+        } else {
+          container.innerHTML = '<p class="text-center text-slate-400 text-sm italic">No se encontraron pagos para el chofer y mes seleccionados.</p>';
+        }
+      });
+  }
+
+  // --- ESTADÍSTICAS DE GANANCIAS ---
+  function cargarEstadisticasGanancias() {
+    fetch('get-estadisticas-ganancias.php')
+      .then(res => res.json())
+      .then(data => {
+        if (!data.error) {
+          document.getElementById('stat-ganancia-historica').innerText = 'Bs. ' + parseFloat(data.ganancia_historica).toFixed(2);
+          document.getElementById('stat-ganancia-mes').innerText = 'Bs. ' + parseFloat(data.ganancia_mes_actual).toFixed(2);
+          document.getElementById('stat-carreras').innerText = data.carreras_completadas;
+        }
+      });
+  }
+
+  // --- FILTRAR GANANCIAS POR RANGO ---
+  function filtrarGanancias() {
+    const desde = document.getElementById('ganancia-desde').value;
+    const hasta = document.getElementById('ganancia-hasta').value;
+    const container = document.getElementById('resultados-ganancias');
+
+    if (!desde || !hasta) {
+      alert('Seleccione ambos campos de rango (Desde y Hasta).');
+      return;
+    }
+
+    if (desde > hasta) {
+      alert('El mes "Desde" no puede ser mayor que el mes "Hasta".');
+      return;
+    }
+
+    fetch(`get-reporte-ganancias.php?desde=${desde}&hasta=${hasta}`)
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data.length > 0) {
+          let totalComision = 0;
+          let html = `
+            <table class="w-full text-sm text-left">
+              <thead class="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th class="p-3 text-xs font-semibold text-slate-700">ID Transacción</th>
+                <th class="p-3 text-xs font-semibold text-slate-700">Detalle / Tipo</th>
+                <th class="p-3 text-xs font-semibold text-slate-700">Fecha</th>
+                <th class="p-3 text-xs font-semibold text-slate-700 text-right">Monto Comisión</th>
+              </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">`;
+
+          res.data.forEach(t => {
+            totalComision += parseFloat(t.comision);
+            html += `
+              <tr class="hover:bg-slate-50">
+                <td class="p-3 font-mono text-xs">#${String(t.id_transaccion).padStart(4, '0')}</td>
+                <td class="p-3 text-slate-700">
+                  <span class="font-semibold">Viaje</span>
+                  <span class="text-slate-400 text-xs ml-1">(Ref: ${t.nro_ref})</span>
+                </td>
+                <td class="p-3 text-slate-600">${t.fecha}</td>
+                <td class="p-3 text-right font-semibold text-emerald-600">Bs. ${parseFloat(t.comision).toFixed(2)}</td>
+              </tr>`;
+          });
+
+          html += `</tbody>
+              <tfoot>
+                <tr class="bg-slate-100 border-t-2 border-slate-300">
+                  <td colspan="3" class="p-3 text-sm font-extrabold text-slate-900 uppercase">Total Ganancia en el Periodo</td>
+                  <td class="p-3 text-right text-lg font-extrabold text-emerald-600">Bs. ${totalComision.toFixed(2)}</td>
+                </tr>
+              </tfoot>
+            </table>`;
+
+          container.innerHTML = html;
+        } else {
+          container.innerHTML = '<p class="text-center text-slate-400 text-sm italic">No se encontraron transacciones en el rango seleccionado.</p>';
+        }
+      });
+  }
 
 
 </script>

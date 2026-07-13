@@ -141,6 +141,14 @@
       </div>
 
       <form id="ajax-registro-form" class="space-y-4">
+        <div class="mb-6 p-1 bg-slate-100 rounded-xl flex">
+          <button type="button" onclick="setModo('nuevo')" id="btn-nuevo" class="flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm transition-all">REGISTRO NUEVO</button>
+          <button type="button" onclick="setModo('rol')" id="btn-rol" class="flex-1 py-2 text-xs font-bold text-slate-500 transition-all">YA TENGO CUENTA</button>
+        </div>
+        <input type="hidden" name="modo_registro" id="input-modo" value="nuevo">
+
+        <div id="registro-nuevo" class="space-y-4 ">
+
         <div>
           <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Quiero registrarme como:</label>
           <select id="reg-rol" name="reg_rol" onchange="evaluarCamposChofer()" class="w-full bg-white/90 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#1e40af] transition-all cursor-pointer">
@@ -216,21 +224,119 @@
           <div class="space-y-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
             <div class="grid grid-cols-2 gap-2">
               <input id="reg-c1-nom" type="text" name="nombre_contacto1" placeholder="Nombre Contacto 1" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
-              <input id="reg-c1-tel" type="text" name="contacto1" placeholder="Teléfono Contacto 1" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+              <div class="flex gap-1">
+                <select name="prefijo_contacto1" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-16">
+                  <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+                </select>
+                <input id="reg-c1-tel" type="text" name="contacto1" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+              </div>
             </div>
             <div class="grid grid-cols-2 gap-2">
               <input id="reg-c2-nom" type="text" name="nombre_contacto2" placeholder="Nombre Contacto 2" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
-              <input id="reg-c2-tel" type="text" name="contacto2" placeholder="Teléfono Contacto 2" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+              <div class="flex gap-1">
+                <select name="prefijo_contacto2" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-16">
+                  <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+                </select>
+                <input id="reg-c2-tel" type="text" name="contacto2" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+              </div>
             </div>
           </div>
         </div>
+        </div>
 
-        <button type="submit" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-semibold hover:bg-slate-800 transition-all cursor-pointer">
-          Completar Registro
-        </button>
+        <div id="campos-registro-basico" class="space-y-4 hidden">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Quiero registrarme como:</label>
+            <select id="reg-rol2" name="reg_rol2" onchange="tengocuenta()" class="w-full bg-white/90 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#1e40af] transition-all cursor-pointer">
+              <option value="cliente">Pasajero / Cliente</option>
+              <option value="chofer">Conductor / Chofer</option>
+            </select>
+          </div>
+
+          <div id="verificacion-usuario" class="space-y-4 border-b border-slate-200 pb-4 ">
+            <p class="text-xs text-slate-500 font-medium">Ingresa tus datos para validar tu cuenta existente:</p>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Cédula</label>
+              <input type="text" name="cedula_ya" required pattern="[0-9]{5,10}" title="Solo números." placeholder="12345678" class="w-full bg-white/90 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#1e40af]">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Correo Electrónico</label>
+              <input type="email" name="correo_ya" required placeholder="usuario@gmail.com" class="w-full bg-white/90 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:border-[#1e40af]">
+            </div>
+
+            <div class="relative group">
+              <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Contraseña</label>
+              <input id="registro-ya" type="password" name="password_ya" required placeholder="••••••••" class="w-full bg-white/90 border border-slate-300 rounded-xl px-4 py-3 pr-12 text-sm text-slate-900 focus:outline-none focus:border-[#1e40af]">
+              <button type="button" onclick="togglePasswordVisibility('registro-ya', 'registro-eye-icon-ya')" class="absolute bottom-3 right-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
+                <i id="registro-eye-icon-ya" data-lucide="eye" class="h-4 w-4"></i>
+              </button>
+            </div>
+
+            <div id="bloque-codigo-confirmacion" class="space-y-4 border-t pt-4">
+              <p class="text-xs text-slate-600">Se enviará un código al: <b id="telefono-enmascarado">0414-15****</b></p>
+
+              <div class="flex gap-2">
+                <input type="text" id="codigo-ingresado" placeholder="123456" class="w-full border-2 border-slate-300 rounded-xl px-4 py-3 text-sm font-bold text-center">
+                <button type="button" onclick="verificarCodigo()" class="bg-blue-600 text-white px-4 rounded-xl text-xs font-bold hover:bg-blue-700">VERIFICAR</button>
+              </div>
+            </div>
+
+            <div id="campos-banca-chofer2" class="border-t border-slate-200 pt-4 space-y-4 hidden">
+              <div class="flex items-center gap-1.5 text-xs font-bold text-[#1e40af] uppercase tracking-wider">
+                <i data-lucide="info" class="h-3.5 w-3.5"></i>
+                <span>Datos Bancarios Obligatorios</span>
+              </div>
+              <div class="grid grid-cols-2 gap-4 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 mb-1 uppercase">Banco</label>
+                  <select name="banco_ya" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 cursor-pointer">
+                    <option value="Banesco">Banesco</option>
+                    <option value="Banco de Venezuela">B. Venezuela</option>
+                    <option value="Mercantil">Mercantil</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 mb-1 uppercase">Nº Cuenta</label>
+                  <input id="reg-cuenta2" name="nro_cuenta_ya" type="text" pattern="[0-9]{20}" maxlength="20" placeholder="20 dígitos numéricos" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                </div>
+              </div>
+
+              <div class="flex items-center gap-1.5 text-xs font-bold text-[#1e40af] uppercase tracking-wider pt-2">
+                <i data-lucide="shield-alert" class="h-3.5 w-3.5"></i>
+                <span>Contactos de Emergencia (Mínimo 2)</span>
+              </div>
+              <div class="space-y-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <div class="grid grid-cols-2 gap-2">
+                  <input id="reg-c1-nom2" type="text" name="nombre_contacto1_ya" placeholder="Nombre Contacto 1" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+                  <div class="flex gap-1">
+                    <select name="prefijo_contacto1_ya" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-16">
+                      <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+                    </select>
+                    <input id="reg-c1-tel2" type="text" name="contacto1_ya" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                  <input id="reg-c2-nom2" type="text" name="nombre_contacto2_ya" placeholder="Nombre Contacto 2" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+                  <div class="flex gap-1">
+                    <select name="prefijo_contacto2_ya" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-16">
+                      <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+                    </select>
+                    <input id="reg-c2-tel2" type="text" name="contacto2_ya" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+        </div>
       </form>
+
     </div>
+    <button type="submit" form='ajax-registro-form' id="btn-completar-registro" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-semibold hover:bg-slate-800 transition-all cursor-pointer">
+      Completar Registro
+    </button>
   </div>
+
 </main>
 
 <footer class="w-full py-6 bg-white/70 backdrop-blur-md border-t border-slate-200 relative z-20 text-center text-xs text-slate-500 font-medium">
@@ -246,6 +352,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('tab') === 'register') cambiarTab('registro');
     if (urlParams.has('error')) document.getElementById('error-msg').classList.remove('hidden');
+    setModo('nuevo');
   });
 
   // Limpia los mensajes de error cuando el usuario empieza a escribir de nuevo
@@ -263,6 +370,112 @@
     eyeIcon.setAttribute('data-lucide', passwordInput.type === 'password' ? 'eye' : 'eye-off');
     lucide.createIcons();
   }
+
+  function verificarCodigo() {
+    const codigoInput = document.getElementById('codigo-ingresado').value;
+    const btnCompletar = document.getElementById('btn-completar-registro');
+
+    if (codigoInput === "123456") {
+      btnCompletar.disabled = false;
+      // Quitamos los estilos de deshabilitado
+      btnCompletar.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
+      btnCompletar.classList.add('bg-slate-900', 'text-white');
+      alert("Código verificado correctamente.");
+    } else {
+      alert("Código incorrecto.");
+    }
+  }
+
+  function setModo(modo) {
+    document.getElementById('input-modo').value = modo;
+    const camposBasicos = document.getElementById('campos-registro-basico');
+    const registroNuevo = document.getElementById('registro-nuevo');
+    const btnCompletar = document.getElementById('btn-completar-registro');
+    const btnNuevo = document.getElementById('btn-nuevo');
+    const btnRol = document.getElementById('btn-rol');
+
+    // Arreglos de inputs para controlar sus atributos requeridos
+    const inputsNuevo = ['nombres', 'apellidos', 'cedula', 'telefono', 'correo', 'registro-pass'];
+    const inputsBasicos = ['cedula_ya', 'correo_ya', 'registro-ya'];
+
+    const form = document.getElementById('ajax-registro-form');
+
+    if (modo === 'rol') {
+      camposBasicos.classList.remove('hidden');
+      registroNuevo.classList.add('hidden');
+
+      // 1. Forzar obligatorios en 'Ya tengo cuenta' y quitar a 'Registro nuevo'
+      inputsBasicos.forEach(name => {
+        if(name === 'registro-ya') document.getElementById('registro-ya')?.setAttribute('required', 'required');
+        else form.querySelector(`[name="${name}"]`)?.setAttribute('required', 'required');
+      });
+      inputsNuevo.forEach(name => {
+        if(name === 'registro-pass') document.getElementById('registro-pass')?.removeAttribute('required');
+        else form.querySelector(`[name="${name}"]`)?.removeAttribute('required');
+      });
+
+      // Desactivar campos bancarios de chofer nuevo por si acaso
+      const inputsBancaNuevo = ['reg-cuenta', 'reg-c1-nom', 'reg-c1-tel', 'reg-c2-nom', 'reg-c2-tel'];
+      inputsBancaNuevo.forEach(id => document.getElementById(id)?.removeAttribute('required'));
+
+      // Bloqueamos el botón si estamos en "YA TENGO CUENTA" hasta validar
+      btnCompletar.disabled = true;
+      btnCompletar.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
+      btnCompletar.classList.remove('bg-slate-900', 'text-white');
+
+      btnRol.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm";
+      btnNuevo.className = "flex-1 py-2 text-xs font-bold text-slate-500";
+
+      // Ejecutar lógica interna de roles existentes
+      tengocuenta();
+    } else {
+      camposBasicos.classList.add('hidden');
+      registroNuevo.classList.remove('hidden');
+
+      // 2. Forzar obligatorios en 'Registro nuevo' y liberar por completo 'Ya tengo cuenta'
+      inputsNuevo.forEach(name => {
+        if(name === 'registro-pass') document.getElementById('registro-pass')?.setAttribute('required', 'required');
+        else form.querySelector(`[name="${name}"]`)?.setAttribute('required', 'required');
+      });
+      inputsBasicos.forEach(name => {
+        if(name === 'registro-ya') document.getElementById('registro-ya')?.removeAttribute('required');
+        else form.querySelector(`[name="${name}"]`)?.removeAttribute('required');
+      });
+
+      // Desactivar campos bancarios de ya tengo cuenta por si acaso
+      const inputsBancaBasico = ['reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c2-nom2', 'reg-c2-tel2'];
+      inputsBancaBasico.forEach(id => document.getElementById(id)?.removeAttribute('required'));
+
+      // Reactivamos el botón en "REGISTRO NUEVO"
+      btnCompletar.disabled = false;
+      btnCompletar.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
+      btnCompletar.classList.add('bg-slate-900', 'text-white');
+
+      btnNuevo.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm";
+      btnRol.className = "flex-1 py-2 text-xs font-bold text-slate-500";
+
+      // Evaluar si requiere campos de chofer nuevo
+      evaluarCamposChofer();
+    }
+  }
+
+  function tengocuenta() {
+    const rolSeleccionado = document.getElementById('reg-rol2').value;
+    const camposVerificacion = document.getElementById('verificacion-usuario');
+    const camposBanca = document.getElementById('campos-banca-chofer2');
+    const inputsBanca = ['reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c2-nom2', 'reg-c2-tel2'];
+
+    camposVerificacion.classList.remove('hidden');
+
+    if (rolSeleccionado === 'chofer' && document.getElementById('input-modo').value === 'rol') {
+      camposBanca.classList.remove('hidden');
+      inputsBanca.forEach(id => document.getElementById(id)?.setAttribute('required', 'required'));
+    } else {
+      camposBanca.classList.add('hidden');
+      inputsBanca.forEach(id => document.getElementById(id)?.removeAttribute('required'));
+    }
+  }
+
 
   function cambiarTab(tipo) {
     const isLogin = tipo === 'login';
