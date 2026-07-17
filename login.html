@@ -171,7 +171,12 @@
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Cédula</label>
-            <input type="text" name="cedula" required pattern="[0-9]{5,10}" title="Solo números." placeholder="12345678" class="w-full bg-white/90 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#1e40af]">
+            <div class="flex gap-1.5">
+              <select name="cedula_prefijo" id="reg-cedula-prefijo" class="bg-white/90 border border-slate-300 rounded-xl px-1.5 py-2 text-xs text-slate-900">
+                <option value="V-">V-</option><option value="J-">J-</option>
+              </select>
+              <input type="text" name="cedula" id="reg-cedula-num" required pattern="[0-9]{7,8}" minlength="7" maxlength="8" title="7 u 8 dígitos numéricos" placeholder="12345678" class="w-full bg-white/90 border border-slate-300 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-[#1e40af]">
+            </div>
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Teléfono</label>
@@ -224,19 +229,25 @@
             <span>Contactos de Emergencia (Mínimo 2)</span>
           </div>
           <div class="space-y-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <div class="grid grid-cols-2 gap-2">
-              <input id="reg-c1-nom" type="text" name="nombre_contacto1" placeholder="Nombre Contacto 1" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+            <div class="grid grid-cols-3 gap-2">
+              <input id="reg-c1-nom" type="text" name="nombre_contacto1" placeholder="Nombre" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+              <select id="reg-c1-rel" name="relacion_contacto1" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-[10px] text-slate-900 cursor-pointer">
+                <option value="">Parentesco</option><option value="Cónyuge/Pareja">Cónyuge/Pareja</option><option value="Padre/Madre">Padre/Madre</option><option value="Hijo/Hija">Hijo/Hija</option><option value="Familiar">Familiar</option><option value="Amigo/Amiga">Amigo/Amiga</option><option value="Otro">Otro</option>
+              </select>
               <div class="flex gap-1">
-                <select name="prefijo_contacto1" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-16">
+                <select name="prefijo_contacto1" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
                   <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
                 </select>
                 <input id="reg-c1-tel" type="text" name="contacto1" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
               </div>
             </div>
-            <div class="grid grid-cols-2 gap-2">
-              <input id="reg-c2-nom" type="text" name="nombre_contacto2" placeholder="Nombre Contacto 2" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+            <div class="grid grid-cols-3 gap-2">
+              <input id="reg-c2-nom" type="text" name="nombre_contacto2" placeholder="Nombre" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+              <select id="reg-c2-rel" name="relacion_contacto2" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-[10px] text-slate-900 cursor-pointer">
+                <option value="">Parentesco</option><option value="Cónyuge/Pareja">Cónyuge/Pareja</option><option value="Padre/Madre">Padre/Madre</option><option value="Hijo/Hija">Hijo/Hija</option><option value="Familiar">Familiar</option><option value="Amigo/Amiga">Amigo/Amiga</option><option value="Otro">Otro</option>
+              </select>
               <div class="flex gap-1">
-                <select name="prefijo_contacto2" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-16">
+                <select name="prefijo_contacto2" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
                   <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
                 </select>
                 <input id="reg-c2-tel" type="text" name="contacto2" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
@@ -260,7 +271,12 @@
 
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Cédula</label>
-              <input type="text" name="cedula_ya" required pattern="[0-9]{5,10}" title="Solo números." placeholder="12345678" class="w-full bg-white/90 border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#1e40af]">
+              <div class="flex gap-1.5">
+                <select name="cedula_prefijo_ya" id="reg-cedula-prefijo-ya" class="bg-white/90 border border-slate-300 rounded-xl px-1.5 py-2 text-xs text-slate-900">
+                  <option value="V-">V-</option><option value="J-">J-</option>
+                </select>
+                <input type="text" name="cedula_ya" id="reg-cedula-num-ya" required pattern="[0-9]{7,8}" minlength="7" maxlength="8" title="7 u 8 dígitos numéricos" placeholder="12345678" class="w-full bg-white/90 border border-slate-300 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-[#1e40af]">
+              </div>
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Correo Electrónico</label>
@@ -311,19 +327,25 @@
                 <span>Contactos de Emergencia (Mínimo 2)</span>
               </div>
               <div class="space-y-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <div class="grid grid-cols-2 gap-2">
-                  <input id="reg-c1-nom2" type="text" name="nombre_contacto1_ya" placeholder="Nombre Contacto 1" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+                <div class="grid grid-cols-3 gap-2">
+                  <input id="reg-c1-nom2" type="text" name="nombre_contacto1_ya" placeholder="Nombre" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+                  <select id="reg-c1-rel2" name="relacion_contacto1_ya" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-[10px] text-slate-900 cursor-pointer">
+                    <option value="">Parentesco</option><option value="Cónyuge/Pareja">Cónyuge/Pareja</option><option value="Padre/Madre">Padre/Madre</option><option value="Hijo/Hija">Hijo/Hija</option><option value="Familiar">Familiar</option><option value="Amigo/Amiga">Amigo/Amiga</option><option value="Otro">Otro</option>
+                  </select>
                   <div class="flex gap-1">
-                    <select name="prefijo_contacto1_ya" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-16">
+                    <select name="prefijo_contacto1_ya" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
                       <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
                     </select>
                     <input id="reg-c1-tel2" type="text" name="contacto1_ya" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
                   </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                  <input id="reg-c2-nom2" type="text" name="nombre_contacto2_ya" placeholder="Nombre Contacto 2" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+                <div class="grid grid-cols-3 gap-2">
+                  <input id="reg-c2-nom2" type="text" name="nombre_contacto2_ya" placeholder="Nombre" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+                  <select id="reg-c2-rel2" name="relacion_contacto2_ya" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-[10px] text-slate-900 cursor-pointer">
+                    <option value="">Parentesco</option><option value="Cónyuge/Pareja">Cónyuge/Pareja</option><option value="Padre/Madre">Padre/Madre</option><option value="Hijo/Hija">Hijo/Hija</option><option value="Familiar">Familiar</option><option value="Amigo/Amiga">Amigo/Amiga</option><option value="Otro">Otro</option>
+                  </select>
                   <div class="flex gap-1">
-                    <select name="prefijo_contacto2_ya" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-16">
+                    <select name="prefijo_contacto2_ya" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
                       <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
                     </select>
                     <input id="reg-c2-tel2" type="text" name="contacto2_ya" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
@@ -422,7 +444,7 @@
       });
 
       // Desactivar campos bancarios de chofer nuevo por si acaso
-      const inputsBancaNuevo = ['reg-banco', 'reg-cuenta', 'reg-c1-nom', 'reg-c1-tel', 'reg-c2-nom', 'reg-c2-tel'];
+      const inputsBancaNuevo = ['reg-banco', 'reg-cuenta', 'reg-c1-nom', 'reg-c1-tel', 'reg-c1-rel', 'reg-c2-nom', 'reg-c2-tel', 'reg-c2-rel'];
       inputsBancaNuevo.forEach(id => document.getElementById(id)?.removeAttribute('required'));
 
       // Bloqueamos el botón si estamos en "YA TENGO CUENTA" hasta validar
@@ -450,7 +472,7 @@
       });
 
       // Desactivar campos bancarios de ya tengo cuenta por si acaso
-      const inputsBancaBasico = ['reg-banco2', 'reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c2-nom2', 'reg-c2-tel2'];
+      const inputsBancaBasico = ['reg-banco2', 'reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c1-rel2', 'reg-c2-nom2', 'reg-c2-tel2', 'reg-c2-rel2'];
       inputsBancaBasico.forEach(id => document.getElementById(id)?.removeAttribute('required'));
 
       // Reactivamos el botón en "REGISTRO NUEVO"
@@ -470,7 +492,7 @@
     const rolSeleccionado = document.getElementById('reg-rol2').value;
     const camposVerificacion = document.getElementById('verificacion-usuario');
     const camposBanca = document.getElementById('campos-banca-chofer2');
-    const inputsBanca = ['reg-banco2', 'reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c2-nom2', 'reg-c2-tel2'];
+    const inputsBanca = ['reg-banco2', 'reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c1-rel2', 'reg-c2-nom2', 'reg-c2-tel2', 'reg-c2-rel2'];
 
     camposVerificacion.classList.remove('hidden');
 
@@ -495,7 +517,7 @@
   function evaluarCamposChofer() {
     const rolSeleccionado = document.getElementById('reg-rol').value;
     const seccionBancaria = document.getElementById('campos-banca-chofer');
-    const inputs = ['reg-banco', 'reg-cuenta', 'reg-c1-nom', 'reg-c1-tel', 'reg-c2-nom', 'reg-c2-tel'];
+    const inputs = ['reg-banco', 'reg-cuenta', 'reg-c1-nom', 'reg-c1-tel', 'reg-c1-rel', 'reg-c2-nom', 'reg-c2-tel', 'reg-c2-rel'];
 
     if (rolSeleccionado === 'chofer') {
       seccionBancaria.classList.remove('hidden');
@@ -512,6 +534,19 @@
     sincronizarCuentas();
 
     const formData = new FormData(this);
+
+    // Combine cédula prefijo + número
+    const modoReg = document.getElementById('input-modo').value;
+    if (modoReg === 'nuevo') {
+      const pref = document.getElementById('reg-cedula-prefijo').value;
+      const num = document.getElementById('reg-cedula-num').value.trim();
+      formData.set('cedula', pref + num);
+    } else {
+      const pref = document.getElementById('reg-cedula-prefijo-ya').value;
+      const num = document.getElementById('reg-cedula-num-ya').value.trim();
+      formData.set('cedula_ya', pref + num);
+    }
+
     const regErrorContainer = document.getElementById('reg-error-msg');
     const regErrorText = document.getElementById('reg-error-text');
 

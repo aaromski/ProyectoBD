@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel del Cliente - Decarrerita</title>
+  <script src="../js/tailwind.js"></script>
+  <script src="../js/lucide.min.js"></script>
+  <link href="../css/select2.min.css" rel="stylesheet" />
+  <script src="../js/jquery.min.js"></script>
+  <script src="../js/select2.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
+    .custom-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; }
+    .badge-pendiente { background-color: #fef3c7; color: #d97706; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
+    .badge-aprobado { background-color: #d1fae5; color: #059669; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
+    .badge-cancelado { background-color: #fee2e2; color: #dc2626; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+<aside class="w-64 bg-white border-r border-slate-300 flex flex-col p-6 text-[#1e293b]">
+  <div class="flex items-center gap-2 mb-10">
+    <i data-lucide="car" class="h-6 w-6 text-[#0f172a]"></i>
+    <span class="text-lg font-bold tracking-tight">Decarrerita</span>
+  </div>
+
+  <nav class="space-y-6 flex-grow">
+    <div>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Resumen</p>
+      <a href="#" onclick="cambiarVista('vista-principal', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold bg-[#0f172a] text-white rounded-lg transition-all">
+        <i data-lucide="layout-dashboard" class="h-4 w-4"></i> Panel Principal
+      </a>
+    </div>
+
+    <div>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Historial</p>
+      <div class="space-y-1">
+        <a href="#" onclick="cambiarVista('vista-recargas', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg ">
+          <i data-lucide="receipt" class="h-4 w-4"></i> Recargas
+        </a>
+        <a href="#" onclick="cambiarVista('vista-traslados', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg ">
+          <i data-lucide="map-pin" class="h-4 w-4"></i> Mis Destinos
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Ajustes</p>
+      <div class="space-y-1">
+        <a href="#" onclick="cambiarVista('vista-ajustes', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg ">
+          <i data-lucide="settings" class="h-4 w-4"></i> Cuenta
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="relative group mt-auto">
+    <button id="btn-perfil" class="flex items-center gap-3 w-full p-2 hover:bg-slate-100 rounded-lg transition-all">
+      <div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-sm text-[#475569] border border-slate-300">U</div>
+      <div class="text-left">
+        <p id="nombre-usuario" class="text-sm font-bold truncate w-26 capitalize">Cargando...</p>
+        <p id="ci-usuario" class="text-xs text-[#64748b]">...</p>
+      </div>
+      <i data-lucide="chevron-up" class="h-4 w-4 ml-auto text-slate-400"></i>
+    </button>
+    <div id="menu-perfil" class="hidden absolute bottom-full left-0 w-full mb-2 bg-white border border-slate-300 rounded-lg shadow-xl p-2 z-50">
+      <a href="../logout.php" class="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 rounded">
+        <i data-lucide="log-out" class="h-4 w-4"></i> Salir
+      </a>
+    </div>
+  </div>
+</aside>
+
+<main class="flex-1 p-8 overflow-y-auto">
+  <header class="flex justify-between items-center mb-8">
+    <h1 class="text-xl font-bold uppercase tracking-tight">PANEL DE CONTROL</h1>
+
+    <div class="flex items-center gap-3">
+      <div class="bg-slate-100 border border-slate-200 px-4 py-2 rounded-lg text-xs font-bold text-slate-700 flex items-center gap-2 shadow-sm">
+        <i data-lucide="trending-up" class="h-3.5 w-3.5 text-slate-500"></i>
+        <span>Tasa BCV: <span id="tasa-bcv-display" class="font-mono bg-slate-200 px-1.5 py-0.5 rounded text-slate-900">Bs. --,--</span></span>
+      </div>
+
+      <button id="btn-convertir-moneda" onclick="alternarMoneda()" class="bg-white border border-slate-300 hover:bg-slate-50 px-3 py-2 rounded-lg text-xs font-bold text-slate-600 flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer">
+        <i data-lucide="dollar-sign" class="h-3.5 w-3.5 text-emerald-600"></i>
+        <span id="texto-btn-moneda">Ver en USD</span>
+      </button>
+
+      <div class="bg-white border border-slate-300 px-4 py-2 rounded-lg text-sm font-mono font-bold text-slate-600 shadow-xs">
+        <span id="reloj">--:--:--</span>
+      </div>
+    </div>
+  </header>
+
+  <section id="vista-principal" class="vista-seccion">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 items-start">
+      <div class="custom-card p-6 border-slate-300 flex flex-col justify-between">
+        <div>
+          <p class="text-[10px] font-bold uppercase text-[#64748b] tracking-wider">Saldo Disponible</p>
+          <p id="saldo-bs" class="text-3xl font-extrabold mt-1 text-slate-900 font-mono text-balance">Bs. 0,00</p>
+        </div>
+        <button onclick="document.getElementById('modal-recarga').classList.remove('hidden')" class="mt-6 w-full bg-[#0f172a] text-white py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors">Notificar Pago Móvil</button>
+      </div>
+
+      <div class="lg:col-span-2 custom-card p-6 border-slate-300">
+        <h2 class="text-sm font-bold mb-4 uppercase text-slate-800">Solicitar Nuevo Traslado</h2>
+        <form id="form-traslado" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Punto de Origen</label>
+            <select name="origen" id="origen" class="buscador-zonas w-full">
+              <option value="">Seleccione origen...</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Destino Final</label>
+            <select name="destino" id="destino" class="buscador-zonas w-full">
+              <option value="">Seleccione destino...</option>
+            </select>
+          </div>
+          <button type="button" id="btn-calcular" class="sm:col-span-2 bg-slate-700 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-slate-600 transition-colors">Calcular Costo de Ruta</button>
+          <button type="button" id="btn-asignar" class="sm:col-span-2 bg-[#0f172a] text-white py-3 rounded-lg font-bold text-sm hidden hover:bg-slate-800 transition-all">Confirmar y Solicitar Unidad</button>
+        </form>
+
+        <div id="resultado-precio" class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-lg text-sm text-center hidden text-slate-700">
+          <p class="text-xs uppercase font-bold text-slate-400">Tarifa del Servicio Solicitado</p>
+          <p class="text-2xl text-slate-900 font-extrabold mt-0.5 font-mono" id="valor-precio-bs">Bs. 0,00</p>
+        </div>
+
+        <div id="resultado" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-sm">
+          <p class="font-bold text-[#059669] flex items-center gap-1.5"><i data-lucide="check" class="h-4 w-4"></i> ¡Conductor Local Asignado!</p>
+          <p id="datos-conductor-asignado" class="text-xs mt-1 text-emerald-800">Verificando estatus operativo en tiempo real...</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="custom-card border-slate-300 overflow-hidden">
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
+        <div>
+          <h3 class="text-slate-900 font-bold text-base">Movimientos Financieros</h3>
+          <p class="text-slate-500 text-xs mt-0.5">Historial consolidado de recargas y gastos de viajes</p>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="bg-slate-50">
+          <tr class="text-slate-400 text-[10px] uppercase tracking-wider">
+            <th class="px-6 py-3 font-semibold">Fecha</th>
+            <th class="px-6 py-3 font-semibold">Detalle</th>
+            <th class="px-6 py-3 font-semibold">Monto</th>
+            <th class="px-6 py-3 font-semibold">Estado</th>
+          </tr>
+          </thead>
+          <tbody id="tabla-movimientos-financieros">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="vista-recargas" class="vista-seccion hidden">
+    <div class="custom-card border-slate-300 p-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+          <h2 class="font-bold text-lg text-slate-900">Control de Conciliaciones de Pago</h2>
+          <p class="text-xs text-slate-500">Historial logístico de reportes monetarios en Bolívares.</p>
+        </div>
+        <button onclick="document.getElementById('modal-recarga').classList.remove('hidden')" class="bg-[#0f172a] text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-800">Notificar Pago</button>
+      </div>
+
+      <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+        <table class="w-full text-sm text-left">
+          <thead class="text-[#64748b] bg-slate-50 text-[10px] uppercase tracking-wider border-b border-slate-200">
+          <tr>
+            <th class="px-6 py-3">Fecha Registro</th>
+            <th class="px-6 py-3">Banco</th>
+            <th class="px-6 py-3">Nº Referencia Bancaria</th>
+            <th class="px-6 py-3">Monto</th>
+            <th class="px-6 py-3 text-center">Estado</th>
+          </tr>
+          </thead>
+          <tbody id="tabla-historial-recarga">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="vista-traslados" class="vista-seccion hidden">
+    <div class="custom-card border-slate-300 p-6">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+          <h2 class="font-bold text-lg text-slate-900">Historial de Destinos y Viajes</h2>
+          <p class="text-xs text-slate-500">Listado logístico de rutas ejecutadas y costos finales cobrados en Bolívares.</p>
+        </div>
+        <select id="filtro-estado-traslado" onchange="aplicarFiltro()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
+          <option value="todos">Todos los Estados</option>
+          <option value="pendiente">Pendientes</option>
+          <option value="aceptado">Aceptados</option>
+          <option value="finalizado">Finalizados</option>
+        </select>
+      </div>
+
+      <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
+        <table class="w-full text-sm text-left">
+          <thead class="text-[#64748b] bg-slate-50 text-[10px] uppercase tracking-wider border-b border-slate-200">
+          <tr>
+            <th class="px-6 py-3">Código Viaje</th>
+            <th class="px-6 py-3">Ruta (Origen &rarr; Destino)</th>
+            <th class="px-6 py-3">Costo (Bs.)</th>
+            <th class="px-6 py-3 text-center">Estado</th>
+            <th class="px-6 py-3 text-center">Acciones</th> </tr>
+          </thead>
+          <tbody id="tabla-traslados-detallada">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="vista-ajustes" class="vista-seccion hidden">
+    <h2 class="text-xl font-bold mb-6">Ajustes de Cuenta</h2>
+    <div class="max-w-2xl bg-white border border-slate-300 rounded-xl p-8 shadow-xs">
+      <form id="form-ajustes-unificado" class="space-y-6" onsubmit="event.preventDefault(); guardarCambiosUnificado();">
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Nombres</label>
+            <input type="text" id="ajuste-nombres" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Apellidos</label>
+            <input type="text" id="ajuste-apellidos" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Cédula</label>
+            <input type="text" id="ajuste-cedula" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Teléfono</label>
+            <input type="tel" id="ajuste-tlf" class="mt-1 w-full border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none" placeholder="04140000000">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Correo Electrónico</label>
+          <input type="email" id="ajuste-correo" required class="w-full border border-slate-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#0f172a] outline-none">
+        </div>
+        <div class="pt-4 border-t border-slate-100 space-y-4">
+          <h4 class="text-xs font-bold uppercase text-slate-900">Cambiar Contraseña</h4>
+          <div class="grid grid-cols-2 gap-4">
+            <input type="password" id="pass-nueva" placeholder="Nueva clave" class="w-full border border-slate-300 p-3 rounded-lg text-sm">
+            <input type="password" id="pass-confirm" placeholder="Confirmar clave" class="w-full border border-slate-300 p-3 rounded-lg text-sm">
+          </div>
+        </div>
+        <button type="submit" class="w-full bg-[#0f172a] text-white py-3 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors">Guardar Cambios</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<div id="modal-recarga" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50 p-4">
+  <div class="bg-white p-6 rounded-xl w-full max-w-sm border border-slate-300 shadow-xl relative">
+    <button onclick="cerrarModalRecarga()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+      <i data-lucide="x" class="h-5 w-5"></i>
+    </button>
+
+    <div class="mb-4">
+      <h3 class="font-bold text-slate-900">Reportar Pago Móvil / Transferencia</h3>
+    </div>
+
+    <form id="form-notificar-pago" class="space-y-4" onsubmit="procesarNotificacionPago(event)">
+      <div>
+        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Cuenta Destino</label>
+        <select name="id_cuenta_empresa" id="select-cuenta-empresa" class="w-full border p-2.5 rounded-lg text-sm bg-white outline-none">
+          <option value="">Cargando cuentas...</option>
+        </select>
+      </div>
+
+      <div id="panel-info-cuenta" class="hidden bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+        <p class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Datos de Cobro</p>
+        <div id="panel-transferencia" class="space-y-2">
+          <p class="text-xs font-bold text-slate-700 uppercase">Transferencia Bancaria</p>
+          <div class="text-xs text-slate-600 space-y-1">
+            <p><span class="font-semibold">Titular:</span> <span id="info-titular"></span></p>
+            <p><span class="font-semibold">RIF:</span> <span id="info-rif"></span></p>
+            <p><span class="font-semibold">Cuenta:</span> <span id="info-cuenta" class="font-mono"></span></p>
+          </div>
+        </div>
+        <div id="panel-pagomovil" class="hidden border-t border-slate-200 pt-3 space-y-2">
+          <p class="text-xs font-bold text-slate-700 uppercase">Pago Móvil</p>
+          <div class="text-xs text-slate-600 space-y-1">
+            <p><span class="font-semibold">Teléfono:</span> <span id="info-telefono" class="font-mono"></span></p>
+            <p><span class="font-semibold">RIF:</span> <span id="info-rif-pm"></span></p>
+            <p><span class="font-semibold">Banco:</span> <span id="info-banco-pm"></span></p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Monto (Bs.)</label>
+        <input type="number" step="0.01" min="1" name="monto" id="recarga-monto-bs" required class="w-full border p-2.5 rounded-lg text-sm font-mono font-bold">
+      </div>
+
+      <div>
+        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Referencia (6 dígitos)</label>
+        <input type="text" name="nro_ref" id="recarga-referencia" required maxlength="6" pattern="\d{6}" class="w-full border p-2.5 rounded-lg text-sm font-mono">
+      </div>
+
+      <div>
+        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Fecha de Ejecución</label>
+        <input type="date" name='fecha' id="fecha-modal" required class="w-full border p-2.5 rounded-lg text-sm outline-none">
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <button type="button" onclick="cerrarModalRecarga()" class="w-1/3 bg-slate-100 text-slate-700 py-2.5 rounded-lg font-bold text-sm hover:bg-slate-200 transition-colors">
+          Salir
+        </button>
+        <input type="hidden" name="tipo" value="recarga">
+        <button type="submit" class="w-full bg-[#0f172a] text-white py-2.5 rounded-lg font-bold text-sm hover:bg-slate-800">Enviar Notificación</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-control-tasa" class="fixed inset-0 bg-black/40 flex items-center justify-center hidden z-50 p-4 animate-fade-in">
+  <div class="bg-white p-5 rounded-xl w-full max-w-xs border border-slate-300 shadow-2xl">
+    <div class="flex justify-between items-center mb-3">
+      <h3 class="font-bold text-xs uppercase tracking-wider text-amber-800 flex items-center gap-1">
+        <i data-lucide="sliders" class="h-3.5 w-3.5"></i> Control de Tasa (Offline)
+      </h3>
+      <button onclick="document.getElementById('modal-control-tasa').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="h-3.5 w-3.5"></i></button>
+    </div>
+    <p class="text-[11px] text-slate-500 mb-4">Usa este panel simulador durante la defensa para alterar el valor del Bolívar y demostrar dinamismo comercial.</p>
+    <div class="space-y-3">
+      <div>
+        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Nueva Tasa Oficial (Bs.)</label>
+        <input type="number" step="0.01" id="input-nueva-tasa" class="w-full border p-2 rounded text-sm font-mono font-bold" placeholder="Ej. 45.50">
+      </div>
+      <button onclick="actualizarTasaManual()" class="w-full bg-amber-600 text-white py-2 rounded text-xs font-bold hover:bg-amber-700 transition-colors">Modificar e Inyectar Tasa</button>
+    </div>
+  </div>
+</div>
+
+
+<div id="modal-detalle-viaje" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-xl p-6 w-full max-w-sm shadow-xl">
+    <h3 class="text-lg font-bold mb-4">Perfil del Chofer</h3>
+    <div id="contenido-detalle" class="space-y-3 text-sm">
+    </div>
+    <button onclick="document.getElementById('modal-detalle-viaje').classList.add('hidden')"
+            class="mt-6 w-full bg-slate-900 text-white py-2 rounded-lg font-bold text-sm">
+      Cerrar
+    </button>
+  </div>
+</div>
+
+<script>
+  // VARIABLES GLOBAL DE CONTROL MONETARIO (ENTORNO OFFLINE VENEZUELA)
+  let tasaBCV = 0.00;           // Tasa base predeterminada
+  let saldoEnBsGlobal = 0.00;     // Saldo real plano en Bs (traído de la DB)
+  let precioViajeBsGlobal = 0.00; // Costo calculado del viaje actual en Bs
+  let mostrarEnUSD = false;       // Estado del conmutador visual de moneda
+  let historialCompleto = [];
+
+  lucide.createIcons();
+
+  // Reloj en tiempo real
+  function updateClock() {
+    const opciones = { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true };
+    const reloj = document.getElementById('reloj');
+    if (reloj) reloj.innerText = new Date().toLocaleTimeString('es-VE', opciones);
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Cargar Tasa desde archivo local backend
+  function obtenerTasaLocal() {
+    return fetch('../get_tasa_bcv.php')
+      .then(res => res.json())
+      .then(data => {
+        if(data.tasa) {
+          tasaBCV = parseFloat(data.tasa);
+        }
+        document.getElementById('tasa-bcv-display').innerText = 'Bs. ' + tasaBCV.toFixed(2).replace('.', ',');
+      })
+      .catch(() => {
+        document.getElementById('tasa-bcv-display').innerText = 'Bs. ' + tasaBCV.toFixed(2).replace('.', ',');
+      });
+  }
+
+  // Cargar zonas desde endpoint JSON
+  function cargarZonas() {
+    return fetch('get-zonas-catalogo.php')
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data) {
+          const opciones = res.data.map(z => `<option value="${z.id_zona}">${z.nombre_zona}</option>`).join('');
+          document.getElementById('origen').innerHTML = '<option value="">Seleccione origen...</option>' + opciones;
+          document.getElementById('destino').innerHTML = '<option value="">Seleccione destino...</option>' + opciones;
+        }
+      });
+  }
+
+  function cargarHistorialTraslados() {
+    fetch('get_historial_cliente.php')
+      .then(response => response.json())
+      .then(res => {
+        if (res.success && res.data) {
+          historialCompleto = res.data;
+          renderizarTabla(historialCompleto);
+        } else {
+          console.warn("No hay datos disponibles o la respuesta fue falsa.");
+        }
+      })
+      .catch(err => console.error("Error FATAL al cargar historial:", err));
+  }
+
+  function renderizarTabla(datos) {
+    const tbody = document.getElementById('tabla-traslados-detallada');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    datos.forEach(t => {
+      const estadoRaw = (t.estado || '').toLowerCase();
+
+      let accion = '';
+      if (estadoRaw === 'en_curso') {
+        accion = `
+          <div class="flex flex-col gap-1">
+            <button onclick="actualizarEstado(${t.id_traslado}, 'cancelado')" class="text-rose-600 text-[10px] font-bold hover:underline">Cancelar</button>
+            <button onclick="actualizarEstado(${t.id_traslado}, 'finalizado')" class="text-emerald-600 text-[10px] font-bold hover:underline">Finalizar</button>
+            <button onclick="abrirModalDetalle(${t.id_traslado})" class="text-blue-600 text-[10px] font-bold hover:underline">Ver Perfil</button>
+          </div>
+        `;
+      } else if (estadoRaw === 'aceptado') {
+        accion = `<button onclick="abrirModalDetalle(${t.id_traslado})" class="text-blue-600 underline font-bold hover:text-blue-800">Ver Chofer</button>`;
+      } else {
+        accion = `<span class="text-slate-400 text-xs italic">N/A</span>`;
+      }
+
+      let badgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
+      let textoMostrar = t.estado;
+
+      if (estadoRaw === 'en_curso') {
+        badgeClass = 'bg-amber-100 text-amber-700 border-amber-200';
+        textoMostrar = 'En Curso';
+      } else if (estadoRaw === 'aceptado') {
+        badgeClass = 'bg-emerald-100 text-emerald-700 border-emerald-200';
+        textoMostrar = 'Aceptado';
+      } else if (estadoRaw === 'pendiente') {
+        badgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
+        textoMostrar = 'Pendiente';
+      }
+
+      const precio = t.costo ? parseFloat(t.costo).toFixed(2) : '0.00';
+
+      const row = `
+    <tr class="border-b hover:bg-slate-50">
+      <td class="px-6 py-4 font-mono text-slate-500">#${t.id_traslado}</td>
+      <td class="px-6 py-4">${t.nombre_origen} &rarr; ${t.nombre_destino}</td>
+      <td class="px-6 py-4 font-bold text-slate-900">Bs. ${precio}</td>
+      <td class="px-6 py-4 text-center">
+          <span class="px-2.5 py-1 text-[10px] font-bold rounded-full uppercase border ${badgeClass}">
+            ${textoMostrar}
+          </span>
+      </td>
+      <td class="px-6 py-4 text-center">${accion}</td>
+    </tr>
+  `;
+      tbody.innerHTML += row;
+    });
+  }
+
+  function actualizarEstado(idTraslado, nuevoEstado) {
+    if (nuevoEstado === 'cancelado') {
+      if (!confirm("¿Estás seguro de cancelar este viaje? Se te reembolsará el dinero a tu saldo.")) {
+        return;
+      }
+
+      fetch('cancelar_viaje.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `id=${idTraslado}`
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (res.success) {
+            alert("Viaje cancelado y saldo devuelto correctamente.");
+            cargarHistorialTraslados();
+            if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario();
+          } else {
+            alert("Error: " + res.message);
+          }
+        });
+
+    } else {
+      if (!confirm(`¿Confirmas que deseas finalizar el viaje? Se registrará el pago.`)) return;
+
+      fetch('finalizar_viaje.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: idTraslado })
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (res.success) {
+            alert("Viaje finalizado correctamente.");
+            cargarHistorialTraslados();
+          } else {
+            alert("Error: " + res.message);
+          }
+        });
+    }
+  }
+
+  function abrirModalDetalle(idTraslado) {
+    fetch('get_detalle_viaje.php?id=' + idTraslado)
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          const d = res.data;
+          const contenedor = document.getElementById('contenido-detalle');
+
+          contenedor.innerHTML = `
+                <div class="flex items-center gap-3 mb-4">
+                   <div class="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-lg text-slate-700">
+                      ${d.nombre.charAt(0)}${d.apellido.charAt(0)}
+                   </div>
+                   <div>
+                      <p class="font-bold text-base capitalize">${d.nombre} ${d.apellido}</p>
+                      <p class="text-xs text-slate-500">Conductor Asignado</p>
+                   </div>
+                </div>
+                <p><strong>Vehículo:</strong> ${d.marca} ${d.modelo}</p>
+                <p><strong>Placa:</strong> <span class="font-mono font-bold bg-slate-100 px-2 py-0.5 rounded">${d.placa}</span></p>
+                <p><strong>Teléfono:</strong> <a href="tel:${d.telefono}" class="text-blue-600 underline">${d.telefono}</a></p>
+              `;
+
+          document.getElementById('modal-detalle-viaje').classList.remove('hidden');
+        } else {
+          alert("No se pudo cargar la información del chofer.");
+        }
+      })
+      .catch(err => console.error("Error:", err));
+  }
+
+  let cuentasEmpresaData = [];
+
+  function cargarCuentasEmpresa() {
+    fetch('../get-cuentas-empresa.php')
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          cuentasEmpresaData = result.data.filter(c => c.estado === 'activo');
+          const select = document.getElementById('select-cuenta-empresa');
+          select.innerHTML = '<option value="">Seleccione una cuenta...</option>';
+          cuentasEmpresaData.forEach(c => {
+            let option = document.createElement('option');
+            option.value = c.id_cuenta;
+            option.textContent = `${c.nombre_banco} - ${c.prefijo}${c.numero_cuenta}`;
+            select.appendChild(option);
+          });
+        }
+      });
+  }
+
+  function cerrarModalRecarga() {
+    document.getElementById('modal-recarga').classList.add('hidden');
+    document.getElementById('panel-info-cuenta').classList.add('hidden');
+    document.getElementById('select-cuenta-empresa').value = '';
+  }
+
+  function mostrarInfoCuenta(idCuenta) {
+    const panel = document.getElementById('panel-info-cuenta');
+    if (!idCuenta) { panel.classList.add('hidden'); return; }
+
+    const cuenta = cuentasEmpresaData.find(c => c.id_cuenta == idCuenta);
+    if (!cuenta) { panel.classList.add('hidden'); return; }
+
+    document.getElementById('info-titular').textContent = cuenta.nombre_titular || 'N/A';
+    document.getElementById('info-rif').textContent = cuenta.identificacion_titular || 'N/A';
+    document.getElementById('info-cuenta').textContent = `${cuenta.prefijo}${cuenta.numero_cuenta}`;
+
+    const panelPM = document.getElementById('panel-pagomovil');
+    if (cuenta.telefono && cuenta.telefono.trim() !== '') {
+      panelPM.classList.remove('hidden');
+      document.getElementById('info-telefono').textContent = cuenta.telefono;
+      document.getElementById('info-rif-pm').textContent = cuenta.identificacion_titular || 'N/A';
+      document.getElementById('info-banco-pm').textContent = cuenta.nombre_banco;
+    } else {
+      panelPM.classList.add('hidden');
+    }
+
+    panel.classList.remove('hidden');
+  }
+
+  document.getElementById('select-cuenta-empresa').addEventListener('change', function() {
+    mostrarInfoCuenta(this.value);
+  });
+
+  // Alternar el estado visual de la moneda
+  function alternarMoneda() {
+    mostrarEnUSD = !mostrarEnUSD;
+
+    const btnTexto = document.getElementById('texto-btn-moneda');
+    if (mostrarEnUSD) {
+      btnTexto.innerText = "Ver en Bs.";
+    } else {
+      btnTexto.innerText = "Ver en USD";
+    }
+
+    renderizarMontos();
+  }
+
+  function aplicarFiltro() {
+    const estadoSeleccionado = document.getElementById('filtro-estado-traslado').value;
+
+    if (estadoSeleccionado === 'todos') {
+      renderizarTabla(historialCompleto);
+    } else {
+      const datosFiltrados = historialCompleto.filter(t => t.estado === estadoSeleccionado);
+      renderizarTabla(datosFiltrados);
+    }
+  }
+
+  // Renderizador unificado en pantalla
+  function renderizarMontos() {
+    const elementoSaldo = document.getElementById('saldo-bs');
+    const elementoPrecio = document.getElementById('valor-precio-bs');
+
+    if (mostrarEnUSD) {
+      let saldoUSD = saldoEnBsGlobal / tasaBCV;
+      let precioUSD = precioViajeBsGlobal / tasaBCV;
+
+      if (elementoSaldo) elementoSaldo.innerText = '$' + saldoUSD.toFixed(2) + ' USD';
+      if (elementoPrecio) elementoPrecio.innerText = '$' + precioUSD.toFixed(2) + ' USD';
+    } else {
+      if (elementoSaldo) elementoSaldo.innerText = 'Bs. ' + saldoEnBsGlobal.toFixed(2).replace('.', ',');
+      if (elementoPrecio) elementoPrecio.innerText = 'Bs. ' + precioViajeBsGlobal.toFixed(2).replace('.', ',');
+    }
+  }
+
+  function cargarDatosUsuario() {
+    fetch('../get-usuario.php')
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) { window.location.href = 'login.html'; return; }
+        document.getElementById('nombre-usuario').innerText = data.nombres.split(' ')[0] + ' ' + data.apellidos.split(' ')[0];
+        document.getElementById('ci-usuario').innerText = 'CI: ' + data.cedula;
+        document.getElementById('ajuste-nombres').value = data.nombres;
+        document.getElementById('ajuste-apellidos').value = data.apellidos;
+        document.getElementById('ajuste-cedula').value = data.cedula;
+        document.getElementById('ajuste-correo').value = data.correo;
+        document.getElementById('ajuste-tlf').value = data.tlf || '';
+
+        saldoEnBsGlobal = parseFloat(data.saldo);
+        renderizarMontos();
+      });
+  }
+
+
+  // Funciones de UI del Perfil
+  const btnPerfil = document.getElementById('btn-perfil');
+  const menuPerfil = document.getElementById('menu-perfil');
+  btnPerfil.addEventListener('click', () => menuPerfil.classList.toggle('hidden'));
+  window.addEventListener('click', (e) => { if (!btnPerfil.contains(e.target)) menuPerfil.classList.add('hidden'); });
+
+  function cambiarVista(idVista, event) {
+    document.querySelectorAll('.vista-seccion').forEach(v => v.classList.add('hidden'));
+    document.getElementById(idVista).classList.remove('hidden');
+
+    document.querySelectorAll('.nav-link').forEach(l => {
+      l.classList.remove('bg-[#0f172a]', 'text-white');
+      l.classList.add('text-[#64748b]');
+    });
+
+    if(event && event.currentTarget) {
+      event.currentTarget.classList.add('bg-[#0f172a]', 'text-white');
+      event.currentTarget.classList.remove('text-[#64748b]');
+    }
+  }
+
+  function guardarCambiosUnificado() {
+    const pass1 = document.getElementById('pass-nueva').value;
+    const pass2 = document.getElementById('pass-confirm').value;
+    if (pass1 !== pass2) { alert("Las contraseñas no coinciden."); return; }
+    alert("Simulación de guardado de ajustes.");
+  }
+
+  function renderizarMovimientos(lista) {
+    const tbody = document.getElementById('tabla-movimientos-financieros');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    lista.forEach(m => {
+      const esPositivo = m.monto > 0;
+      const color = esPositivo ? 'text-emerald-600' : 'text-rose-600';
+      const signo = esPositivo ? '+' : '-';
+
+      let badgeClass = 'bg-slate-100 text-slate-600';
+      if (m.estado === 'finalizado') {
+        badgeClass = 'bg-emerald-100 text-emerald-700';
+      } else if (m.estado === 'cancelado') {
+        badgeClass = 'bg-rose-100 text-rose-700';
+      }
+
+      tbody.innerHTML += `
+      <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+        <td class="px-6 py-4 text-sm text-slate-500">${m.fecha}</td>
+        <td class="px-6 py-4 text-sm font-medium text-slate-800">${m.detalle}</td>
+        <td class="px-6 py-4 text-sm font-bold ${color} font-mono">
+          ${signo} Bs. ${Math.abs(m.monto).toFixed(2)}
+        </td>
+        <td class="px-6 py-4 text-sm">
+          <span class="inline-block px-3 py-1 text-[10px] uppercase tracking-wider font-bold rounded-full ${badgeClass}">
+          ${m.estado}
+        </span>
+        </td>
+      </tr>
+    `;
+    });
+  }
+
+  async function cargarHistorialFinanciero() {
+    try {
+      const [resPagos, resTraslados] = await Promise.all([
+        fetch('get_historial_transaccion.php').then(r => r.json()),
+        fetch('get_historial_cliente.php').then(r => r.json())
+      ]);
+
+      let movimientos = [];
+
+      if (resPagos.success) {
+        resPagos.data.forEach(p => {
+          movimientos.push({
+            tipo: 'RECARGA',
+            fecha: p.fecha,
+            monto: parseFloat(p.monto),
+            detalle: 'Recarga Billetera',
+            estado: p.estado
+          });
+        });
+      }
+
+      if (resTraslados.success) {
+        resTraslados.data.forEach(t => {
+          movimientos.push({
+            tipo: 'VIAJE',
+            fecha: t.fecha || 'N/A',
+            monto: -Math.abs(parseFloat(t.costo)),
+            detalle: `Viaje: ${t.nombre_origen} → ${t.nombre_destino}`,
+            estado: t.estado
+          });
+        });
+      }
+
+      movimientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+      renderizarMovimientos(movimientos);
+    } catch (err) {
+      console.error("Error al cargar historial unificado:", err);
+    }
+  }
+
+  function cargarHistorialPagos() {
+    fetch('get_historial_transaccion.php')
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          const tbody = document.getElementById('tabla-historial-recarga');
+          if (!tbody) return;
+
+          tbody.innerHTML = '';
+
+          result.data.forEach(t => {
+            const estadoTexto = t.estado.toUpperCase();
+            const claseEstado = (t.estado === 'finalizado') ? 'badge-aprobado' : 'badge-pendiente';
+
+            tbody.innerHTML += `
+            <tr class="border-b hover:bg-slate-50">
+                <td class="px-6 py-4">${t.fecha}</td>
+                <td class="px-6 py-4">${t.nombre_banco || 'N/A'}</td>
+                <td class="px-6 py-4 font-mono">${t.nro_ref}</td>
+                <td class="px-6 py-4 font-bold">Bs. ${t.monto}</td>
+                <td class="px-6 py-4 text-center">
+                    <span class="${claseEstado}">${estadoTexto}</span>
+                </td>
+            </tr>
+          `;
+          });
+        }
+      })
+      .catch(error => console.error('Error al cargar historial de pagos:', error));
+  }
+
+  $('#form-notificar-pago').on('submit', function(e) {
+    e.preventDefault();
+    $.post('guardar_transaccion.php', $(this).serialize(), function(response) {
+      alert(response.message);
+      if(response.success) cerrarModalRecarga();
+    }, 'json');
+  });
+
+  $(document).ready(function() {
+    $('.select-zona').select2({ placeholder: "Seleccione una zona", allowClear: true });
+
+    $('#form-recarga').on('submit', function(e) {
+      e.preventDefault();
+    });
+
+    $('#form-traslado').on('submit', function(e) {
+      e.preventDefault();
+    });
+  });
+
+  $(document).ready(function() {
+    $('.buscador-zonas').select2({ placeholder: "Buscar sector...", allowClear: false });
+
+    $('#btn-calcular').on('click', function() {
+      let origen = $('#origen').val();
+      let destino = $('#destino').val();
+      if(origen === "" || destino === "") { alert("Por favor selecciona los sectores"); return; }
+
+      $.post('calcular_viaje.php', { origen: origen, destino: destino }, function(precioBs) {
+        let precioLimpio = parseFloat(precioBs.replace(',', '.'));
+
+        if (!isNaN(precioLimpio)) {
+          precioViajeBsGlobal = precioLimpio;
+          $('#resultado-precio').removeClass('hidden');
+          $('#btn-asignar').removeClass('hidden');
+          renderizarMontos();
+        } else {
+          alert("Error al calcular el costo.");
+        }
+      });
+    });
+
+    $('#btn-asignar').on('click', function() {
+      const id_origen = $('#origen').val();
+      const id_destino = $('#destino').val();
+
+      const costoRaw = $('#valor-precio-bs').text();
+      const costo = parseFloat(costoRaw.replace('Bs.', '').replace(',', '.').trim());
+
+      if (!id_origen || !id_destino) {
+        alert("Por favor, selecciona tanto el origen como el destino.");
+        return;
+      }
+
+      $.ajax({
+        url: 'solicitar_traslado.php',
+        type: 'POST',
+        data: {
+          origen: id_origen,
+          destino: id_destino,
+          costo: costo
+        },
+        dataType: 'json',
+        success: function(response) {
+          if (response.success) {
+            alert("¡Traslado solicitado con éxito! Estamos asignando un conductor.");
+            $('#btn-asignar').addClass('hidden');
+            $('#resultado').removeClass('hidden');
+            cargarHistorialTraslados();
+            cargarDatosUsuario();
+            cargarHistorialFinanciero();
+          } else {
+            alert("Error: " + response.message);
+          }
+        },
+        error: function() {
+          alert("Ocurrió un error al procesar la solicitud.");
+        }
+      });
+    });
+  });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    Promise.all([obtenerTasaLocal(), cargarZonas()]).then(() => {
+      cargarDatosUsuario();
+      cargarCuentasEmpresa();
+      cargarHistorialFinanciero();
+      cargarHistorialPagos();
+      cargarHistorialTraslados();
+    });
+  });
+
+</script>
+
+</body>
+</html>

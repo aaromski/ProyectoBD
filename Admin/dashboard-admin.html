@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Administrativo - Decarrerita</title>
+  <script src="../js/tailwind.js"></script>
+  <script src="../js/lucide.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; }
+    .vista-seccion { transition: all 0.3s ease; }
+    .dropdown-menu { display: none; position: absolute; right: 0; top: 100%; z-index: 40; min-width: 160px; }
+    .dropdown-menu.show { display: block; }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden text-[#1e293b]">
+
+<!-- SIDEBAR -->
+<aside class="w-64 bg-white border-r border-slate-300 flex flex-col p-6 h-screen">
+  <div class="flex items-center gap-2 mb-10">
+    <div class="bg-slate-900 p-1.5 rounded-lg text-white">
+      <i data-lucide="shield-check" class="h-5 w-5"></i>
+    </div>
+    <span class="text-lg font-extrabold text-slate-900 whitespace-nowrap">Admin Decarrerita</span>
+  </div>
+
+  <nav class="space-y-6 flex-grow">
+    <div>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Resumen</p>
+      <a href="#" onclick="cambiarVista('vista-principal', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold bg-[#0f172a] text-white rounded-lg transition-all">
+        <i data-lucide="layout-dashboard" class="h-4 w-4"></i> Panel de Control
+      </a>
+    </div>
+
+    <div>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Gestión de Usuarios</p>
+      <div class="space-y-1">
+        <a href="#" onclick="cambiarVista('vista-choferes', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+          <i data-lucide="truck" class="h-4 w-4"></i> Choferes
+        </a>
+        <a href="#" onclick="cambiarVista('vista-clientes', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+          <i data-lucide="users" class="h-4 w-4"></i> Clientes
+        </a>
+        <a href="#" onclick="cambiarVista('vista-personal', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+          <i data-lucide="user-check" class="h-4 w-4"></i> Personal
+        </a>
+      </div>
+    </div>
+
+    <div>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Ajustes</p>
+      <div class="space-y-1">
+        <a href="#" onclick="cambiarVista('vista-bcv', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+          <i data-lucide="trending-up" class="h-4 w-4"></i> Tasa BCV
+        </a>
+        <a href="#" onclick="cambiarVista('vista-bancos', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+          <i data-lucide="landmark" class="h-4 w-4"></i> Cuentas Autorizadas
+        </a>
+        <a href="#" onclick="cambiarVista('vista-cuenta', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+          <i data-lucide="settings" class="h-4 w-4"></i> Cuenta
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="relative group mt-auto">
+    <button id="btn-perfil" class="flex items-center gap-3 w-full p-2 hover:bg-slate-100 rounded-lg transition-all">
+      <div class="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-sm text-[#475569] border border-slate-300">A</div>
+      <div class="text-left">
+        <p id="nombre-usuario" class="text-sm font-bold truncate w-26 capitalize">Cargando...</p>
+        <p id="ci-usuario" class="text-xs text-[#64748b]">Administrador</p>
+      </div>
+      <i data-lucide="chevron-up" class="h-4 w-4 ml-auto text-slate-400"></i>
+    </button>
+    <div id="menu-perfil" class="hidden absolute bottom-full left-0 w-full mb-2 bg-white border border-slate-300 rounded-lg shadow-xl p-2 z-50">
+      <a href="../logout.php" class="flex items-center gap-2 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50 rounded">
+        <i data-lucide="log-out" class="h-4 w-4"></i> Salir
+      </a>
+    </div>
+  </div>
+</aside>
+
+<!-- CONTENIDO PRINCIPAL -->
+<main class="flex-1 p-8 overflow-y-auto">
+  <section id="vista-principal" class="vista-seccion">
+    <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+      <div>
+        <h1 class="text-xl font-bold mb-2">PANEL DE CONTROL ADMINISTRATIVO</h1>
+        <p class="text-sm text-slate-500">Supervisión de usuarios, tasas y bancos en una sola vista.</p>
+      </div>
+      <div class="bg-white border border-slate-300 px-4 py-2 rounded-lg text-sm font-bold text-[#475569]">
+        <span id="reloj">--:--:--</span>
+      </div>
+    </header>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
+      <div class="bg-white p-6 rounded-xl border border-slate-200">
+        <p class="text-xs text-slate-500 uppercase">CLIENTES REGISTRADOS</p>
+        <h3 id="stat-clientes" class="text-3xl font-bold mt-2">Cargando...</h3>
+      </div>
+      <div class="bg-white p-6 rounded-xl border border-slate-200">
+        <p class="text-xs text-slate-500 uppercase">CHOFERES REGISTRADOS</p>
+        <h3 id="stat-choferes" class="text-3xl font-bold mt-2">Cargando...</h3>
+      </div>
+      <div class="bg-white p-6 rounded-xl border border-slate-200">
+        <p class="text-xs text-slate-500 uppercase">BANCOS REGISTRADOS</p>
+        <h3 id="stat-bancos" class="text-3xl font-bold mt-2">Cargando...</h3>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div class="xl:col-span-2 bg-white rounded-xl border border-slate-300 p-6 shadow-sm">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900">Listado de Usuarios Admin</h2>
+            <p class="text-sm text-slate-500 mt-1">Administrar administradores del sistema con acciones rápidas.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex items-center gap-2">
+              <label class="text-[10px] font-bold text-slate-400 uppercase">Filtrar ID:</label>
+              <input type="text" id="filtro-admins" oninput="filtrarAdmins()" placeholder="Ej: 1" class="w-32 border border-slate-300 rounded-lg px-3 py-2 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0f172a]">
+            </div>
+            <button onclick="mostrarModalCrearAdmin()" class="bg-[#0f172a] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition">Crear Usuario Admin</button>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left border-collapse">
+            <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold">
+              <tr>
+                <th class="px-5 py-4">ID</th>
+                <th class="px-5 py-4">Nombre</th>
+                <th class="px-5 py-4">Rol</th>
+                <th class="px-5 py-4">Correo</th>
+                <th class="px-5 py-4 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-admins" class="divide-y divide-slate-200 text-slate-700">
+              <tr><td colspan="5" class="px-5 py-4 text-center text-slate-400">Cargando administradores...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="bg-white rounded-xl border border-slate-300 p-6 shadow-sm">
+          <h2 class="text-lg font-bold text-slate-900 mb-4">Actualizar Tasa BCV</h2>
+          <p class="text-sm text-slate-500 mb-4">Valor actual tomado de la configuración del sistema.</p>
+          <div class="rounded-xl bg-slate-50 border border-slate-200 p-4 text-sm text-slate-700">
+            <p class="font-semibold">Tasa actual BCV</p>
+            <p id="tasa-valor" class="text-3xl font-bold mt-2">Cargando...</p>
+          </div>
+          <button onclick="cambiarVista('vista-bcv')" class="w-full mt-4 bg-[#0f172a] text-white py-3 rounded-lg text-sm font-bold hover:bg-slate-800 transition">Actualizar Tasa</button>
+        </div>
+
+        <div class="bg-white rounded-xl border border-slate-300 p-6 shadow-sm">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-900">Cuentas Autorizadas</h2>
+              <p class="text-sm text-slate-500 mt-1">Accede al panel completo de cuentas de la empresa.</p>
+            </div>
+            <button onclick="cambiarVista('vista-bancos')" class="bg-[#0f172a] text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition">Ver Todo</button>
+          </div>
+
+          <div class="space-y-3" id="resumen-bancos">
+            <p class="text-sm text-slate-400 text-center py-2">Cargando cuentas...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="vista-choferes" class="vista-seccion hidden p-8">
+    <div class="bg-white rounded-xl border border-slate-300 p-6 shadow-sm">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div>
+          <h2 class="text-xl font-bold">Choferes</h2>
+          <p class="text-sm text-slate-500 mt-1">Lista de choferes registrados en el sistema.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-[10px] font-bold text-slate-400 uppercase">Filtrar ID:</label>
+          <input type="text" id="filtro-choferes" oninput="filtrarChoferes()" placeholder="Ej: 5" class="w-32 border border-slate-300 rounded-lg px-3 py-2 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0f172a]">
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left border-collapse">
+          <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold">
+            <tr>
+              <th class="px-5 py-4">ID</th>
+              <th class="px-5 py-4">Nombre</th>
+              <th class="px-5 py-4">Correo</th>
+              <th class="px-5 py-4 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-choferes" class="divide-y divide-slate-200 text-slate-700">
+            <tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">Cargando choferes...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="vista-clientes" class="vista-seccion hidden p-8">
+    <div class="bg-white rounded-xl border border-slate-300 p-6 shadow-sm">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div>
+          <h2 class="text-xl font-bold">Clientes</h2>
+          <p class="text-sm text-slate-500 mt-1">Lista de clientes registrados y su correo de contacto.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-[10px] font-bold text-slate-400 uppercase">Filtrar ID:</label>
+          <input type="text" id="filtro-clientes" oninput="filtrarClientes()" placeholder="Ej: 5" class="w-32 border border-slate-300 rounded-lg px-3 py-2 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0f172a]">
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left border-collapse">
+          <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold">
+            <tr>
+              <th class="px-5 py-4">ID</th>
+              <th class="px-5 py-4">Nombre</th>
+              <th class="px-5 py-4">Correo</th>
+              <th class="px-5 py-4 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-clientes" class="divide-y divide-slate-200 text-slate-700">
+            <tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">Cargando clientes...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="vista-personal" class="vista-seccion hidden p-8">
+    <div class="bg-white rounded-xl border border-slate-300 p-6 shadow-sm">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div>
+          <h2 class="text-xl font-bold">Personal</h2>
+          <p class="text-sm text-slate-500 mt-1">Lista de usuarios administrativos y personal de soporte.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center gap-2">
+            <label class="text-[10px] font-bold text-slate-400 uppercase">Filtrar ID:</label>
+            <input type="text" id="filtro-personal" oninput="filtrarPersonal()" placeholder="Ej: 5" class="w-32 border border-slate-300 rounded-lg px-3 py-2 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-[#0f172a]">
+          </div>
+          <button onclick="mostrarModalCrearPersonal()" class="bg-[#0f172a] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition">Crear Usuario Personal</button>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left border-collapse">
+          <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold">
+            <tr>
+              <th class="px-5 py-4">ID</th>
+              <th class="px-5 py-4">Nombre</th>
+              <th class="px-5 py-4">Correo</th>
+              <th class="px-5 py-4 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-personal" class="divide-y divide-slate-200 text-slate-700">
+            <tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">Cargando personal...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="vista-bcv" class="vista-seccion hidden p-8">
+    <div class="bg-white rounded-xl border border-slate-300 p-6 shadow-sm">
+      <div class="mb-6">
+        <h2 class="text-xl font-bold text-slate-900">Modificar Tasa BCV</h2>
+        <p class="text-sm text-slate-500 mt-1">Actualice el valor de la tasa para que el sistema use el valor oficial más reciente.</p>
+      </div>
+
+      <form id="form-tasa" class="grid grid-cols-1 gap-5 max-w-2xl">
+        <div class="rounded-xl bg-slate-50 border border-slate-200 p-4">
+          <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Valor Actual</p>
+          <p id="tasa-valor-current" class="text-3xl font-bold text-slate-900 mt-2">Cargando...</p>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-[#64748b] mb-2">Nueva Tasa BCV</label>
+          <input id="input-nueva-tasa" type="number" step="0.01" required class="w-full bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-[#0f172a] outline-none transition-all" placeholder="Ej: 680.25">
+        </div>
+        <button type="submit" class="w-full md:w-auto bg-[#0f172a] text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-slate-800 transition">Guardar Cambios</button>
+        <p id="mensaje-tasa" class="text-sm text-slate-700"></p>
+      </form>
+    </div>
+  </section>
+
+  <section id="vista-bancos" class="vista-seccion hidden p-8">
+    <div class="bg-white rounded-xl border border-slate-300 p-6 shadow-sm">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div>
+          <h2 class="text-xl font-bold">Cuentas Autorizadas de la Empresa</h2>
+          <p class="text-sm text-slate-500 mt-1">Administra las cuentas bancarias autorizadas y los datos de cada titular.</p>
+        </div>
+        <button onclick="mostrarModalAgregarCuentaEmpresa()" class="bg-[#0f172a] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition">Agregar Cuenta Empresa</button>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left border-collapse">
+          <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold">
+            <tr>
+              <th class="px-5 py-4">ID</th>
+              <th class="px-5 py-4">Banco</th>
+              <th class="px-5 py-4">Número de Cuenta</th>
+              <th class="px-5 py-4">Cédula/RIF</th>
+              <th class="px-5 py-4">Teléfono</th>
+              <th class="px-5 py-4">Estado</th>
+              <th class="px-5 py-4 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-bancos" class="divide-y divide-slate-200 text-slate-700">
+            <tr>
+              <td class="px-5 py-4" colspan="7">Cargando cuentas...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="vista-cuenta" class="vista-seccion hidden p-8">
+    <div class="max-w-2xl bg-white border border-slate-300 rounded-xl p-8 shadow-sm">
+      <h2 class="text-xl font-bold mb-6">Ajustes de Cuenta</h2>
+      <form id="form-ajustes-cuenta" class="space-y-6" onsubmit="event.preventDefault(); guardarCambiosCuenta();">
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Nombres</label>
+            <input id="ajuste-nombres" type="text" class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed" readonly />
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Apellidos</label>
+            <input id="ajuste-apellidos" type="text" class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed" readonly />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Cédula</label>
+            <input id="ajuste-cedula" type="text" class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed" readonly />
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Teléfono</label>
+            <input id="ajuste-tlf" type="tel" class="mt-1 w-full border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none" placeholder="0414xxxxxxx" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Correo Electrónico</label>
+          <input id="ajuste-correo" type="email" class="w-full border border-slate-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#0f172a] outline-none" placeholder="correo@dominio.com" />
+        </div>
+
+        <div class="pt-4 border-t border-slate-100 space-y-4">
+          <h4 class="text-xs font-bold uppercase text-slate-900">Cambiar Contraseña</h4>
+          <div class="grid grid-cols-2 gap-4">
+            <input id="ajuste-pass-nueva" type="password" placeholder="Nueva clave" class="w-full border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none" />
+            <input id="ajuste-pass-confirm" type="password" placeholder="Confirmar clave" class="w-full border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none" />
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-[#0f172a] text-white py-3 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors">Guardar Cambios</button>
+        <p id="mensaje-cuenta" class="text-sm text-slate-700"></p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<!-- MODALES -->
+<div id="modal-eliminar" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl">
+    <h3 class="text-lg font-bold text-slate-900 mb-4">Confirmar eliminación</h3>
+    <p id="modal-eliminar-mensaje" class="text-sm text-slate-600 mb-6">¿Está seguro de que desea eliminar este registro? Esta acción no se puede deshacer.</p>
+    <div class="flex justify-end gap-3">
+      <button onclick="ocultarModalEliminar()" class="bg-slate-100 text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-200 transition">Cancelar</button>
+      <button onclick="confirmarEliminar()" class="bg-rose-600 text-white px-4 py-2 rounded-lg hover:bg-rose-700 transition">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<div id="modal-crear-personal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-xl w-full max-w-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h3 class="text-lg font-bold text-slate-900">Crear Usuario Admin</h3>
+        <p class="text-sm text-slate-500">Registra un nuevo usuario administrativo con acceso al panel.</p>
+      </div>
+      <button onclick="ocultarModalCrearPersonal()" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="h-5 w-5"></i></button>
+    </div>
+    <form id="form-crear-personal" class="grid grid-cols-1 md:grid-cols-2 gap-5" onsubmit="event.preventDefault(); (document.getElementById('modal-crear-personal').getAttribute('data-mode') === 'admin') ? crearAdmin() : crearPersonal();">
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nombres</label>
+        <input id="cp-nombres" type="text" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="Ej: Laura Gabriela">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Apellidos</label>
+        <input id="cp-apellidos" type="text" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="Ej: Lopez Pérez">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Cédula</label>
+        <input id="cp-cedula" type="text" required pattern="[0-9]{5,10}" title="Solo números." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900" placeholder="Ej: 28168956">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Correo</label>
+        <input id="cp-correo" type="email" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="correo@dominio.com">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono</label>
+        <input id="cp-telefono" type="tel" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="0414xxxxxxx">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Contraseña</label>
+        <input id="cp-password" type="password" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+      </div>
+      <div class="md:col-span-2 flex justify-end gap-3">
+        <button type="button" onclick="ocultarModalCrearPersonal()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
+        <button type="submit" class="bg-[#0f172a] text-white px-4 py-3 rounded-xl hover:bg-slate-800 transition">Guardar Usuario</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-editar-personal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-xl w-full max-w-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h3 class="text-lg font-bold text-slate-900">Modificar Usuario Personal</h3>
+        <p class="text-sm text-slate-500">Actualiza los datos del usuario seleccionado.</p>
+      </div>
+      <button onclick="ocultarModalEditarPersonal()" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="h-5 w-5"></i></button>
+    </div>
+    <form id="form-editar-personal" class="grid grid-cols-1 md:grid-cols-2 gap-5" onsubmit="event.preventDefault(); guardarEdicionPersonal();">
+      <input type="hidden" id="ep-id">
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nombres</label>
+        <input id="ep-nombres" type="text" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Apellidos</label>
+        <input id="ep-apellidos" type="text" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Cédula</label>
+        <input id="ep-cedula" type="text" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Correo</label>
+        <input id="ep-correo" type="email" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="correo@dominio.com">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono</label>
+        <input id="ep-telefono" type="tel" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="0414xxxxxxx">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nueva Contraseña <span class="text-slate-400 font-normal">(dejar vacío para no cambiar)</span></label>
+        <input id="ep-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+      </div>
+      <div class="md:col-span-2 flex justify-end gap-3">
+        <button type="button" onclick="ocultarModalEditarPersonal()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
+        <button type="submit" class="bg-[#0f172a] text-white px-4 py-3 rounded-xl hover:bg-slate-800 transition">Guardar Cambios</button>
+      </div>
+    </form>
+</div>
+</div>
+
+<div id="modal-editar-chofer" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-xl w-full max-w-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h3 class="text-lg font-bold text-slate-900">Modificar Chofer</h3>
+        <p class="text-sm text-slate-500">Actualiza los datos del chofer seleccionado.</p>
+      </div>
+      <button onclick="ocultarModalEditarChofer()" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="h-5 w-5"></i></button>
+    </div>
+    <form id="form-editar-chofer" class="grid grid-cols-1 md:grid-cols-2 gap-5" onsubmit="event.preventDefault(); guardarEdicionChofer();">
+      <input type="hidden" id="ech-id">
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nombres</label>
+        <input id="ech-nombres" type="text" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Apellidos</label>
+        <input id="ech-apellidos" type="text" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Cédula</label>
+        <input id="ech-cedula" type="text" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Correo</label>
+        <input id="ech-correo" type="email" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="correo@dominio.com">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono</label>
+        <input id="ech-telefono" type="tel" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="0414xxxxxxx">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nueva Contraseña <span class="text-slate-400 font-normal">(dejar vacío para no cambiar)</span></label>
+        <input id="ech-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+      </div>
+      <div class="md:col-span-2 flex justify-end gap-3">
+        <button type="button" onclick="ocultarModalEditarChofer()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
+        <button type="submit" class="bg-[#0f172a] text-white px-4 py-3 rounded-xl hover:bg-slate-800 transition">Guardar Cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-editar-cliente" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-xl w-full max-w-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h3 class="text-lg font-bold text-slate-900">Modificar Cliente</h3>
+        <p class="text-sm text-slate-500">Actualiza los datos del cliente seleccionado.</p>
+      </div>
+      <button onclick="ocultarModalEditarCliente()" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="h-5 w-5"></i></button>
+    </div>
+    <form id="form-editar-cliente" class="grid grid-cols-1 md:grid-cols-2 gap-5" onsubmit="event.preventDefault(); guardarEdicionCliente();">
+      <input type="hidden" id="ecl-id">
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nombres</label>
+        <input id="ecl-nombres" type="text" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Apellidos</label>
+        <input id="ecl-apellidos" type="text" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Cédula</label>
+        <input id="ecl-cedula" type="text" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Correo</label>
+        <input id="ecl-correo" type="email" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="correo@dominio.com">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono</label>
+        <input id="ecl-telefono" type="tel" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="0414xxxxxxx">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nueva Contraseña <span class="text-slate-400 font-normal">(dejar vacío para no cambiar)</span></label>
+        <input id="ecl-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+      </div>
+      <div class="md:col-span-2 flex justify-end gap-3">
+        <button type="button" onclick="ocultarModalEditarCliente()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
+        <button type="submit" class="bg-[#0f172a] text-white px-4 py-3 rounded-xl hover:bg-slate-800 transition">Guardar Cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-editar-admin" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-xl w-full max-w-2xl shadow-2xl overflow-y-auto max-h-[90vh]">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h3 class="text-lg font-bold text-slate-900">Modificar Administrador</h3>
+        <p class="text-sm text-slate-500">Actualiza los datos del administrador seleccionado.</p>
+      </div>
+      <button onclick="ocultarModalEditarAdmin()" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="h-5 w-5"></i></button>
+    </div>
+    <form id="form-editar-admin" class="grid grid-cols-1 md:grid-cols-2 gap-5" onsubmit="event.preventDefault(); guardarEdicionAdmin();">
+      <input type="hidden" id="ead-id">
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nombres</label>
+        <input id="ead-nombres" type="text" readonly class="w-full bg-gray-100 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed" placeholder="Nombres">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Apellidos</label>
+        <input id="ead-apellidos" type="text" readonly class="w-full bg-gray-100 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed" placeholder="Apellidos">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Cédula</label>
+        <input id="ead-cedula" type="text" readonly class="w-full bg-gray-100 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed" placeholder="Cédula">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Correo</label>
+        <input id="ead-correo" type="email" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="correo@dominio.com">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono</label>
+        <input id="ead-telefono" type="tel" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="0414xxxxxxx">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nueva Contraseña <span class="text-slate-400 font-normal">(dejar vacío para no cambiar)</span></label>
+        <input id="ead-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+      </div>
+      <div class="md:col-span-2 flex justify-end gap-3">
+        <button type="button" onclick="ocultarModalEditarAdmin()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
+        <button type="submit" class="bg-[#0f172a] text-white px-4 py-3 rounded-xl hover:bg-slate-800 transition">Guardar Cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-agregar-cuenta-empresa" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h3 class="text-lg font-bold text-slate-900">Agregar Cuenta Empresa</h3>
+        <p class="text-sm text-slate-500">Registre una nueva cuenta bancaria autorizada.</p>
+      </div>
+      <button onclick="ocultarModalAgregarCuentaEmpresa()" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="h-5 w-5"></i></button>
+    </div>
+    <form id="form-agregar-cuenta-empresa" class="grid grid-cols-1 gap-5" onsubmit="event.preventDefault(); crearCuentaEmpresa();">
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Banco</label>
+        <select id="ab-banco" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
+          <option value="">Seleccione un banco</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Cédula/RIF</label>
+        <div class="flex gap-2">
+          <select id="ab-cedula-prefijo" required class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
+            <option value="V-">V-</option>
+            <option value="J-">J-</option>
+          </select>
+          <input id="ab-cedula-numero" type="text" required pattern="\d{6,10}" title="Solo números (6-10 dígitos)." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="Ej: 28168956">
+        </div>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nombre del Titular</label>
+        <input id="ab-nombre-titular" type="text" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="Ej: Juan Pérez">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Número de Cuenta <span class="text-slate-400 font-normal">(16 dígitos)</span></label>
+        <input id="ab-numero-cuenta" type="text" required maxlength="16" pattern="\d{16}" title="Solo 16 dígitos." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none font-mono" placeholder="Ej: 3456789012345678">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono <span class="text-slate-400 font-normal">(opcional)</span></label>
+        <div class="flex gap-2">
+          <select id="ab-telefono-prefijo" class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
+            <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+          </select>
+          <input id="ab-telefono" type="text" pattern="\d{7}" maxlength="7" placeholder="1234567" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none font-mono">
+        </div>
+      </div>
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="ocultarModalAgregarCuentaEmpresa()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
+        <button type="submit" class="bg-[#0f172a] text-white px-4 py-3 rounded-xl hover:bg-slate-800 transition">Guardar Cuenta</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="modal-editar-cuenta-empresa" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl">
+    <div class="flex justify-between items-center mb-6">
+      <div>
+        <h3 class="text-lg font-bold text-slate-900">Editar Cuenta Empresa</h3>
+        <p class="text-sm text-slate-500">Actualice los datos de la cuenta seleccionada.</p>
+      </div>
+      <button onclick="ocultarModalEditarCuentaEmpresa()" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="h-5 w-5"></i></button>
+    </div>
+    <form id="form-editar-cuenta-empresa" class="grid grid-cols-1 gap-5" onsubmit="event.preventDefault(); guardarEdicionCuentaEmpresa();">
+      <input type="hidden" id="ec-id-cuenta">
+      <input type="hidden" id="ec-id-banco">
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Banco</label>
+        <select id="ec-banco" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
+          <option value="">Seleccione un banco</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Cédula/RIF</label>
+        <div class="flex gap-2">
+          <select id="ec-cedula-prefijo" required class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
+            <option value="V-">V-</option>
+            <option value="J-">J-</option>
+          </select>
+          <input id="ec-cedula-numero" type="text" required pattern="\d{6,10}" title="Solo números (6-10 dígitos)." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="Ej: 28168956">
+        </div>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nombre del Titular</label>
+        <input id="ec-nombre-titular" type="text" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="Ej: Juan Pérez">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Número de Cuenta <span class="text-slate-400 font-normal">(16 dígitos)</span></label>
+        <input id="ec-numero-cuenta" type="text" required maxlength="16" pattern="\d{16}" title="Solo 16 dígitos." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none font-mono" placeholder="Ej: 3456789012345678">
+      </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono <span class="text-slate-400 font-normal">(opcional)</span></label>
+          <div class="flex gap-2">
+            <select id="ec-telefono-prefijo" class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
+              <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+            </select>
+            <input id="ec-telefono" type="text" pattern="\d{7}" maxlength="7" placeholder="1234567" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none font-mono">
+          </div>
+        </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Estado</label>
+        <select id="ec-estado" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+      </div>
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="ocultarModalEditarCuentaEmpresa()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
+        <button type="submit" class="bg-[#0f172a] text-white px-4 py-3 rounded-xl hover:bg-slate-800 transition">Guardar Cambios</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function initDashboard() {
+    lucide.createIcons();
+    updateClock();
+    setInterval(updateClock, 1000);
+    cargarPerfilAdmin();
+    cargarTasaBCV();
+    cargarCuentasEmpresa();
+    cargarPersonal();
+    cargarAdmins();
+    cargarChoferes();
+    cargarClientes();
+    actualizarEstadisticas();
+
+    document.getElementById('btn-perfil').addEventListener('click', () => {
+      document.getElementById('menu-perfil').classList.toggle('hidden');
+    });
+
+    window.addEventListener('click', (e) => {
+      const btnPerfil = document.getElementById('btn-perfil');
+      if (!btnPerfil.contains(e.target)) {
+        document.getElementById('menu-perfil').classList.add('hidden');
+      }
+    });
+
+    document.getElementById('form-tasa').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const nuevaTasa = document.getElementById('input-nueva-tasa').value.trim();
+      if (!nuevaTasa) return;
+      actualizarTasaBCV(nuevaTasa);
+    });
+  }
+
+  function updateClock() {
+    document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-VE');
+  }
+
+  function cambiarVista(idVista, event) {
+    document.querySelectorAll('.vista-seccion').forEach(v => v.classList.add('hidden'));
+    const target = document.getElementById(idVista);
+    if (target) target.classList.remove('hidden');
+
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.classList.remove('bg-[#0f172a]', 'text-white');
+      link.classList.add('text-slate-600');
+    });
+
+    if (event && event.currentTarget) {
+      event.currentTarget.classList.add('bg-[#0f172a]', 'text-white');
+      event.currentTarget.classList.remove('text-slate-600');
+    }
+  }
+
+  function cargarPerfilAdmin() {
+    fetch('../get-usuario.php', { headers: { 'Accept': 'application/json' } })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const u = data.data;
+        const nombres = u.nombres || '';
+        const apellidos = u.apellidos || '';
+        const cedula = u.cedula || '';
+        const correo = u.correo || '';
+        const telefono = u.telefono || '';
+
+        document.getElementById('nombre-usuario').innerText = `${nombres.split(' ')[0] || ''} ${apellidos.split(' ')[0] || ''}`.trim() || 'Administrador';
+        document.getElementById('ci-usuario').innerText = cedula ? `CI: ${cedula}` : 'Administrador';
+        document.getElementById('ajuste-nombres').value = nombres;
+        document.getElementById('ajuste-apellidos').value = apellidos;
+        document.getElementById('ajuste-cedula').value = cedula;
+        document.getElementById('ajuste-correo').value = correo;
+        document.getElementById('ajuste-tlf').value = telefono;
+      })
+      .catch(() => {
+        document.getElementById('nombre-usuario').innerText = 'Administrador';
+      });
+  }
+
+  function cargarTasaBCV() {
+    fetch('../get_tasa_bcv.php', { headers: { 'Accept': 'application/json' } })
+      .then(response => response.json())
+      .then(data => {
+        const tasa = parseFloat(data.tasa) || 0;
+        document.getElementById('tasa-valor').innerText = tasa.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        document.getElementById('tasa-valor-current').innerText = tasa.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      })
+      .catch(() => {
+        document.getElementById('tasa-valor').innerText = 'Error al cargar';
+        document.getElementById('tasa-valor-current').innerText = 'Error al cargar';
+      });
+  }
+
+  function actualizarTasaBCV(nuevaTasa) {
+    const mensaje = document.getElementById('mensaje-tasa');
+    mensaje.innerText = 'Actualizando...';
+
+    fetch('actualizar_tasa.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: new URLSearchParams({ nueva_tasa: nuevaTasa })
+    })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          mensaje.innerText = 'Tasa BCV actualizada correctamente.';
+          cargarTasaBCV();
+          document.getElementById('input-nueva-tasa').value = '';
+        } else {
+          mensaje.innerText = result.message || 'No se pudo actualizar la tasa.';
+        }
+      })
+      .catch(() => {
+        mensaje.innerText = 'Error de conexión al actualizar la tasa.';
+      });
+  }
+
+  function cargarCuentasEmpresa() {
+    fetch('../get-cuentas-empresa.php', { headers: { 'Accept': 'application/json' } })
+      .then(response => response.json())
+      .then(result => {
+        const tbody = document.getElementById('tabla-bancos');
+        if (!result.success || !Array.isArray(result.data)) {
+          tbody.innerHTML = '<tr><td class="px-5 py-4" colspan="7" class="text-center text-slate-500">No se pudieron cargar las cuentas.</td></tr>';
+          return;
+        }
+
+        if (result.data.length === 0) {
+          tbody.innerHTML = '<tr><td class="px-5 py-4" colspan="7" class="text-center text-slate-500">No hay cuentas autorizadas registradas.</td></tr>';
+          document.getElementById('stat-bancos').innerText = '0';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        result.data.forEach(cuenta => {
+          if (cuenta.id_banco == 1) return;
+          const esActivo = cuenta.estado === 'activo';
+          const cuentaCompleta = (cuenta.prefijo || '') + cuenta.numero_cuenta;
+
+          const estadoBadge = esActivo
+            ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Activo
+             </span>`
+            : `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Inactivo
+             </span>`;
+
+          const btnModificar = esActivo
+            ? `<button onclick="editarCuentaEmpresa(${cuenta.id_cuenta}, ${cuenta.id_banco}, '${cuenta.numero_cuenta}', '${cuenta.identificacion_titular.replace(/'/g, "\\'")}', '${cuenta.nombre_titular.replace(/'/g, "\\'")}', '${(cuenta.telefono || '').replace(/'/g, "\\'")}', '${cuenta.estado}')"
+                     class="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-md transition text-left">
+              <i data-lucide="pencil" class="w-3.5 h-3.5 text-blue-500"></i> Modificar
+             </button>`
+            : `<button disabled class="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-400 bg-transparent cursor-not-allowed">
+              <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Modificar (Desactiva primero)
+             </button>`;
+
+          const btnEstado = esActivo
+            ? `<button onclick="cambiarEstadoCuentaEmpresa(${cuenta.id_cuenta})"
+                     class="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-md transition text-left">
+              <i data-lucide="eye-off" class="w-3.5 h-3.5 text-amber-500"></i> Desactivar
+             </button>`
+            : `<button onclick="cambiarEstadoCuentaEmpresa(${cuenta.id_cuenta})"
+                     class="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-md transition text-left">
+              <i data-lucide="eye" class="w-3.5 h-3.5 text-emerald-500"></i> Activar
+             </button>`;
+
+          tbody.innerHTML += `
+          <tr class="border-b border-slate-200 hover:bg-slate-50 transition-colors" data-id="${cuenta.id_cuenta}">
+            <td class="px-5 py-4 font-mono font-bold text-slate-400">#${String(cuenta.id_cuenta).padStart(3, '0')}</td>
+            <td class="px-5 py-4 font-semibold text-slate-900">${cuenta.nombre_banco}</td>
+            <td class="px-5 py-4 text-slate-600 font-mono">${cuentaCompleta}</td>
+            <td class="px-5 py-4 text-slate-600">${cuenta.identificacion_titular}</td>
+            <td class="px-5 py-4 text-slate-600">${cuenta.telefono || 'N/A'}</td>
+            <td class="px-5 py-4">${estadoBadge}</td>
+            <td class="px-5 py-4 text-right relative">
+              <button onclick="toggleDropdown(event, 'drop-cuenta-${cuenta.id_cuenta}')"
+                      class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition focus:outline-none">
+                <i data-lucide="more-vertical" class="h-5 w-5"></i>
+              </button>
+
+              <div id="drop-cuenta-${cuenta.id_cuenta}"
+                   class="dropdown-menu hidden absolute right-[105%] top-0 w-48 bg-white border border-slate-200 rounded-xl shadow-xl p-1.5 z-50 text-left">
+                ${btnModificar}
+                ${btnEstado}
+                <div class="border-t border-slate-100 my-1"></div>
+                <button onclick="mostrarModalEliminar('cuenta_empresa', ${cuenta.id_cuenta}, '${cuenta.nombre_titular.replace(/'/g, "\\'")}')"
+                        class="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-md transition text-left">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5 text-rose-500"></i> Eliminar
+                </button>
+              </div>
+            </td>
+          </tr>`;
+        });
+        document.getElementById('stat-bancos').innerText = result.data.filter(c => c.id_banco != 1).length;
+        lucide.createIcons();
+        cargarResumenCuentas(result.data);
+      })
+      .catch(() => {
+        const tbody = document.getElementById('tabla-bancos');
+        tbody.innerHTML = '<tr><td class="px-5 py-4" colspan="7" class="text-center text-rose-500">Error cargando cuentas.</td></tr>';
+      });
+  }
+
+  function cargarResumenCuentas(cuentas) {
+    const container = document.getElementById('resumen-bancos');
+    const activas = cuentas.filter(c => c.id_banco != 1);
+    if (activas.length === 0) {
+      container.innerHTML = '<p class="text-sm text-slate-400 text-center py-2">No hay cuentas registradas.</p>';
+      return;
+    }
+    container.innerHTML = '';
+    activas.slice(0, 5).forEach(c => {
+      const cuentaCompleta = (c.prefijo || '') + c.numero_cuenta;
+      container.innerHTML += `
+        <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
+          <div>
+            <p class="font-semibold text-slate-900">${c.nombre_titular}</p>
+            <p class="text-xs text-slate-500">${c.nombre_banco} &middot; ${cuentaCompleta}</p>
+          </div>
+          <button onclick="cambiarVista('vista-bancos')" class="bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Ver</button>
+        </div>`;
+    });
+  }
+
+  function toggleDropdown(event, dropId) {
+    event.stopPropagation();
+    document.querySelectorAll('.dropdown-menu.show').forEach(d => {
+      if (d.id !== dropId) d.classList.remove('show');
+    });
+    document.getElementById(dropId).classList.toggle('show');
+  }
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.dropdown-menu.show').forEach(d => d.classList.remove('show'));
+  });
+
+  function actualizarEstadisticas() {
+    fetch('get-estadisticas-admin.php')
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) return;
+        document.getElementById('stat-clientes').innerText = data.clientes.toLocaleString('es-VE');
+        document.getElementById('stat-choferes').innerText = data.choferes.toLocaleString('es-VE');
+      })
+      .catch(() => {});
+  }
+
+  let eliminarData = { tipo: '', id: '', nombre: '' };
+
+  function mostrarModalEliminar(tipo, id, nombre) {
+    eliminarData = { tipo, id, nombre };
+    document.getElementById('modal-eliminar-mensaje').innerText = `¿Está seguro de que desea eliminar el registro "${nombre}"? Esta acción no se puede deshacer.`;
+    document.getElementById('modal-eliminar').classList.remove('hidden');
+  }
+
+  function ocultarModalEliminar() {
+    document.getElementById('modal-eliminar').classList.add('hidden');
+  }
+
+  function confirmarEliminar() {
+    ocultarModalEliminar();
+    const formData = new FormData();
+
+    let endpoint = '';
+    if (eliminarData.tipo === 'cuenta_empresa') {
+      formData.append('id_cuenta', eliminarData.id);
+      endpoint = 'eliminar-cuenta-empresa.php';
+    } else if (['admin', 'personal', 'chofer', 'cliente'].includes(eliminarData.tipo)) {
+      formData.append('id_usuario', eliminarData.id);
+      endpoint = 'eliminar-usuario.php';
+    }
+
+    if (endpoint) {
+      fetch(endpoint, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(res => {
+          if (res.success) {
+            cargarAdmins();
+            cargarPersonal();
+            cargarChoferes();
+            cargarClientes();
+            cargarCuentasEmpresa();
+            actualizarEstadisticas();
+            alert(res.message);
+          } else {
+            alert('Error: ' + res.message);
+          }
+        });
+    }
+  }
+
+  function mostrarModalCrearPersonal() {
+    document.getElementById('form-crear-personal').reset();
+    const modal = document.getElementById('modal-crear-personal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function ocultarModalCrearPersonal() {
+    const modal = document.getElementById('modal-crear-personal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function crearPersonal() {
+    const formData = new FormData();
+    formData.append('nombres', document.getElementById('cp-nombres').value.trim());
+    formData.append('apellidos', document.getElementById('cp-apellidos').value.trim());
+    formData.append('cedula', document.getElementById('cp-cedula').value.trim());
+    formData.append('correo', document.getElementById('cp-correo').value.trim());
+    formData.append('telefono', document.getElementById('cp-telefono').value.trim());
+    formData.append('password', document.getElementById('cp-password').value);
+
+    fetch('crear-personal.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          ocultarModalCrearPersonal();
+          cargarPersonal();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function cargarPersonal() {
+    fetch('get-usuarios-rol.php?tipo_rol=personal')
+      .then(res => res.json())
+      .then(res => {
+        const tbody = document.getElementById('tabla-personal');
+        tbody.innerHTML = '';
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(u => {
+            tbody.innerHTML += `
+              <tr class="hover:bg-slate-50" data-id="${u.id_usuario}">
+                <td class="px-5 py-4 font-mono font-bold">#${String(u.id_usuario).padStart(3, '0')}</td>
+                <td class="px-5 py-4">${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}</td>
+                <td class="px-5 py-4">${u.correo}</td>
+                <td class="px-5 py-4 text-right flex flex-wrap justify-end gap-2">
+                  <button onclick="editarPersonal(${u.id_usuario}, '${u.nombres.replace(/'/g, "\\'")}', '${u.apellidos.replace(/'/g, "\\'")}', '${u.cedula}', '${u.correo}', '${u.telefono || ''}')"
+                    class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Modificar</button>
+                  <button onclick="confirmarEliminarPersonal(${u.id_usuario}, '${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}')"
+                    class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-rose-200 transition">Eliminar</button>
+                </td>
+              </tr>`;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">No hay usuarios personal registrados.</td></tr>';
+        }
+      });
+  }
+
+  function filtrarPersonal() {
+    const filtro = document.getElementById('filtro-personal').value.trim();
+    const filas = document.querySelectorAll('#tabla-personal tr[data-id]');
+    filas.forEach(fila => {
+      const id = fila.getAttribute('data-id');
+      fila.style.display = id.startsWith(filtro) ? '' : 'none';
+    });
+  }
+
+  function editarPersonal(id, nombres, apellidos, cedula, correo, telefono) {
+    document.getElementById('ep-id').value = id;
+    document.getElementById('ep-nombres').value = nombres;
+    document.getElementById('ep-apellidos').value = apellidos;
+    document.getElementById('ep-cedula').value = cedula;
+    document.getElementById('ep-correo').value = correo;
+    document.getElementById('ep-telefono').value = telefono;
+    document.getElementById('ep-password').value = '';
+    const modal = document.getElementById('modal-editar-personal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function ocultarModalEditarPersonal() {
+    const modal = document.getElementById('modal-editar-personal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function guardarEdicionPersonal() {
+    const formData = new FormData();
+    formData.append('id_usuario', document.getElementById('ep-id').value);
+    formData.append('correo', document.getElementById('ep-correo').value.trim());
+    formData.append('telefono', document.getElementById('ep-telefono').value.trim());
+    formData.append('password', document.getElementById('ep-password').value);
+
+    fetch('../editar-usuario.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          ocultarModalEditarPersonal();
+          cargarPersonal();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function confirmarEliminarPersonal(id, nombre) {
+    if (!confirm(`¿Está seguro de eliminar al usuario "${nombre}" (ID #${String(id).padStart(3, '0')})? Esta acción no se puede deshacer.`)) return;
+
+    const formData = new FormData();
+    formData.append('id_usuario', id);
+
+    fetch('eliminar-usuario.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          cargarPersonal();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function cargarChoferes() {
+    fetch('get-usuarios-rol.php?tipo_rol=chofer')
+      .then(res => res.json())
+      .then(res => {
+        const tbody = document.getElementById('tabla-choferes');
+        tbody.innerHTML = '';
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(u => {
+            tbody.innerHTML += `
+              <tr class="hover:bg-slate-50" data-id="${u.id_usuario}">
+                <td class="px-5 py-4 font-mono font-bold">#${String(u.id_usuario).padStart(3, '0')}</td>
+                <td class="px-5 py-4">${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}</td>
+                <td class="px-5 py-4">${u.correo}</td>
+                <td class="px-5 py-4 text-right flex flex-wrap justify-end gap-2">
+                  <button onclick="editarChofer(${u.id_usuario}, '${u.nombres.replace(/'/g, "\\'")}', '${u.apellidos.replace(/'/g, "\\'")}', '${u.cedula}', '${u.correo}', '${u.telefono || ''}')"
+                    class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Modificar</button>
+                  <button onclick="confirmarEliminarChofer(${u.id_usuario}, '${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}')"
+                    class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-rose-200 transition">Eliminar</button>
+                </td>
+              </tr>`;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">No hay choferes registrados.</td></tr>';
+        }
+      });
+  }
+
+  function filtrarChoferes() {
+    const filtro = document.getElementById('filtro-choferes').value.trim();
+    const filas = document.querySelectorAll('#tabla-choferes tr[data-id]');
+    filas.forEach(fila => {
+      const id = fila.getAttribute('data-id');
+      fila.style.display = id.startsWith(filtro) ? '' : 'none';
+    });
+  }
+
+  function editarChofer(id, nombres, apellidos, cedula, correo, telefono) {
+    document.getElementById('ech-id').value = id;
+    document.getElementById('ech-nombres').value = nombres;
+    document.getElementById('ech-apellidos').value = apellidos;
+    document.getElementById('ech-cedula').value = cedula;
+    document.getElementById('ech-correo').value = correo;
+    document.getElementById('ech-telefono').value = telefono;
+    document.getElementById('ech-password').value = '';
+    const modal = document.getElementById('modal-editar-chofer');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function ocultarModalEditarChofer() {
+    const modal = document.getElementById('modal-editar-chofer');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function guardarEdicionChofer() {
+    const formData = new FormData();
+    formData.append('id_usuario', document.getElementById('ech-id').value);
+    formData.append('correo', document.getElementById('ech-correo').value.trim());
+    formData.append('telefono', document.getElementById('ech-telefono').value.trim());
+    formData.append('password', document.getElementById('ech-password').value);
+
+    fetch('../editar-usuario.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          ocultarModalEditarChofer();
+          cargarChoferes();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function confirmarEliminarChofer(id, nombre) {
+    if (!confirm(`¿Está seguro de eliminar al chofer "${nombre}" (ID #${String(id).padStart(3, '0')})? Esta acción no se puede deshacer.`)) return;
+
+    const formData = new FormData();
+    formData.append('id_usuario', id);
+
+    fetch('eliminar-usuario.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          cargarChoferes();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function cargarClientes() {
+    fetch('get-usuarios-rol.php?tipo_rol=cliente')
+      .then(res => res.json())
+      .then(res => {
+        const tbody = document.getElementById('tabla-clientes');
+        tbody.innerHTML = '';
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(u => {
+            tbody.innerHTML += `
+              <tr class="hover:bg-slate-50" data-id="${u.id_usuario}">
+                <td class="px-5 py-4 font-mono font-bold">#${String(u.id_usuario).padStart(3, '0')}</td>
+                <td class="px-5 py-4">${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}</td>
+                <td class="px-5 py-4">${u.correo}</td>
+                <td class="px-5 py-4 text-right flex flex-wrap justify-end gap-2">
+                  <button onclick="editarCliente(${u.id_usuario}, '${u.nombres.replace(/'/g, "\\'")}', '${u.apellidos.replace(/'/g, "\\'")}', '${u.cedula}', '${u.correo}', '${u.telefono || ''}')"
+                    class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Modificar</button>
+                  <button onclick="confirmarEliminarCliente(${u.id_usuario}, '${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}')"
+                    class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-rose-200 transition">Eliminar</button>
+                </td>
+              </tr>`;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">No hay clientes registrados.</td></tr>';
+        }
+      });
+  }
+
+  function filtrarClientes() {
+    const filtro = document.getElementById('filtro-clientes').value.trim();
+    const filas = document.querySelectorAll('#tabla-clientes tr[data-id]');
+    filas.forEach(fila => {
+      const id = fila.getAttribute('data-id');
+      fila.style.display = id.startsWith(filtro) ? '' : 'none';
+    });
+  }
+
+  function editarCliente(id, nombres, apellidos, cedula, correo, telefono) {
+    document.getElementById('ecl-id').value = id;
+    document.getElementById('ecl-nombres').value = nombres;
+    document.getElementById('ecl-apellidos').value = apellidos;
+    document.getElementById('ecl-cedula').value = cedula;
+    document.getElementById('ecl-correo').value = correo;
+    document.getElementById('ecl-telefono').value = telefono;
+    document.getElementById('ecl-password').value = '';
+    const modal = document.getElementById('modal-editar-cliente');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function ocultarModalEditarCliente() {
+    const modal = document.getElementById('modal-editar-cliente');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function guardarEdicionCliente() {
+    const formData = new FormData();
+    formData.append('id_usuario', document.getElementById('ecl-id').value);
+    formData.append('correo', document.getElementById('ecl-correo').value.trim());
+    formData.append('telefono', document.getElementById('ecl-telefono').value.trim());
+    formData.append('password', document.getElementById('ecl-password').value);
+
+    fetch('../editar-usuario.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          ocultarModalEditarCliente();
+          cargarClientes();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function confirmarEliminarCliente(id, nombre) {
+    if (!confirm(`¿Está seguro de eliminar al cliente "${nombre}" (ID #${String(id).padStart(3, '0')})? Esta acción no se puede deshacer.`)) return;
+
+    const formData = new FormData();
+    formData.append('id_usuario', id);
+
+    fetch('eliminar-usuario.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          cargarClientes();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function cargarAdmins() {
+    fetch('get-usuarios-rol.php?tipo_rol=admin')
+      .then(res => res.json())
+      .then(res => {
+        const tbody = document.getElementById('tabla-admins');
+        tbody.innerHTML = '';
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(u => {
+            tbody.innerHTML += `
+              <tr class="hover:bg-slate-50" data-id="${u.id_usuario}">
+                <td class="px-5 py-4 font-mono font-bold">#${String(u.id_usuario).padStart(3, '0')}</td>
+                <td class="px-5 py-4">${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}</td>
+                <td class="px-5 py-4">Admin</td>
+                <td class="px-5 py-4">${u.correo}</td>
+                <td class="px-5 py-4 text-right flex flex-wrap justify-end gap-2">
+                  <button onclick="editarAdmin(${u.id_usuario}, '${u.nombres.replace(/'/g, "\\'")}', '${u.apellidos.replace(/'/g, "\\'")}', '${u.cedula}', '${u.correo}', '${u.telefono || ''}')"
+                    class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Modificar</button>
+                  <button onclick="confirmarEliminarAdmin(${u.id_usuario}, '${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}')"
+                    class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-rose-200 transition">Eliminar</button>
+                </td>
+              </tr>`;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-4 text-center text-slate-400">No hay administradores registrados.</td></tr>';
+        }
+      });
+  }
+
+  function filtrarAdmins() {
+    const filtro = document.getElementById('filtro-admins').value.trim();
+    const filas = document.querySelectorAll('#tabla-admins tr[data-id]');
+    filas.forEach(fila => {
+      const id = fila.getAttribute('data-id');
+      fila.style.display = id.startsWith(filtro) ? '' : 'none';
+    });
+  }
+
+  function mostrarModalCrearAdmin() {
+    document.getElementById('form-crear-personal').reset();
+    const modal = document.getElementById('modal-crear-personal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modal.setAttribute('data-mode', 'admin');
+  }
+
+  function ocultarModalCrearAdmin() {
+    const modal = document.getElementById('modal-crear-personal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    modal.removeAttribute('data-mode');
+  }
+
+  function crearAdmin() {
+    const formData = new FormData();
+    formData.append('nombres', document.getElementById('cp-nombres').value.trim());
+    formData.append('apellidos', document.getElementById('cp-apellidos').value.trim());
+    formData.append('cedula', document.getElementById('cp-cedula').value.trim());
+    formData.append('correo', document.getElementById('cp-correo').value.trim());
+    formData.append('telefono', document.getElementById('cp-telefono').value.trim());
+    formData.append('password', document.getElementById('cp-password').value);
+    formData.append('rol', 'admin');
+
+    fetch('crear-personal.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          ocultarModalCrearAdmin();
+          cargarAdmins();
+          actualizarEstadisticas();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function editarAdmin(id, nombres, apellidos, cedula, correo, telefono) {
+    document.getElementById('ead-id').value = id;
+    document.getElementById('ead-nombres').value = nombres;
+    document.getElementById('ead-apellidos').value = apellidos;
+    document.getElementById('ead-cedula').value = cedula;
+    document.getElementById('ead-correo').value = correo;
+    document.getElementById('ead-telefono').value = telefono;
+    document.getElementById('ead-password').value = '';
+    const modal = document.getElementById('modal-editar-admin');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function ocultarModalEditarAdmin() {
+    const modal = document.getElementById('modal-editar-admin');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function guardarEdicionAdmin() {
+    const formData = new FormData();
+    formData.append('id_usuario', document.getElementById('ead-id').value);
+    formData.append('correo', document.getElementById('ead-correo').value.trim());
+    formData.append('telefono', document.getElementById('ead-telefono').value.trim());
+    formData.append('password', document.getElementById('ead-password').value);
+
+    fetch('../editar-usuario.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          ocultarModalEditarAdmin();
+          cargarAdmins();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function confirmarEliminarAdmin(id, nombre) {
+    if (!confirm(`¿Está seguro de eliminar al administrador "${nombre}" (ID #${String(id).padStart(3, '0')})? Esta acción no se puede deshacer.`)) return;
+
+    const formData = new FormData();
+    formData.append('id_usuario', id);
+
+    fetch('eliminar-usuario.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          cargarAdmins();
+          actualizarEstadisticas();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function cargarCatalogoBancos(selectId) {
+    fetch('../get-bancos-catalogo.php', { headers: { 'Accept': 'application/json' } })
+      .then(res => res.json())
+      .then(result => {
+        const select = document.getElementById(selectId);
+        if (result.success && Array.isArray(result.data)) {
+          result.data.forEach(banco => {
+            if (banco.id_banco == 1) return;
+            const opt = document.createElement('option');
+            opt.value = banco.id_banco;
+            opt.textContent = banco.nombre_banco + ' (' + banco.prefijo + ')';
+            select.appendChild(opt);
+          });
+        }
+      });
+  }
+
+  function mostrarModalAgregarCuentaEmpresa() {
+    document.getElementById('form-agregar-cuenta-empresa').reset();
+    const select = document.getElementById('ab-banco');
+    select.innerHTML = '<option value="">Seleccione un banco</option>';
+    cargarCatalogoBancos('ab-banco');
+    const modal = document.getElementById('modal-agregar-cuenta-empresa');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function ocultarModalAgregarCuentaEmpresa() {
+    const modal = document.getElementById('modal-agregar-cuenta-empresa');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function crearCuentaEmpresa() {
+    const prefijo = document.getElementById('ab-cedula-prefijo').value;
+    const numero = document.getElementById('ab-cedula-numero').value.trim();
+    const formData = new FormData();
+    formData.append('id_banco', document.getElementById('ab-banco').value);
+    formData.append('numero_cuenta', document.getElementById('ab-numero-cuenta').value.trim());
+    formData.append('identificacion_titular', prefijo + numero);
+    formData.append('nombre_titular', document.getElementById('ab-nombre-titular').value.trim());
+    const telPrefijo = document.getElementById('ab-telefono-prefijo').value;
+    const telNumero = document.getElementById('ab-telefono').value.trim();
+    formData.append('telefono', telPrefijo + telNumero);
+    formData.append('estado', 'inactivo');
+
+    fetch('crear-cuenta-empresa.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          ocultarModalAgregarCuentaEmpresa();
+          cargarCuentasEmpresa();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function editarCuentaEmpresa(id, idBanco, numero, identificacion, nombre, telefono, estado) {
+    document.getElementById('ec-id-cuenta').value = id;
+    document.getElementById('ec-id-banco').value = idBanco;
+    document.getElementById('ec-numero-cuenta').value = numero;
+    document.getElementById('ec-nombre-titular').value = nombre;
+    document.getElementById('ec-estado').value = estado;
+
+    if (telefono && telefono.length === 11) {
+      document.getElementById('ec-telefono-prefijo').value = telefono.substring(0, 4);
+      document.getElementById('ec-telefono').value = telefono.substring(4);
+    } else {
+      document.getElementById('ec-telefono-prefijo').value = '0414';
+      document.getElementById('ec-telefono').value = telefono || '';
+    }
+
+    const select = document.getElementById('ec-banco');
+    select.innerHTML = '<option value="">Seleccione un banco</option>';
+    cargarCatalogoBancos('ec-banco');
+    setTimeout(() => { select.value = idBanco; }, 200);
+
+    if (identificacion && identificacion.includes('-')) {
+      const parts = identificacion.split('-');
+      document.getElementById('ec-cedula-prefijo').value = parts[0] + '-';
+      document.getElementById('ec-cedula-numero').value = parts[1] || '';
+    } else {
+      document.getElementById('ec-cedula-prefijo').value = 'V-';
+      document.getElementById('ec-cedula-numero').value = identificacion || '';
+    }
+
+    const modal = document.getElementById('modal-editar-cuenta-empresa');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function ocultarModalEditarCuentaEmpresa() {
+    const modal = document.getElementById('modal-editar-cuenta-empresa');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function guardarEdicionCuentaEmpresa() {
+    const prefijo = document.getElementById('ec-cedula-prefijo').value;
+    const numero = document.getElementById('ec-cedula-numero').value.trim();
+    const formData = new FormData();
+    formData.append('id_cuenta', document.getElementById('ec-id-cuenta').value);
+    formData.append('id_banco', document.getElementById('ec-banco').value);
+    formData.append('numero_cuenta', document.getElementById('ec-numero-cuenta').value.trim());
+    formData.append('identificacion_titular', prefijo + numero);
+    formData.append('nombre_titular', document.getElementById('ec-nombre-titular').value.trim());
+    const telPrefijo = document.getElementById('ec-telefono-prefijo').value;
+    const telNumero = document.getElementById('ec-telefono').value.trim();
+    formData.append('telefono', telPrefijo + telNumero);
+    formData.append('estado', document.getElementById('ec-estado').value);
+
+    fetch('editar-cuenta-empresa.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          ocultarModalEditarCuentaEmpresa();
+          cargarCuentasEmpresa();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function cambiarEstadoCuentaEmpresa(id) {
+    const formData = new FormData();
+    formData.append('id_cuenta', id);
+
+    fetch('cambiar-estado-cuenta-empresa.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          cargarCuentasEmpresa();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function guardarCambiosCuenta() {
+    const correo = document.getElementById('ajuste-correo').value.trim();
+    const tlf = document.getElementById('ajuste-tlf').value.trim();
+    const mensaje = document.getElementById('mensaje-cuenta');
+
+    mensaje.innerText = 'Guardando cambios...';
+
+    fetch('../editar-usuario.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: new URLSearchParams({ correo, tlf })
+    })
+      .then(response => response.json())
+      .then(result => {
+        if (result.success) {
+          mensaje.innerText = 'Datos actualizados correctamente.';
+        } else {
+          mensaje.innerText = result.message || 'No se pudieron guardar los cambios.';
+        }
+      })
+      .catch(() => {
+        mensaje.innerText = 'Error de conexión al guardar los cambios.';
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', initDashboard);
+</script>
+</body>
+</html>

@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           $_SESSION['cliente_id'] = $perfil['id_cliente'];
           $_SESSION['rol'] = 'cliente';
           $_SESSION['nombre_completo'] = $usuario['nombres'] . " " . $usuario['apellidos'];
-          header("Location: dashboard-cliente.html");
+          header("Location: Cliente/dashboard-cliente.html");
           exit();
         }
       }
@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           $_SESSION['chofer_id'] = $perfil['id_chofer'];
           $_SESSION['rol'] = 'chofer';
           $_SESSION['nombre_completo'] = $usuario['nombres'] . " " . $usuario['apellidos'];
-          header("Location: dashboard-chofer.html");
+          header("Location: Chofer/dashboard-chofer.html");
           exit();
         }
       }
@@ -75,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           $_SESSION['rol'] = $rol_solicitado;
           $_SESSION['nombre_completo'] = $usuario['nombres'] . " " . $usuario['apellidos'];
 
-          $redirect = ($rol_solicitado === 'personal') ? "dashboard-personal.html" : "dashboard-admin.html";
+          $redirect = ($rol_solicitado === 'personal') ? "Personal/dashboard-personal.html" : "Admin/dashboard-admin.html";
           header("Location: " . $redirect);
           exit();
         }

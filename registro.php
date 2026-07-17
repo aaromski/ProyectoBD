@@ -10,7 +10,7 @@ if($modo === 'nuevo') {
   $rol_registro = isset($_POST['reg_rol']) ? $_POST['reg_rol'] : 'cliente';
   $nombres = trim($_POST['nombres']);
   $apellidos = trim($_POST['apellidos']);
-  $cedula = trim($_POST['cedula']);
+  $cedula = trim($_POST['cedula']); // Now includes "V-" or "J-" prefix from frontend
   $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
   $correo = trim($_POST['correo']);
   $telefono = trim($_POST['prefijo'] . $_POST['telefono']);
@@ -54,13 +54,25 @@ if($modo === 'nuevo') {
       // 2. Insertar según el rol (Entidad + Rol Asignado)
       if ($rol_registro === 'chofer') {
         // Registrar en tabla choferes (asumiendo campos requeridos)
-        $sql_chofer = "INSERT INTO choferes (id_usuario, id_banco, nro_cuenta, saldo, contacto1, contacto2, nombre_contacto1, nombre_contacto2) VALUES (?, ?, ?, 0, ?, ?, ?, ?)";
+        $sql_chofer = "INSERT INTO choferes (id_usuario, id_banco, nro_cuenta, saldo) VALUES (?, ?, ?, 0)";
         $stmt_chofer = $conn->prepare($sql_chofer);
         $contacto1 = trim($_POST['prefijo_contacto1'] . $_POST['contacto1']);
         $contacto2 = trim($_POST['prefijo_contacto2'] . $_POST['contacto2']);
-        $stmt_chofer->execute([$id_usuario_creado, intval($_POST['banco']), $_POST['nro_cuenta'], $contacto1, $contacto2, $_POST['nombre_contacto1'], $_POST['nombre_contacto2']]);
+        $stmt_chofer->execute([$id_usuario_creado, intval($_POST['banco']), $_POST['nro_cuenta']]);
 
         $id_chofer_nuevo = $conn->lastInsertId();
+
+        // Insert emergency contacts into contactos_emergencia table
+        $relacion1 = trim($_POST['relacion_contacto1'] ?? '');
+        $relacion2 = trim($_POST['relacion_contacto2'] ?? '');
+        if (!empty($_POST['nombre_contacto1']) && $contacto1 && $relacion1) {
+          $conn->prepare("INSERT INTO contactos_emergencia (id_chofer, nombre, telefono, relacion) VALUES (?, ?, ?, ?)")
+            ->execute([$id_chofer_nuevo, trim($_POST['nombre_contacto1']), $contacto1, $relacion1]);
+        }
+        if (!empty($_POST['nombre_contacto2']) && $contacto2 && $relacion2) {
+          $conn->prepare("INSERT INTO contactos_emergencia (id_chofer, nombre, telefono, relacion) VALUES (?, ?, ?, ?)")
+            ->execute([$id_chofer_nuevo, trim($_POST['nombre_contacto2']), $contacto2, $relacion2]);
+        }
 
         // Crear registro en evaluaciones
         $conn->prepare("INSERT INTO evaluaciones_choferes (id_chofer, id_personal, nota_psicologica, fecha, estado) VALUES (?, NULL, NULL, NOW(), 'pendiente')")
@@ -91,6 +103,8 @@ if($modo === 'nuevo') {
   } else if ($modo === 'rol') {
     // 2. LÓGICA PARA "YA TENGO CUENTA"
     $cedula = trim($_POST['cedula_ya']);
+    // Strip V-/J- prefix for DB lookup compatibility with legacy records
+    $cedula = preg_replace('/^[VJ]-/', '', $cedula);
     $correo = trim($_POST['correo_ya']);
     $password = $_POST['password_ya']; // Se valida con password_verify
     $rol_nuevo = $_POST['reg_rol2'];
@@ -139,13 +153,26 @@ if($modo === 'nuevo') {
 
           if (!$stmt_check->fetch()) {
             // Insertar en choferes
-            $sql_chofer = "INSERT INTO choferes (id_usuario, id_banco, nro_cuenta, saldo, contacto1, contacto2, nombre_contacto1, nombre_contacto2) VALUES (?, ?, ?, 0, ?, ?, ?, ?)";
+            $sql_chofer = "INSERT INTO choferes (id_usuario, id_banco, nro_cuenta, saldo) VALUES (?, ?, ?, 0)";
             $stmt_chofer = $conn->prepare($sql_chofer);
             $contacto1_ya = trim($_POST['prefijo_contacto1_ya'] . $_POST['contacto1_ya']);
             $contacto2_ya = trim($_POST['prefijo_contacto2_ya'] . $_POST['contacto2_ya']);
-            $stmt_chofer->execute([$id_usuario, intval($_POST['banco_ya']), $_POST['nro_cuenta_ya'], $contacto1_ya, $contacto2_ya, $_POST['nombre_contacto1_ya'], $_POST['nombre_contacto2_ya']]);
+            $stmt_chofer->execute([$id_usuario, intval($_POST['banco_ya']), $_POST['nro_cuenta_ya']]);
 
             $id_chofer_nuevo = $conn->lastInsertId();
+
+            // Insert emergency contacts into contactos_emergencia table
+            $relacion1_ya = trim($_POST['relacion_contacto1_ya'] ?? '');
+            $relacion2_ya = trim($_POST['relacion_contacto2_ya'] ?? '');
+            if (!empty($_POST['nombre_contacto1_ya']) && $contacto1_ya && $relacion1_ya) {
+              $conn->prepare("INSERT INTO contactos_emergencia (id_chofer, nombre, telefono, relacion) VALUES (?, ?, ?, ?)")
+                ->execute([$id_chofer_nuevo, trim($_POST['nombre_contacto1_ya']), $contacto1_ya, $relacion1_ya]);
+            }
+            if (!empty($_POST['nombre_contacto2_ya']) && $contacto2_ya && $relacion2_ya) {
+              $conn->prepare("INSERT INTO contactos_emergencia (id_chofer, nombre, telefono, relacion) VALUES (?, ?, ?, ?)")
+                ->execute([$id_chofer_nuevo, trim($_POST['nombre_contacto2_ya']), $contacto2_ya, $relacion2_ya]);
+            }
+
             $conn->prepare("INSERT INTO evaluaciones_choferes (id_chofer, id_personal, nota_psicologica, fecha, estado) VALUES (?, NULL, NULL, NOW(), 'pendiente')")->execute([$id_chofer_nuevo]);
 
             // Asignar rol

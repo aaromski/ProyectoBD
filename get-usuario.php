@@ -55,6 +55,11 @@ try {
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($usuario) {
+      // Fetch emergency contacts
+      $stmt_contacts = $conn->prepare("SELECT nombre, telefono, relacion FROM contactos_emergencia WHERE id_chofer = ? ORDER BY id_contactos ASC");
+      $stmt_contacts->execute([$usuario['id_chofer']]);
+      $contactos = $stmt_contacts->fetchAll(PDO::FETCH_ASSOC);
+
       echo json_encode([
         'success' => true,
         'rol' => 'chofer',
@@ -66,7 +71,8 @@ try {
         'tlf' => $usuario['telefono'],
         'banco' => $usuario['banco'],
         'nro_cuenta' => $usuario['nro_cuenta'],
-        'saldo' => $usuario['saldo']
+        'saldo' => $usuario['saldo'],
+        'contactos_emergencia' => $contactos
       ]);
     } else {
       echo json_encode(['error' => 'Perfil de chofer no encontrado']);
