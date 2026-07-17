@@ -36,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           $_SESSION['cliente_id'] = $perfil['id_cliente'];
           $_SESSION['rol'] = 'cliente';
           $_SESSION['nombre_completo'] = $usuario['nombres'] . " " . $usuario['apellidos'];
-          header("Location: dashboard-cliente.php");
+          header("Location: dashboard-cliente.html");
           exit();
         }
       }

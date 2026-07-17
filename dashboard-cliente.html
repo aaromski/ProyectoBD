@@ -10,7 +10,7 @@
   <script src="js/jquery.min.js"></script>
   <script src="js/select2.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
     .custom-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; }
     .badge-pendiente { background-color: #fef3c7; color: #d97706; padding: 2px 8px; border-radius: 9999px; font-size: 11px; font-weight: 700; }
@@ -37,10 +37,10 @@
     <div>
       <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Historial</p>
       <div class="space-y-1">
-        <a href="#" onclick="cambiarVista('vista-recargas', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg hover:bg-slate-50">
+        <a href="#" onclick="cambiarVista('vista-recargas', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg ">
           <i data-lucide="receipt" class="h-4 w-4"></i> Recargas
         </a>
-        <a href="#" onclick="cambiarVista('vista-traslados', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg hover:bg-slate-50">
+        <a href="#" onclick="cambiarVista('vista-traslados', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg ">
           <i data-lucide="map-pin" class="h-4 w-4"></i> Mis Destinos
         </a>
       </div>
@@ -49,7 +49,7 @@
     <div>
       <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Ajustes</p>
       <div class="space-y-1">
-        <a href="#" onclick="cambiarVista('vista-ajustes', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg hover:bg-slate-50">
+        <a href="#" onclick="cambiarVista('vista-ajustes', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg ">
           <i data-lucide="settings" class="h-4 w-4"></i> Cuenta
         </a>
       </div>
@@ -75,7 +75,7 @@
 
 <main class="flex-1 p-8 overflow-y-auto">
   <header class="flex justify-between items-center mb-8">
-    <h1 class="text-xl font-bold uppercase tracking-tight">PANEL DE CONTROL backup</h1>
+    <h1 class="text-xl font-bold uppercase tracking-tight">PANEL DE CONTROL</h1>
 
     <div class="flex items-center gap-3">
       <div class="bg-slate-100 border border-slate-200 px-4 py-2 rounded-lg text-xs font-bold text-slate-700 flex items-center gap-2 shadow-sm">
@@ -111,14 +111,12 @@
             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Punto de Origen</label>
             <select name="origen" id="origen" class="buscador-zonas w-full">
               <option value="">Seleccione origen...</option>
-              <?php include('get_zonas.php'); ?>
             </select>
           </div>
           <div>
             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Destino Final</label>
             <select name="destino" id="destino" class="buscador-zonas w-full">
               <option value="">Seleccione destino...</option>
-              <?php include('get_zonas.php'); ?>
             </select>
           </div>
           <button type="button" id="btn-calcular" class="sm:col-span-2 bg-slate-700 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-slate-600 transition-colors">Calcular Costo de Ruta</button>
@@ -138,23 +136,24 @@
     </div>
 
     <div class="custom-card border-slate-300 overflow-hidden">
-      <div class="p-4 border-b border-slate-300 font-bold text-sm text-slate-800">
-        <span>ÚLTIMOS MOVIMIENTOS FINANCIEROS (Bs.)</span>
+      <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
+        <div>
+          <h3 class="text-slate-900 font-bold text-base">Movimientos Financieros</h3>
+          <p class="text-slate-500 text-xs mt-0.5">Historial consolidado de recargas y gastos de viajes</p>
+        </div>
       </div>
+
       <div class="overflow-x-auto">
-        <table class="w-full text-sm text-left">
-          <thead class="text-[#64748b] bg-slate-50 text-[10px] uppercase border-b border-slate-200">
-          <tr>
-            <th class="px-6 py-3">Fecha</th>
-            <th class="px-6 py-3">Referencia / Detalle</th>
-            <th class="px-6 py-3">Tipo Operación</th>
-            <th class="px-6 py-3 text-right">Monto</th>
+        <table class="w-full text-left">
+          <thead class="bg-slate-50">
+          <tr class="text-slate-400 text-[10px] uppercase tracking-wider">
+            <th class="px-6 py-3 font-semibold">Fecha</th>
+            <th class="px-6 py-3 font-semibold">Detalle</th>
+            <th class="px-6 py-3 font-semibold">Monto</th>
+            <th class="px-6 py-3 font-semibold">Estado</th>
           </tr>
           </thead>
-          <tbody id="tabla-resumen-movimientos">
-          <tr>
-            <td colspan="4" class="px-6 py-4 text-center text-xs text-slate-400">No se registran transacciones recientes.</td>
-          </tr>
+          <tbody id="tabla-movimientos-financieros">
           </tbody>
         </table>
       </div>
@@ -196,11 +195,11 @@
           <h2 class="font-bold text-lg text-slate-900">Historial de Destinos y Viajes</h2>
           <p class="text-xs text-slate-500">Listado logístico de rutas ejecutadas y costos finales cobrados en Bolívares.</p>
         </div>
-        <select id="filtro-estado-traslado" onchange="cargarTraslados()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
+        <select id="filtro-estado-traslado" onchange="aplicarFiltro()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
           <option value="todos">Todos los Estados</option>
-          <option value="Solicitado">Solicitados</option>
-          <option value="Completado">Completados</option>
-          <option value="Cancelado">Cancelados</option>
+          <option value="pendiente">Pendientes</option>
+          <option value="aceptado">Aceptados</option>
+          <option value="finalizado">Finalizados</option>
         </select>
       </div>
 
@@ -264,7 +263,7 @@
 
 <div id="modal-recarga" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50 p-4">
   <div class="bg-white p-6 rounded-xl w-full max-w-sm border border-slate-300 shadow-xl relative">
-    <button onclick="document.getElementById('modal-recarga').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+    <button onclick="cerrarModalRecarga()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
       <i data-lucide="x" class="h-5 w-5"></i>
     </button>
 
@@ -274,10 +273,30 @@
 
     <form id="form-notificar-pago" class="space-y-4" onsubmit="procesarNotificacionPago(event)">
       <div>
-        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Banco Destino</label>
-        <select name="id_banco" id="select-banco" class="w-full border p-2.5 rounded-lg text-sm bg-white outline-none">
-          <option value="">Cargando bancos...</option>
+        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Cuenta Destino</label>
+        <select name="id_cuenta_empresa" id="select-cuenta-empresa" class="w-full border p-2.5 rounded-lg text-sm bg-white outline-none">
+          <option value="">Cargando cuentas...</option>
         </select>
+      </div>
+
+      <div id="panel-info-cuenta" class="hidden bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+        <p class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Datos de Cobro</p>
+        <div id="panel-transferencia" class="space-y-2">
+          <p class="text-xs font-bold text-slate-700 uppercase">Transferencia Bancaria</p>
+          <div class="text-xs text-slate-600 space-y-1">
+            <p><span class="font-semibold">Titular:</span> <span id="info-titular"></span></p>
+            <p><span class="font-semibold">RIF:</span> <span id="info-rif"></span></p>
+            <p><span class="font-semibold">Cuenta:</span> <span id="info-cuenta" class="font-mono"></span></p>
+          </div>
+        </div>
+        <div id="panel-pagomovil" class="hidden border-t border-slate-200 pt-3 space-y-2">
+          <p class="text-xs font-bold text-slate-700 uppercase">Pago Móvil</p>
+          <div class="text-xs text-slate-600 space-y-1">
+            <p><span class="font-semibold">Teléfono:</span> <span id="info-telefono" class="font-mono"></span></p>
+            <p><span class="font-semibold">RIF:</span> <span id="info-rif-pm"></span></p>
+            <p><span class="font-semibold">Banco:</span> <span id="info-banco-pm"></span></p>
+          </div>
+        </div>
       </div>
 
       <div>
@@ -296,7 +315,7 @@
       </div>
 
       <div class="flex gap-3 pt-2">
-        <button type="button" onclick="document.getElementById('modal-recarga').classList.add('hidden')" class="w-1/3 bg-slate-100 text-slate-700 py-2.5 rounded-lg font-bold text-sm hover:bg-slate-200 transition-colors">
+        <button type="button" onclick="cerrarModalRecarga()" class="w-1/3 bg-slate-100 text-slate-700 py-2.5 rounded-lg font-bold text-sm hover:bg-slate-200 transition-colors">
           Salir
         </button>
         <input type="hidden" name="tipo" value="recarga">
@@ -326,13 +345,15 @@
 </div>
 
 
-<div id="modal-detalle-viaje" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-  <div class="bg-white p-6 rounded-2xl w-full max-w-sm shadow-2xl">
-    <h3 class="font-bold text-lg mb-4 text-slate-800">Detalles del Conductor</h3>
+<div id="modal-detalle-viaje" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+  <div class="bg-white rounded-xl p-6 w-full max-w-sm shadow-xl">
+    <h3 class="text-lg font-bold mb-4">Perfil del Chofer</h3>
     <div id="contenido-detalle" class="space-y-3 text-sm">
     </div>
     <button onclick="document.getElementById('modal-detalle-viaje').classList.add('hidden')"
-            class="mt-6 w-full bg-slate-100 text-slate-700 py-2.5 rounded-lg font-bold hover:bg-slate-200">Cerrar</button>
+            class="mt-6 w-full bg-slate-900 text-white py-2 rounded-lg font-bold text-sm">
+      Cerrar
+    </button>
   </div>
 </div>
 
@@ -342,6 +363,7 @@
   let saldoEnBsGlobal = 0.00;     // Saldo real plano en Bs (traído de la DB)
   let precioViajeBsGlobal = 0.00; // Costo calculado del viaje actual en Bs
   let mostrarEnUSD = false;       // Estado del conmutador visual de moneda
+  let historialCompleto = [];
 
   lucide.createIcons();
 
@@ -369,33 +391,130 @@
       });
   }
 
-  function cargarHistorialTraslados() {
-    console.log("Iniciando fetch a get_historial_cliente.php...");
-
-    fetch('get_historial_cliente.php')
-      .then(response => {
-        console.log("Estado de la respuesta:", response.status);
-        return response.json();
-      })
+  // Cargar zonas desde endpoint JSON
+  function cargarZonas() {
+    return fetch('get-zonas-catalogo.php')
+      .then(res => res.json())
       .then(res => {
-        console.log("Datos recibidos del servidor:", res);
-
         if (res.success && res.data) {
-          const tbody = document.getElementById('tabla-traslados-detallada');
-          if (!tbody) {
-            console.error("ERROR: No se encontró el elemento con id 'tabla-traslados-detallada' en el HTML.");
-            return;
-          }
+          const opciones = res.data.map(z => `<option value="${z.id_zona}">${z.nombre_zona}</option>`).join('');
+          document.getElementById('origen').innerHTML = '<option value="">Seleccione origen...</option>' + opciones;
+          document.getElementById('destino').innerHTML = '<option value="">Seleccione destino...</option>' + opciones;
+        }
+      });
+  }
 
-          tbody.innerHTML = '';
-          res.data.forEach(t => {
-            tbody.innerHTML += `<tr><td>${t.id_traslado}</td><td>${t.nombre_origen}</td></tr>`;
-          });
+  function cargarHistorialTraslados() {
+    fetch('get_historial_cliente.php')
+      .then(response => response.json())
+      .then(res => {
+        if (res.success && res.data) {
+          historialCompleto = res.data;
+          renderizarTabla(historialCompleto);
         } else {
-          console.warn("La respuesta fue exitosa pero no hay datos o success es false:", res);
+          console.warn("No hay datos disponibles o la respuesta fue falsa.");
         }
       })
-      .catch(err => console.error("Error FATAL en el fetch:", err));
+      .catch(err => console.error("Error FATAL al cargar historial:", err));
+  }
+
+  function renderizarTabla(datos) {
+    const tbody = document.getElementById('tabla-traslados-detallada');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    datos.forEach(t => {
+      const estadoRaw = (t.estado || '').toLowerCase();
+
+      let accion = '';
+      if (estadoRaw === 'en_curso') {
+        accion = `
+          <div class="flex flex-col gap-1">
+            <button onclick="actualizarEstado(${t.id_traslado}, 'cancelado')" class="text-rose-600 text-[10px] font-bold hover:underline">Cancelar</button>
+            <button onclick="actualizarEstado(${t.id_traslado}, 'finalizado')" class="text-emerald-600 text-[10px] font-bold hover:underline">Finalizar</button>
+            <button onclick="abrirModalDetalle(${t.id_traslado})" class="text-blue-600 text-[10px] font-bold hover:underline">Ver Perfil</button>
+          </div>
+        `;
+      } else if (estadoRaw === 'aceptado') {
+        accion = `<button onclick="abrirModalDetalle(${t.id_traslado})" class="text-blue-600 underline font-bold hover:text-blue-800">Ver Chofer</button>`;
+      } else {
+        accion = `<span class="text-slate-400 text-xs italic">N/A</span>`;
+      }
+
+      let badgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
+      let textoMostrar = t.estado;
+
+      if (estadoRaw === 'en_curso') {
+        badgeClass = 'bg-amber-100 text-amber-700 border-amber-200';
+        textoMostrar = 'En Curso';
+      } else if (estadoRaw === 'aceptado') {
+        badgeClass = 'bg-emerald-100 text-emerald-700 border-emerald-200';
+        textoMostrar = 'Aceptado';
+      } else if (estadoRaw === 'pendiente') {
+        badgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
+        textoMostrar = 'Pendiente';
+      }
+
+      const precio = t.costo ? parseFloat(t.costo).toFixed(2) : '0.00';
+
+      const row = `
+    <tr class="border-b hover:bg-slate-50">
+      <td class="px-6 py-4 font-mono text-slate-500">#${t.id_traslado}</td>
+      <td class="px-6 py-4">${t.nombre_origen} &rarr; ${t.nombre_destino}</td>
+      <td class="px-6 py-4 font-bold text-slate-900">Bs. ${precio}</td>
+      <td class="px-6 py-4 text-center">
+          <span class="px-2.5 py-1 text-[10px] font-bold rounded-full uppercase border ${badgeClass}">
+            ${textoMostrar}
+          </span>
+      </td>
+      <td class="px-6 py-4 text-center">${accion}</td>
+    </tr>
+  `;
+      tbody.innerHTML += row;
+    });
+  }
+
+  function actualizarEstado(idTraslado, nuevoEstado) {
+    if (nuevoEstado === 'cancelado') {
+      if (!confirm("¿Estás seguro de cancelar este viaje? Se te reembolsará el dinero a tu saldo.")) {
+        return;
+      }
+
+      fetch('cancelar_viaje.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `id=${idTraslado}`
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (res.success) {
+            alert("Viaje cancelado y saldo devuelto correctamente.");
+            cargarHistorialTraslados();
+            if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario();
+          } else {
+            alert("Error: " + res.message);
+          }
+        });
+
+    } else {
+      if (!confirm(`¿Confirmas que deseas finalizar el viaje? Se registrará el pago.`)) return;
+
+      fetch('finalizar_viaje.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: idTraslado })
+      })
+        .then(res => res.json())
+        .then(res => {
+          if (res.success) {
+            alert("Viaje finalizado correctamente.");
+            cargarHistorialTraslados();
+          } else {
+            alert("Error: " + res.message);
+          }
+        });
+    }
   }
 
   function abrirModalDetalle(idTraslado) {
@@ -405,34 +524,83 @@
         if (res.success) {
           const d = res.data;
           const contenedor = document.getElementById('contenido-detalle');
+
           contenedor.innerHTML = `
-            <p><strong>Conductor:</strong> ${d.nombres} ${d.apellidos}</p>
-            <p><strong>Teléfono:</strong> ${d.telefono}</p>
-            <hr class="my-2 border-slate-200">
-            <p><strong>Vehículo:</strong> ${d.marca} ${d.modelo}</p>
-            <p><strong>Placa:</strong> <span class="font-mono font-bold">${d.placa}</span></p>
-        `;
+                <div class="flex items-center gap-3 mb-4">
+                   <div class="h-12 w-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-lg text-slate-700">
+                      ${d.nombre.charAt(0)}${d.apellido.charAt(0)}
+                   </div>
+                   <div>
+                      <p class="font-bold text-base capitalize">${d.nombre} ${d.apellido}</p>
+                      <p class="text-xs text-slate-500">Conductor Asignado</p>
+                   </div>
+                </div>
+                <p><strong>Vehículo:</strong> ${d.marca} ${d.modelo}</p>
+                <p><strong>Placa:</strong> <span class="font-mono font-bold bg-slate-100 px-2 py-0.5 rounded">${d.placa}</span></p>
+                <p><strong>Teléfono:</strong> <a href="tel:${d.telefono}" class="text-blue-600 underline">${d.telefono}</a></p>
+              `;
+
           document.getElementById('modal-detalle-viaje').classList.remove('hidden');
+        } else {
+          alert("No se pudo cargar la información del chofer.");
         }
-      });
+      })
+      .catch(err => console.error("Error:", err));
   }
 
-  function cargarBancos() {
-    fetch('get_bancos.php')
+  let cuentasEmpresaData = [];
+
+  function cargarCuentasEmpresa() {
+    fetch('get-cuentas-empresa.php')
       .then(response => response.json())
       .then(result => {
         if (result.success) {
-          const select = document.getElementById('select-banco');
-          select.innerHTML = '<option value="">Seleccione un banco</option>';
-          result.data.forEach(banco => {
+          cuentasEmpresaData = result.data.filter(c => c.estado === 'activo');
+          const select = document.getElementById('select-cuenta-empresa');
+          select.innerHTML = '<option value="">Seleccione una cuenta...</option>';
+          cuentasEmpresaData.forEach(c => {
             let option = document.createElement('option');
-            option.value = banco.id_banco; // Enviamos el ID real ahora
-            option.textContent = banco.nombre_banco;
+            option.value = c.id_cuenta;
+            option.textContent = `${c.nombre_banco} - ${c.prefijo}${c.numero_cuenta}`;
             select.appendChild(option);
           });
         }
       });
   }
+
+  function cerrarModalRecarga() {
+    document.getElementById('modal-recarga').classList.add('hidden');
+    document.getElementById('panel-info-cuenta').classList.add('hidden');
+    document.getElementById('select-cuenta-empresa').value = '';
+  }
+
+  function mostrarInfoCuenta(idCuenta) {
+    const panel = document.getElementById('panel-info-cuenta');
+    if (!idCuenta) { panel.classList.add('hidden'); return; }
+
+    const cuenta = cuentasEmpresaData.find(c => c.id_cuenta == idCuenta);
+    if (!cuenta) { panel.classList.add('hidden'); return; }
+
+    document.getElementById('info-titular').textContent = cuenta.nombre_titular || 'N/A';
+    document.getElementById('info-rif').textContent = cuenta.identificacion_titular || 'N/A';
+    document.getElementById('info-cuenta').textContent = `${cuenta.prefijo}${cuenta.numero_cuenta}`;
+
+    const panelPM = document.getElementById('panel-pagomovil');
+    if (cuenta.telefono && cuenta.telefono.trim() !== '') {
+      panelPM.classList.remove('hidden');
+      document.getElementById('info-telefono').textContent = cuenta.telefono;
+      document.getElementById('info-rif-pm').textContent = cuenta.identificacion_titular || 'N/A';
+      document.getElementById('info-banco-pm').textContent = cuenta.nombre_banco;
+    } else {
+      panelPM.classList.add('hidden');
+    }
+
+    panel.classList.remove('hidden');
+  }
+
+  document.getElementById('select-cuenta-empresa').addEventListener('change', function() {
+    mostrarInfoCuenta(this.value);
+  });
 
   // Alternar el estado visual de la moneda
   function alternarMoneda() {
@@ -446,6 +614,17 @@
     }
 
     renderizarMontos();
+  }
+
+  function aplicarFiltro() {
+    const estadoSeleccionado = document.getElementById('filtro-estado-traslado').value;
+
+    if (estadoSeleccionado === 'todos') {
+      renderizarTabla(historialCompleto);
+    } else {
+      const datosFiltrados = historialCompleto.filter(t => t.estado === estadoSeleccionado);
+      renderizarTabla(datosFiltrados);
+    }
   }
 
   // Renderizador unificado en pantalla
@@ -478,7 +657,6 @@
         document.getElementById('ajuste-correo').value = data.correo;
         document.getElementById('ajuste-tlf').value = data.tlf || '';
 
-        // Guardamos el saldo plano en Bs que viene directo de la DB
         saldoEnBsGlobal = parseFloat(data.saldo);
         renderizarMontos();
       });
@@ -494,10 +672,12 @@
   function cambiarVista(idVista, event) {
     document.querySelectorAll('.vista-seccion').forEach(v => v.classList.add('hidden'));
     document.getElementById(idVista).classList.remove('hidden');
+
     document.querySelectorAll('.nav-link').forEach(l => {
       l.classList.remove('bg-[#0f172a]', 'text-white');
       l.classList.add('text-[#64748b]');
     });
+
     if(event && event.currentTarget) {
       event.currentTarget.classList.add('bg-[#0f172a]', 'text-white');
       event.currentTarget.classList.remove('text-[#64748b]');
@@ -511,23 +691,80 @@
     alert("Simulación de guardado de ajustes.");
   }
 
-  function abrirModalDetalle(idTraslado) {
-    fetch('get_detalle_viaje.php?id=' + idTraslado)
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) {
-          const d = res.data;
-          const contenedor = document.getElementById('contenido-detalle');
-          contenedor.innerHTML = `
-                    <p><strong>Conductor:</strong> ${d.nombres} ${d.apellidos}</p>
-                    <p><strong>Teléfono:</strong> ${d.telefono}</p>
-                    <hr>
-                    <p><strong>Vehículo:</strong> ${d.marca} ${d.modelo}</p>
-                    <p><strong>Placa:</strong> <span class="font-mono font-bold">${d.placa}</span></p>
-                `;
-          document.getElementById('modal-detalle-viaje').classList.remove('hidden');
-        }
-      });
+  function renderizarMovimientos(lista) {
+    const tbody = document.getElementById('tabla-movimientos-financieros');
+    if (!tbody) return;
+
+    tbody.innerHTML = '';
+
+    lista.forEach(m => {
+      const esPositivo = m.monto > 0;
+      const color = esPositivo ? 'text-emerald-600' : 'text-rose-600';
+      const signo = esPositivo ? '+' : '-';
+
+      let badgeClass = 'bg-slate-100 text-slate-600';
+      if (m.estado === 'finalizado') {
+        badgeClass = 'bg-emerald-100 text-emerald-700';
+      } else if (m.estado === 'cancelado') {
+        badgeClass = 'bg-rose-100 text-rose-700';
+      }
+
+      tbody.innerHTML += `
+      <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+        <td class="px-6 py-4 text-sm text-slate-500">${m.fecha}</td>
+        <td class="px-6 py-4 text-sm font-medium text-slate-800">${m.detalle}</td>
+        <td class="px-6 py-4 text-sm font-bold ${color} font-mono">
+          ${signo} Bs. ${Math.abs(m.monto).toFixed(2)}
+        </td>
+        <td class="px-6 py-4 text-sm">
+          <span class="inline-block px-3 py-1 text-[10px] uppercase tracking-wider font-bold rounded-full ${badgeClass}">
+          ${m.estado}
+        </span>
+        </td>
+      </tr>
+    `;
+    });
+  }
+
+  async function cargarHistorialFinanciero() {
+    try {
+      const [resPagos, resTraslados] = await Promise.all([
+        fetch('get_historial_transaccion.php').then(r => r.json()),
+        fetch('get_historial_cliente.php').then(r => r.json())
+      ]);
+
+      let movimientos = [];
+
+      if (resPagos.success) {
+        resPagos.data.forEach(p => {
+          movimientos.push({
+            tipo: 'RECARGA',
+            fecha: p.fecha,
+            monto: parseFloat(p.monto),
+            detalle: 'Recarga Billetera',
+            estado: p.estado
+          });
+        });
+      }
+
+      if (resTraslados.success) {
+        resTraslados.data.forEach(t => {
+          movimientos.push({
+            tipo: 'VIAJE',
+            fecha: t.fecha || 'N/A',
+            monto: -Math.abs(parseFloat(t.costo)),
+            detalle: `Viaje: ${t.nombre_origen} → ${t.nombre_destino}`,
+            estado: t.estado
+          });
+        });
+      }
+
+      movimientos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+      renderizarMovimientos(movimientos);
+    } catch (err) {
+      console.error("Error al cargar historial unificado:", err);
+    }
   }
 
   function cargarHistorialPagos() {
@@ -536,12 +773,11 @@
       .then(result => {
         if (result.success) {
           const tbody = document.getElementById('tabla-historial-recarga');
-          if (!tbody) return; // Validación de seguridad
+          if (!tbody) return;
 
-          tbody.innerHTML = ''; // Limpiar tabla
+          tbody.innerHTML = '';
 
           result.data.forEach(t => {
-            // El estado a veces viene en minúsculas, por eso usamos toUpperCase()
             const estadoTexto = t.estado.toUpperCase();
             const claseEstado = (t.estado === 'finalizado') ? 'badge-aprobado' : 'badge-pendiente';
 
@@ -566,26 +802,19 @@
     e.preventDefault();
     $.post('guardar_transaccion.php', $(this).serialize(), function(response) {
       alert(response.message);
-      if(response.success) document.getElementById('modal-recarga').classList.add('hidden');
+      if(response.success) cerrarModalRecarga();
     }, 'json');
   });
 
-  // 3. EVENTOS DE FORMULARIOS JQUERY (Solo procesamiento de submits)
   $(document).ready(function() {
-    // Inicializar select2
     $('.select-zona').select2({ placeholder: "Seleccione una zona", allowClear: true });
 
-    // Formulario de Recarga
     $('#form-recarga').on('submit', function(e) {
       e.preventDefault();
-      // Tu lógica ajax existente...
     });
 
-    // Formulario de Solicitar Traslado
     $('#form-traslado').on('submit', function(e) {
       e.preventDefault();
-      // Tu lógica ajax existente...
-      // TIP: Al terminar con éxito la solicitud del traslado, puedes llamar aquí a cargarHistorialTraslados() para refrescar la tabla al instante.
     });
   });
 
@@ -597,9 +826,7 @@
       let destino = $('#destino').val();
       if(origen === "" || destino === "") { alert("Por favor selecciona los sectores"); return; }
 
-      // Ajuste: Aseguramos que el valor se procese como número decimal (usando punto)
       $.post('calcular_viaje.php', { origen: origen, destino: destino }, function(precioBs) {
-        // Si el precio viene con coma, lo reemplazamos por punto antes de convertir
         let precioLimpio = parseFloat(precioBs.replace(',', '.'));
 
         if (!isNaN(precioLimpio)) {
@@ -614,21 +841,17 @@
     });
 
     $('#btn-asignar').on('click', function() {
-      // 1. Obtenemos los valores de los select (que gracias a get_zonas.php son los IDs)
       const id_origen = $('#origen').val();
       const id_destino = $('#destino').val();
 
-      // 2. Obtenemos el precio (limpiamos el formato "Bs. X,XX" a número "X.XX")
       const costoRaw = $('#valor-precio-bs').text();
       const costo = parseFloat(costoRaw.replace('Bs.', '').replace(',', '.').trim());
 
-      // 3. Validación básica
       if (!id_origen || !id_destino) {
         alert("Por favor, selecciona tanto el origen como el destino.");
         return;
       }
 
-      // 4. Enviamos al servidor
       $.ajax({
         url: 'solicitar_traslado.php',
         type: 'POST',
@@ -641,8 +864,11 @@
         success: function(response) {
           if (response.success) {
             alert("¡Traslado solicitado con éxito! Estamos asignando un conductor.");
-            $('#btn-asignar').addClass('hidden'); // Oculta el botón
-            $('#resultado').removeClass('hidden'); // Muestra el mensaje de éxito
+            $('#btn-asignar').addClass('hidden');
+            $('#resultado').removeClass('hidden');
+            cargarHistorialTraslados();
+            cargarDatosUsuario();
+            cargarHistorialFinanciero();
           } else {
             alert("Error: " + response.message);
           }
@@ -655,16 +881,16 @@
   });
 
   window.addEventListener('DOMContentLoaded', () => {
-    obtenerTasaLocal().then(() => {
+    Promise.all([obtenerTasaLocal(), cargarZonas()]).then(() => {
       cargarDatosUsuario();
-      cargarBancos();
+      cargarCuentasEmpresa();
+      cargarHistorialFinanciero();
       cargarHistorialPagos();
-      cargarHistorialTraslados(); // ¡Ahora sí la va a encontrar globalmente!
+      cargarHistorialTraslados();
     });
   });
 
 </script>
-
 
 </body>
 </html>
