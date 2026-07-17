@@ -21,7 +21,7 @@ try {
   $conn->beginTransaction();
 
   // Buscamos el registro del chofer por su id_usuario bloqueando la fila
-  $stmtChofer = $conn->prepare("SELECT id_chofer, saldo FROM choferes WHERE id_usuario = :id_usuario FOR UPDATE");
+  $stmtChofer = $conn->prepare("SELECT id_chofer, saldo, banco FROM choferes WHERE id_usuario = :id_usuario FOR UPDATE");
   $stmtChofer->execute([':id_usuario' => $id_usuario]);
   $chofer = $stmtChofer->fetch(PDO::FETCH_ASSOC);
 
@@ -33,6 +33,7 @@ try {
 
   $id_chofer = $chofer['id_chofer'];
   $saldo_actual = (float)$chofer['saldo'];
+  $banco_chofer = $chofer['banco'] ?: 'N/A';
 
   if ($monto_bs > $saldo_actual) {
     $conn->rollBack();
@@ -44,8 +45,13 @@ try {
   $conn->prepare("UPDATE choferes SET saldo = :nuevo_saldo WHERE id_chofer = :id_chofer")
     ->execute([':nuevo_saldo' => $nuevo_saldo, ':id_chofer' => $id_chofer]);
 
-  $conn->prepare("INSERT INTO historial_retiros (id_chofer, monto_bs, fecha) VALUES (:id_chofer, :monto_bs, NOW())")
-    ->execute([':id_chofer' => $id_chofer, ':monto_bs' => $monto_bs]);
+
+  // Registrar la transacción de retiro
+  $ref_num = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
+  $nro_ref = 'RETIRO-' . $ref_num;
+  $detalle_retiro = "Transferencia a " . $banco_chofer;
+  $conn->prepare("INSERT INTO transacciones (id_usuario, tipo, id_banco, monto, nro_ref, fecha, estado, detalles) VALUES (?, 'retiro', 1, ?, ?, NOW(), 'finalizado', ?)")
+    ->execute([$id_usuario, $monto_bs, $nro_ref, $detalle_retiro]);
 
   $conn->commit();
   echo json_encode(['success' => true]);

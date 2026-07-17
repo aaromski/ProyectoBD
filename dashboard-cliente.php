@@ -265,7 +265,7 @@
 
 <div id="modal-recarga" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50 p-4">
   <div class="bg-white p-6 rounded-xl w-full max-w-sm border border-slate-300 shadow-xl relative">
-    <button onclick="document.getElementById('modal-recarga').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+    <button onclick="cerrarModalRecarga()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
       <i data-lucide="x" class="h-5 w-5"></i>
     </button>
 
@@ -275,10 +275,30 @@
 
     <form id="form-notificar-pago" class="space-y-4" onsubmit="procesarNotificacionPago(event)">
       <div>
-        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Banco Destino</label>
-        <select name="id_banco" id="select-banco" class="w-full border p-2.5 rounded-lg text-sm bg-white outline-none">
-          <option value="">Cargando bancos...</option>
+        <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Cuenta Destino</label>
+        <select name="id_cuenta_empresa" id="select-cuenta-empresa" class="w-full border p-2.5 rounded-lg text-sm bg-white outline-none">
+          <option value="">Cargando cuentas...</option>
         </select>
+      </div>
+
+      <div id="panel-info-cuenta" class="hidden bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+        <p class="text-[10px] font-bold uppercase text-slate-400 tracking-wider">Datos de Cobro</p>
+        <div id="panel-transferencia" class="space-y-2">
+          <p class="text-xs font-bold text-slate-700 uppercase">Transferencia Bancaria</p>
+          <div class="text-xs text-slate-600 space-y-1">
+            <p><span class="font-semibold">Titular:</span> <span id="info-titular"></span></p>
+            <p><span class="font-semibold">RIF:</span> <span id="info-rif"></span></p>
+            <p><span class="font-semibold">Cuenta:</span> <span id="info-cuenta" class="font-mono"></span></p>
+          </div>
+        </div>
+        <div id="panel-pagomovil" class="hidden border-t border-slate-200 pt-3 space-y-2">
+          <p class="text-xs font-bold text-slate-700 uppercase">Pago Móvil</p>
+          <div class="text-xs text-slate-600 space-y-1">
+            <p><span class="font-semibold">Teléfono:</span> <span id="info-telefono" class="font-mono"></span></p>
+            <p><span class="font-semibold">RIF:</span> <span id="info-rif-pm"></span></p>
+            <p><span class="font-semibold">Banco:</span> <span id="info-banco-pm"></span></p>
+          </div>
+        </div>
       </div>
 
       <div>
@@ -297,7 +317,7 @@
       </div>
 
       <div class="flex gap-3 pt-2">
-        <button type="button" onclick="document.getElementById('modal-recarga').classList.add('hidden')" class="w-1/3 bg-slate-100 text-slate-700 py-2.5 rounded-lg font-bold text-sm hover:bg-slate-200 transition-colors">
+        <button type="button" onclick="cerrarModalRecarga()" class="w-1/3 bg-slate-100 text-slate-700 py-2.5 rounded-lg font-bold text-sm hover:bg-slate-200 transition-colors">
           Salir
         </button>
         <input type="hidden" name="tipo" value="recarga">
@@ -533,22 +553,59 @@
       .catch(err => console.error("Error:", err));
   }
 
-  function cargarBancos() {
-    fetch('get_bancos.php')
+  let cuentasEmpresaData = [];
+
+  function cargarCuentasEmpresa() {
+    fetch('get-cuentas-empresa.php')
       .then(response => response.json())
       .then(result => {
         if (result.success) {
-          const select = document.getElementById('select-banco');
-          select.innerHTML = '<option value="">Seleccione un banco</option>';
-          result.data.forEach(banco => {
+          cuentasEmpresaData = result.data.filter(c => c.estado === 'activo');
+          const select = document.getElementById('select-cuenta-empresa');
+          select.innerHTML = '<option value="">Seleccione una cuenta...</option>';
+          cuentasEmpresaData.forEach(c => {
             let option = document.createElement('option');
-            option.value = banco.id_banco; // Enviamos el ID real ahora
-            option.textContent = banco.nombre_banco;
+            option.value = c.id_cuenta;
+            option.textContent = `${c.nombre_banco} - ${c.prefijo}${c.numero_cuenta}`;
             select.appendChild(option);
           });
         }
       });
   }
+
+  function cerrarModalRecarga() {
+    document.getElementById('modal-recarga').classList.add('hidden');
+    document.getElementById('panel-info-cuenta').classList.add('hidden');
+    document.getElementById('select-cuenta-empresa').value = '';
+  }
+
+  function mostrarInfoCuenta(idCuenta) {
+    const panel = document.getElementById('panel-info-cuenta');
+    if (!idCuenta) { panel.classList.add('hidden'); return; }
+
+    const cuenta = cuentasEmpresaData.find(c => c.id_cuenta == idCuenta);
+    if (!cuenta) { panel.classList.add('hidden'); return; }
+
+    document.getElementById('info-titular').textContent = cuenta.nombre_titular || 'N/A';
+    document.getElementById('info-rif').textContent = cuenta.identificacion_titular || 'N/A';
+    document.getElementById('info-cuenta').textContent = `${cuenta.prefijo}${cuenta.numero_cuenta}`;
+
+    const panelPM = document.getElementById('panel-pagomovil');
+    if (cuenta.telefono && cuenta.telefono.trim() !== '') {
+      panelPM.classList.remove('hidden');
+      document.getElementById('info-telefono').textContent = cuenta.telefono;
+      document.getElementById('info-rif-pm').textContent = cuenta.identificacion_titular || 'N/A';
+      document.getElementById('info-banco-pm').textContent = cuenta.nombre_banco;
+    } else {
+      panelPM.classList.add('hidden');
+    }
+
+    panel.classList.remove('hidden');
+  }
+
+  document.getElementById('select-cuenta-empresa').addEventListener('change', function() {
+    mostrarInfoCuenta(this.value);
+  });
 
   // Alternar el estado visual de la moneda
   function alternarMoneda() {
@@ -761,7 +818,7 @@
     e.preventDefault();
     $.post('guardar_transaccion.php', $(this).serialize(), function(response) {
       alert(response.message);
-      if(response.success) document.getElementById('modal-recarga').classList.add('hidden');
+      if(response.success) cerrarModalRecarga();
     }, 'json');
   });
 
@@ -838,6 +895,9 @@
             alert("¡Traslado solicitado con éxito! Estamos asignando un conductor.");
             $('#btn-asignar').addClass('hidden'); // Oculta el botón
             $('#resultado').removeClass('hidden'); // Muestra el mensaje de éxito
+            cargarHistorialTraslados();   // Refresca la tabla de "Mis Destinos"
+            cargarDatosUsuario();          // Actualiza tu saldo disponible en pantalla
+            cargarHistorialFinanciero();  // Refresca el historial de movimientos financieros
           } else {
             alert("Error: " + response.message);
           }
@@ -852,7 +912,7 @@
   window.addEventListener('DOMContentLoaded', () => {
     obtenerTasaLocal().then(() => {
       cargarDatosUsuario();
-      cargarBancos();
+      cargarCuentasEmpresa();
       cargarHistorialFinanciero();
       cargarHistorialPagos();
       cargarHistorialTraslados(); // ¡Ahora sí la va a encontrar globalmente!

@@ -16,7 +16,7 @@ $sql = "SELECT
         FROM transacciones t
         JOIN usuarios u ON t.id_usuario = u.id_usuario
         WHERE t.estado = 'pendiente'
-        AND t.tipo = 'pago_viaje'";
+        AND t.tipo = 'pago_chofer'";
 
 /** @var PDO $conn */
 $stmt = $conn->prepare($sql);

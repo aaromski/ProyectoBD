@@ -14,7 +14,6 @@ try {
   /** @var PDO $conn */
   $id_usuario = $_SESSION['id_usuario'];
 
-  // 1. Conseguimos el id_chofer primero
   $stmtChofer = $conn->prepare("SELECT id_chofer FROM choferes WHERE id_usuario = :id_usuario");
   $stmtChofer->execute([':id_usuario' => $id_usuario]);
   $chofer = $stmtChofer->fetch(PDO::FETCH_ASSOC);
@@ -26,16 +25,26 @@ try {
 
   $id_chofer = $chofer['id_chofer'];
 
-  // 2. Consulta corregida: Trae 'anio' y une con la tabla 'evaluaciones_vehiculos' para obtener el 'estado'
+
   $sql = "SELECT
-                v.id_vehiculo,  -- <--- ESTO ES LO QUE FALTA
+                v.id_vehiculo,
                 v.marca,
                 v.modelo,
                 v.placa,
                 v.anio,
-                COALESCE(e.estado, 'pendiente') AS estado_evaluacion
+                e.id_evaluacion,
+                COALESCE(e.estado, 'pendiente') AS estado_evaluacion,
+                e.fecha AS fecha_evaluacion
             FROM vehiculos v
-            LEFT JOIN evaluaciones_vehiculos e ON v.id_vehiculo = e.id_vehiculo
+            LEFT JOIN (
+                SELECT ev1.*
+                FROM evaluaciones_vehiculos ev1
+                INNER JOIN (
+                    SELECT id_vehiculo, MAX(fecha) AS max_fecha
+                    FROM evaluaciones_vehiculos
+                    GROUP BY id_vehiculo
+                ) ev2 ON ev1.id_vehiculo = ev2.id_vehiculo AND ev1.fecha = ev2.max_fecha
+            ) e ON v.id_vehiculo = e.id_vehiculo
             WHERE v.id_chofer = :id_chofer
             ORDER BY v.id_vehiculo DESC";
 

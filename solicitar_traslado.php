@@ -29,8 +29,21 @@ try {
 
   $conn->prepare("UPDATE clientes SET saldo = saldo - ? WHERE id_usuario = ?")->execute([$costo, $id_cliente]);
 
-  // 2. Seleccionar un chofer aleatorio
-  $stmt_chofer = $conn->query("SELECT id_chofer FROM choferes ORDER BY RAND() LIMIT 1");
+  // 2. Seleccionar un chofer que tenga evaluaciones aprobadas (psicológica y técnica)
+  $stmt_chofer = $conn->prepare("SELECT c.id_chofer
+    FROM choferes c
+      WHERE EXISTS (
+      SELECT 1 FROM evaluaciones_choferes ec
+      WHERE ec.id_chofer = c.id_chofer AND ec.estado = 'aprobado'
+  )
+      AND EXISTS (
+      SELECT 1 FROM vehiculos v
+      INNER JOIN evaluaciones_vehiculos ev ON v.id_vehiculo = ev.id_vehiculo
+      WHERE v.id_chofer = c.id_chofer AND ev.estado = 'apto'
+  )
+    ORDER BY RAND()
+    LIMIT 1");
+  $stmt_chofer->execute();
   $chofer = $stmt_chofer->fetch(PDO::FETCH_ASSOC);
 
   if (!$chofer) {

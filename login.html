@@ -205,15 +205,17 @@
           <div class="grid grid-cols-2 gap-4 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
             <div>
               <label class="block text-[10px] font-bold text-slate-600 mb-1 uppercase">Banco</label>
-              <select name="banco" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 cursor-pointer">
-                <option value="Banesco">Banesco</option>
-                <option value="Banco de Venezuela">B. Venezuela</option>
-                <option value="Mercantil">Mercantil</option>
+              <select id="reg-banco" name="banco" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 cursor-pointer">
+                <option value="">Cargando bancos...</option>
               </select>
             </div>
             <div>
               <label class="block text-[10px] font-bold text-slate-600 mb-1 uppercase">Nº Cuenta</label>
-              <input id="reg-cuenta" name="nro_cuenta" type="text" pattern="[0-9]{20}" maxlength="20" placeholder="20 dígitos numéricos" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+              <input type="hidden" name="nro_cuenta" id="reg-cuenta-full">
+              <div class="flex">
+                <span id="reg-prefix" class="bg-slate-200 border border-slate-200 border-r-0 rounded-l-lg px-2 py-1.5 text-xs font-mono font-bold text-slate-600 select-none">0000</span>
+                <input id="reg-cuenta" type="text" maxlength="16" pattern="\d{16}" placeholder="16 dígitos" class="w-full bg-white border border-slate-200 rounded-r-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+              </div>
             </div>
           </div>
 
@@ -290,15 +292,17 @@
               <div class="grid grid-cols-2 gap-4 bg-blue-50/50 p-3 rounded-xl border border-blue-100">
                 <div>
                   <label class="block text-[10px] font-bold text-slate-600 mb-1 uppercase">Banco</label>
-                  <select name="banco_ya" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 cursor-pointer">
-                    <option value="Banesco">Banesco</option>
-                    <option value="Banco de Venezuela">B. Venezuela</option>
-                    <option value="Mercantil">Mercantil</option>
+                  <select id="reg-banco2" name="banco_ya" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 cursor-pointer">
+                    <option value="">Cargando bancos...</option>
                   </select>
                 </div>
                 <div>
                   <label class="block text-[10px] font-bold text-slate-600 mb-1 uppercase">Nº Cuenta</label>
-                  <input id="reg-cuenta2" name="nro_cuenta_ya" type="text" pattern="[0-9]{20}" maxlength="20" placeholder="20 dígitos numéricos" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                  <input type="hidden" name="nro_cuenta_ya" id="reg-cuenta2-full">
+                  <div class="flex">
+                    <span id="reg-prefix2" class="bg-slate-200 border border-slate-200 border-r-0 rounded-l-lg px-2 py-1.5 text-xs font-mono font-bold text-slate-600 select-none">0000</span>
+                    <input id="reg-cuenta2" type="text" maxlength="16" pattern="\d{16}" placeholder="16 dígitos" class="w-full bg-white border border-slate-200 rounded-r-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                  </div>
                 </div>
               </div>
 
@@ -329,13 +333,15 @@
             </div>
 
         </div>
+
         </div>
+        <button type="submit" form='ajax-registro-form' id="btn-completar-registro" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-semibold hover:bg-slate-800 transition-all cursor-pointer">
+          Completar Registro
+        </button>
       </form>
 
     </div>
-    <button type="submit" form='ajax-registro-form' id="btn-completar-registro" class="w-full bg-slate-900 text-white py-3.5 rounded-xl font-semibold hover:bg-slate-800 transition-all cursor-pointer">
-      Completar Registro
-    </button>
+
   </div>
 
 </main>
@@ -416,7 +422,7 @@
       });
 
       // Desactivar campos bancarios de chofer nuevo por si acaso
-      const inputsBancaNuevo = ['reg-cuenta', 'reg-c1-nom', 'reg-c1-tel', 'reg-c2-nom', 'reg-c2-tel'];
+      const inputsBancaNuevo = ['reg-banco', 'reg-cuenta', 'reg-c1-nom', 'reg-c1-tel', 'reg-c2-nom', 'reg-c2-tel'];
       inputsBancaNuevo.forEach(id => document.getElementById(id)?.removeAttribute('required'));
 
       // Bloqueamos el botón si estamos en "YA TENGO CUENTA" hasta validar
@@ -444,7 +450,7 @@
       });
 
       // Desactivar campos bancarios de ya tengo cuenta por si acaso
-      const inputsBancaBasico = ['reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c2-nom2', 'reg-c2-tel2'];
+      const inputsBancaBasico = ['reg-banco2', 'reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c2-nom2', 'reg-c2-tel2'];
       inputsBancaBasico.forEach(id => document.getElementById(id)?.removeAttribute('required'));
 
       // Reactivamos el botón en "REGISTRO NUEVO"
@@ -464,7 +470,7 @@
     const rolSeleccionado = document.getElementById('reg-rol2').value;
     const camposVerificacion = document.getElementById('verificacion-usuario');
     const camposBanca = document.getElementById('campos-banca-chofer2');
-    const inputsBanca = ['reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c2-nom2', 'reg-c2-tel2'];
+    const inputsBanca = ['reg-banco2', 'reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c2-nom2', 'reg-c2-tel2'];
 
     camposVerificacion.classList.remove('hidden');
 
@@ -489,7 +495,7 @@
   function evaluarCamposChofer() {
     const rolSeleccionado = document.getElementById('reg-rol').value;
     const seccionBancaria = document.getElementById('campos-banca-chofer');
-    const inputs = ['reg-cuenta', 'reg-c1-nom', 'reg-c1-tel', 'reg-c2-nom', 'reg-c2-tel'];
+    const inputs = ['reg-banco', 'reg-cuenta', 'reg-c1-nom', 'reg-c1-tel', 'reg-c2-nom', 'reg-c2-tel'];
 
     if (rolSeleccionado === 'chofer') {
       seccionBancaria.classList.remove('hidden');
@@ -503,6 +509,7 @@
   // INTERCEPCIÓN ASÍNCRONA CON FETCH (AJAX)
   document.getElementById('ajax-registro-form').addEventListener('submit', function(e) {
     e.preventDefault();
+    sincronizarCuentas();
 
     const formData = new FormData(this);
     const regErrorContainer = document.getElementById('reg-error-msg');
@@ -543,6 +550,66 @@
     document.getElementById('modal-exito').classList.add('hidden');
     cambiarTab('login');
   }
+
+  // === BANCOS CATÁLOGO + AUTOCOMPLETE PREFIJO ===
+  let bancosCatalogo = [];
+
+  function cargarBancosCatalogo() {
+    fetch('get-bancos-catalogo.php')
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data.length > 0) {
+          bancosCatalogo = res.data;
+          [document.getElementById('reg-banco'), document.getElementById('reg-banco2')].forEach(select => {
+            select.innerHTML = '<option value="">Seleccione banco...</option>';
+            bancosCatalogo.forEach(b => {
+              const opt = document.createElement('option');
+              opt.value = b.id_banco;
+              opt.textContent = b.nombre_banco;
+              opt.setAttribute('data-prefijo', b.prefijo);
+              select.appendChild(opt);
+            });
+          });
+        }
+      });
+  }
+
+  function aplicarPrefijo(bancoSelectId, prefixId, cuentaInputId, hiddenId) {
+    const select = document.getElementById(bancoSelectId);
+    const prefix = document.getElementById(prefixId);
+    const input = document.getElementById(cuentaInputId);
+    const hidden = document.getElementById(hiddenId);
+
+    select.addEventListener('change', function() {
+      const opt = this.options[this.selectedIndex];
+      const prefijo = opt.getAttribute('data-prefijo') || '0000';
+      prefix.textContent = prefijo;
+      input.value = '';
+      hidden.value = '';
+      input.focus();
+    });
+
+    input.addEventListener('input', function() {
+      this.value = this.value.replace(/[^0-9]/g, '').substring(0, 16);
+      hidden.value = prefix.textContent + this.value;
+    });
+  }
+
+  function sincronizarCuentas() {
+    const p1 = document.getElementById('reg-prefix').textContent;
+    const c1 = document.getElementById('reg-cuenta').value;
+    document.getElementById('reg-cuenta-full').value = p1 + c1;
+
+    const p2 = document.getElementById('reg-prefix2').textContent;
+    const c2 = document.getElementById('reg-cuenta2').value;
+    document.getElementById('reg-cuenta2-full').value = p2 + c2;
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    cargarBancosCatalogo();
+    aplicarPrefijo('reg-banco', 'reg-prefix', 'reg-cuenta', 'reg-cuenta-full');
+    aplicarPrefijo('reg-banco2', 'reg-prefix2', 'reg-cuenta2', 'reg-cuenta2-full');
+  });
 </script>
 </body>
 </html>

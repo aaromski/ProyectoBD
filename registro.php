@@ -54,11 +54,11 @@ if($modo === 'nuevo') {
       // 2. Insertar según el rol (Entidad + Rol Asignado)
       if ($rol_registro === 'chofer') {
         // Registrar en tabla choferes (asumiendo campos requeridos)
-        $sql_chofer = "INSERT INTO choferes (id_usuario, banco, nro_cuenta, saldo, contacto1, contacto2, nombre_contacto1, nombre_contacto2) VALUES (?, ?, ?, 0, ?, ?, ?, ?)";
+        $sql_chofer = "INSERT INTO choferes (id_usuario, id_banco, nro_cuenta, saldo, contacto1, contacto2, nombre_contacto1, nombre_contacto2) VALUES (?, ?, ?, 0, ?, ?, ?, ?)";
         $stmt_chofer = $conn->prepare($sql_chofer);
         $contacto1 = trim($_POST['prefijo_contacto1'] . $_POST['contacto1']);
         $contacto2 = trim($_POST['prefijo_contacto2'] . $_POST['contacto2']);
-        $stmt_chofer->execute([$id_usuario_creado, $_POST['banco'], $_POST['nro_cuenta'], $contacto1, $contacto2, $_POST['nombre_contacto1'], $_POST['nombre_contacto2']]);
+        $stmt_chofer->execute([$id_usuario_creado, intval($_POST['banco']), $_POST['nro_cuenta'], $contacto1, $contacto2, $_POST['nombre_contacto1'], $_POST['nombre_contacto2']]);
 
         $id_chofer_nuevo = $conn->lastInsertId();
 
@@ -139,11 +139,11 @@ if($modo === 'nuevo') {
 
           if (!$stmt_check->fetch()) {
             // Insertar en choferes
-            $sql_chofer = "INSERT INTO choferes (id_usuario, banco, nro_cuenta, saldo, contacto1, contacto2, nombre_contacto1, nombre_contacto2) VALUES (?, ?, ?, 0, ?, ?, ?, ?)";
+            $sql_chofer = "INSERT INTO choferes (id_usuario, id_banco, nro_cuenta, saldo, contacto1, contacto2, nombre_contacto1, nombre_contacto2) VALUES (?, ?, ?, 0, ?, ?, ?, ?)";
             $stmt_chofer = $conn->prepare($sql_chofer);
             $contacto1_ya = trim($_POST['prefijo_contacto1_ya'] . $_POST['contacto1_ya']);
             $contacto2_ya = trim($_POST['prefijo_contacto2_ya'] . $_POST['contacto2_ya']);
-            $stmt_chofer->execute([$id_usuario, $_POST['banco_ya'], $_POST['nro_cuenta_ya'], $contacto1_ya, $contacto2_ya, $_POST['nombre_contacto1_ya'], $_POST['nombre_contacto2_ya']]);
+            $stmt_chofer->execute([$id_usuario, intval($_POST['banco_ya']), $_POST['nro_cuenta_ya'], $contacto1_ya, $contacto2_ya, $_POST['nombre_contacto1_ya'], $_POST['nombre_contacto2_ya']]);
 
             $id_chofer_nuevo = $conn->lastInsertId();
             $conn->prepare("INSERT INTO evaluaciones_choferes (id_chofer, id_personal, nota_psicologica, fecha, estado) VALUES (?, NULL, NULL, NOW(), 'pendiente')")->execute([$id_chofer_nuevo]);

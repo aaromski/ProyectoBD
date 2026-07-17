@@ -31,7 +31,11 @@ try {
   $stmt->execute([':id_usuario' => $id_usuario, ':mes' => $mes]);
   $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-  echo json_encode(['success' => true, 'data' => $data]);
+  echo json_encode([
+    'success' => true,
+    'data' => $data,
+    'id_buscado' => $id_usuario
+  ]);
 } catch (PDOException $e) {
   echo json_encode(['success' => false, 'message' => 'Error en el servidor.']);
 }

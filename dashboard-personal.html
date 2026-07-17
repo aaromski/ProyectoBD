@@ -112,7 +112,10 @@
     </div>
 
     <div class="bg-white rounded-xl border border-slate-300 p-6">
-      <h2 class="font-bold text-sm mb-4">Acciones más recientes</h2>
+      <h2 class="font-bold text-sm mb-5">Historial de Evaluaciones Recientes</h2>
+      <div id="feed-evaluaciones" class="space-y-0">
+        <p class="text-center text-slate-400 text-xs py-6">Cargando evaluaciones...</p>
+      </div>
     </div>
   </section>
 
@@ -389,7 +392,10 @@
     cargarPagosPendientes();
     cargarPruebasPendientes();
     cargarEstadisticasGanancias();
+    cargarEvaluacionesRecientes();
   });
+
+  let idUsuarioGlobal = null;
 
   function cargarDatosPersonal() {
     fetch('get-usuario.php')
@@ -397,11 +403,11 @@
       .then(data => {
         if (data.error || (data.rol !== 'personal' && data.rol !== 'admin')) {
           window.location.href = 'login.html';
-
           return;
         }
 
         const u = data.data;
+        idUsuarioGlobal = u.id_usuario;
 
         document.getElementById('nombre-usuario').innerText = u.nombres.split(' ')[0] + ' ' + u.apellidos.split(' ')[0];
         const nombreCompletoReal = u.nombres + ' ' + u.apellidos;
@@ -516,6 +522,7 @@
   }
 
   function cerrarModal() {
+    document.getElementById('form-nota').reset();
     document.getElementById('modal-revision').classList.add('hidden');
   }
 
@@ -601,6 +608,7 @@
           cerrarModalPsicologico();
           cargarPruebasPendientes();
           cargarEstadisticas();
+          cargarEvaluacionesRecientes();
         } else {
           alert('Error: ' + res.message);
         }
@@ -729,6 +737,79 @@
       });
   }
 
+  // --- HISTORIAL DE EVALUACIONES RECIENTES ---
+  function cargarEvaluacionesRecientes() {
+    fetch('get-evaluaciones-recientes.php')
+      .then(res => res.json())
+      .then(res => {
+        const container = document.getElementById('feed-evaluaciones');
+        if (!res.success || res.data.length === 0) {
+          container.innerHTML = '<p class="text-center text-slate-400 text-xs py-6">No hay evaluaciones registradas aún.</p>';
+          return;
+        }
+
+        const iconoTipo = (tipo) => tipo === 'psicologica'
+          ? '<i data-lucide="brain" class="h-4 w-4 text-purple-500"></i>'
+          : '<i data-lucide="car" class="h-4 w-4 text-blue-500"></i>';
+
+        const badgeEstado = (estado) => {
+          const styles = {
+            aprobado: 'bg-emerald-100 text-emerald-700',
+            apto: 'bg-emerald-100 text-emerald-700',
+            reprobado: 'bg-red-100 text-red-700',
+            no_apto: 'bg-red-100 text-red-700',
+            pendiente: 'bg-amber-100 text-amber-700',
+          };
+          const labels = {
+            aprobado: 'Aprobado',
+            apto: 'Apto',
+            reprobado: 'Reprobado',
+            no_apto: 'No Apto',
+            pendiente: 'Pendiente',
+          };
+          return `<span class="px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${styles[estado] || 'bg-slate-100 text-slate-500'}">${labels[estado] || estado}</span>`;
+        };
+
+        const labelTipo = (tipo) => tipo === 'psicologica' ? 'Evaluación Psicológica' : 'Evaluación Técnica';
+        const labelTipoColor = (tipo) => tipo === 'psicologica' ? 'text-purple-600' : 'text-blue-600';
+
+        let html = '<div class="divide-y divide-slate-100">';
+        res.data.forEach((ev, i) => {
+          const notaDisplay = ev.nota !== null ? `${ev.nota}/100` : '--';
+          const fechaObj = new Date(ev.fecha);
+          const fechaFmt = fechaObj.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' });
+          const horaFmt = fechaObj.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
+          const dotColor = ev.tipo === 'psicologica' ? 'bg-purple-400' : 'bg-blue-400';
+
+          html += `
+            <div class="flex items-start gap-4 py-4 ${i === 0 ? 'pt-0' : ''}">
+              <div class="mt-1 relative flex-shrink-0">
+                <div class="h-8 w-8 rounded-full bg-slate-100 flex items-center justify-center border border-slate-200">
+                  ${iconoTipo(ev.tipo)}
+                </div>
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full ${dotColor} ring-2 ring-white hidden"></div>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-[10px] font-bold uppercase ${labelTipoColor(ev.tipo)}">${labelTipo(ev.tipo)}</span>
+                  <span class="text-slate-300">&middot;</span>
+                  <span class="text-[10px] font-semibold text-slate-400">${fechaFmt} ${horaFmt}</span>
+                </div>
+                <p class="text-sm font-semibold text-slate-800 mt-1">${ev.evaluado}</p>
+                <p class="text-[11px] text-slate-500 mt-0.5">Registrado por <span class="font-semibold text-slate-600">${ev.evaluador}</span></p>
+              </div>
+              <div class="flex flex-col items-end gap-1 flex-shrink-0">
+                ${badgeEstado(ev.estado)}
+                <span class="text-[10px] font-bold font-mono text-slate-700">${notaDisplay}</span>
+              </div>
+            </div>`;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+        lucide.createIcons();
+      });
+  }
+
   // --- FILTRAR GANANCIAS POR RANGO ---
   function filtrarGanancias() {
     const desde = document.getElementById('ganancia-desde').value;
@@ -789,6 +870,38 @@
         } else {
           container.innerHTML = '<p class="text-center text-slate-400 text-sm italic">No se encontraron transacciones en el rango seleccionado.</p>';
         }
+      });
+  }
+
+  function guardarCambiosUnificado() {
+    const pass1 = document.getElementById('pass-nueva').value;
+    const pass2 = document.getElementById('pass-confirm').value;
+
+    if (pass1 && pass1 !== pass2) {
+      alert('Las contraseñas no coinciden.');
+      return;
+    }
+
+
+    const formData = new FormData();
+    formData.append('correo', document.getElementById('ajuste-correo').value.trim());
+    formData.append('telefono', document.getElementById('ajuste-tlf').value.trim());
+    formData.append('password', pass1);
+
+    fetch('editar-usuario.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          alert('Datos actualizados correctamente.');
+          document.getElementById('pass-nueva').value = '';
+          document.getElementById('pass-confirm').value = '';
+          cargarDatosPersonal();
+        } else {
+          alert('Error: ' + res.message);
+        }
+      })
+      .catch(() => {
+        alert('Error de conexión al guardar los cambios.');
       });
   }
 

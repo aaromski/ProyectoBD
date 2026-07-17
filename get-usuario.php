@@ -45,7 +45,7 @@ try {
   }
   elseif ($rol === 'chofer') {
     // CORRECCIÓN AQUÍ: Buscamos en la tabla usuarios vinculando a choferes por el ID de usuario único, evitando colisiones de IDs autoincrementales de otras tablas
-    $sql = "SELECT u.nombres, u.apellidos, u.cedula, u.correo, u.telefono, c.id_chofer, c.banco, c.nro_cuenta, c.saldo
+    $sql = "SELECT u.nombres, u.apellidos, u.cedula, u.correo, u.telefono, c.id_chofer, c.id_banco AS banco, c.nro_cuenta, c.saldo
                 FROM usuarios u
                 INNER JOIN choferes c ON u.id_usuario = c.id_usuario
                 WHERE u.id_usuario = :id";
