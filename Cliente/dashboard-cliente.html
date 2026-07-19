@@ -198,7 +198,7 @@
         <select id="filtro-estado-traslado" onchange="aplicarFiltro()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
           <option value="todos">Todos los Estados</option>
           <option value="pendiente">Pendientes</option>
-          <option value="aceptado">Aceptados</option>
+          <option value="cancelado">Cancelados</option>
           <option value="finalizado">Finalizados</option>
         </select>
       </div>
@@ -445,15 +445,18 @@
       let badgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
       let textoMostrar = t.estado;
 
-      if (estadoRaw === 'en_curso') {
+      if (estadoRaw === 'pendiente') {
         badgeClass = 'bg-amber-100 text-amber-700 border-amber-200';
-        textoMostrar = 'En Curso';
-      } else if (estadoRaw === 'aceptado') {
-        badgeClass = 'bg-emerald-100 text-emerald-700 border-emerald-200';
-        textoMostrar = 'Aceptado';
-      } else if (estadoRaw === 'pendiente') {
-        badgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
         textoMostrar = 'Pendiente';
+      } else if (estadoRaw === 'en_curso' || estadoRaw === 'aceptado') {
+        badgeClass = 'bg-amber-100 text-amber-700 border-amber-200';
+        textoMostrar = estadoRaw === 'en_curso' ? 'En Curso' : 'Aceptado';
+      } else if (estadoRaw === 'finalizado') {
+        badgeClass = 'bg-emerald-100 text-emerald-700 border-emerald-200';
+        textoMostrar = 'Finalizado';
+      } else if (estadoRaw === 'cancelado') {
+        badgeClass = 'bg-rose-100 text-rose-700 border-rose-200';
+        textoMostrar = 'Cancelado';
       }
 
       const precio = t.costo ? parseFloat(t.costo).toFixed(2) : '0.00';

@@ -866,7 +866,7 @@
         acciones = `<span class="text-slate-400 italic text-[10px]">Finalizado</span>`;
       }
 
-      const pasajeroCell = tabActiva === 'asignados'
+      const pasajeroCell = (tabActiva === 'asignados' && v.estado === 'en_curso')
         ? `<td class="px-6 py-4 font-bold text-blue-600 cursor-pointer hover:underline" onclick="verDatosPasajero(${v.id})">${v.pasajero}</td>`
         : `<td class="px-6 py-4 font-bold text-slate-800">${v.pasajero}</td>`;
 
