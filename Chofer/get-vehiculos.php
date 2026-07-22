@@ -34,7 +34,8 @@ try {
                 v.anio,
                 e.id_evaluacion,
                 COALESCE(e.estado, 'pendiente') AS estado_evaluacion,
-                e.fecha AS fecha_evaluacion
+                e.fecha AS fecha_evaluacion,
+                e.observacion AS observacion_evaluacion
             FROM vehiculos v
             LEFT JOIN (
                 SELECT ev1.*

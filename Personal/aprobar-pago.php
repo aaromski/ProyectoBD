@@ -1,10 +1,19 @@
 <?php
-// aprobar-pago.php
+session_start();
+header('Content-Type: application/json');
 require_once '../conexion.php';
-$data = json_decode(file_get_contents('php://input'), true);
-$id_transaccion = $data['id'] ?? null;
 
-if (!$id_transaccion) {
+if (!isset($_SESSION['id_usuario'])) {
+  echo json_encode(['success' => false, 'message' => 'No autorizado']);
+  exit;
+}
+
+$data = json_decode(file_get_contents('php://input'), true);
+$id_pago = $data['id'] ?? null;
+$nro_ref = $data['nro_ref'] ?? null;
+$detalles = $data['detalles'] ?? null;
+
+if (!$id_pago) {
   echo json_encode(['success' => false, 'message' => 'ID inválido']);
   exit;
 }
@@ -13,39 +22,28 @@ try {
   /** @var PDO $conn */
   $conn->beginTransaction();
 
-  // 1. Obtener el pago_chofer pendiente
-  $stmt = $conn->prepare("SELECT id_usuario, nro_ref FROM transacciones WHERE id_transaccion = ? AND tipo = 'pago_chofer' AND estado = 'pendiente'");
-  $stmt->execute([$id_transaccion]);
-  $trans = $stmt->fetch(PDO::FETCH_ASSOC);
+  $stmt = $conn->prepare("SELECT id_pago, id_chofer, monto, estado FROM pago_chofer WHERE id_pago = ?");
+  $stmt->execute([$id_pago]);
+  $pago = $stmt->fetch(PDO::FETCH_ASSOC);
 
-  if (!$trans) throw new Exception("Transacción no encontrada o ya procesada.");
+  if (!$pago) throw new Exception("Pago no encontrado.");
+  if ($pago['estado'] !== 'pendiente') throw new Exception("Este pago ya fue procesado.");
 
-  // 2. Extraer el número base (quitar prefijo CHOFER-)
-  $ref_num = str_replace('CHOFER-', '', $trans['nro_ref']);
+  $id_personal = $_SESSION['id_usuario'];
 
-  // 3. Buscar el pago_viaje pareado para obtener el monto original
-  $nro_ref_viaje = 'VIAJE-' . $ref_num;
-  $stmt_viaje = $conn->prepare("SELECT monto FROM transacciones WHERE nro_ref = ? AND tipo = 'pago_viaje'");
-  $stmt_viaje->execute([$nro_ref_viaje]);
-  $viaje = $stmt_viaje->fetch(PDO::FETCH_ASSOC);
+  $conn->prepare("UPDATE pago_chofer SET id_personal = ?, nro_ref = ?, estado = 'finalizado', fecha = NOW() WHERE id_pago = ?")
+    ->execute([$id_personal, $nro_ref, $id_pago]);
 
-  if (!$viaje) throw new Exception("No se encontró el viaje asociado.");
-
-  // 4. Calcular el 70% del monto del viaje
-  $monto_chofer = $viaje['monto'] * 0.70;
-
-  // 5. Actualizar el pago_chofer con el monto del 70% y marcar como finalizado
-  $conn->prepare("UPDATE transacciones SET monto = ?, estado = 'finalizado' WHERE id_transaccion = ?")
-    ->execute([$monto_chofer, $id_transaccion]);
-
-  // 6. Sumar el 70% al saldo del chofer
-  $conn->prepare("UPDATE choferes SET saldo = saldo + ? WHERE id_usuario = ?")
-    ->execute([$monto_chofer, $trans['id_usuario']]);
+  if (!empty($detalles)) {
+    $conn->prepare("UPDATE pago_chofer SET detalles = ? WHERE id_pago = ?")
+      ->execute([$detalles, $id_pago]);
+  }
 
   $conn->commit();
-  echo json_encode(['success' => true, 'message' => 'Pago aprobado. Chofer recibió el 70% (Bs. ' . number_format($monto_chofer, 2) . ').']);
+  echo json_encode(['success' => true, 'message' => 'Pago aprobado. Se descontó Bs. ' . number_format($pago['monto'], 2) . ' del saldo del chofer.']);
+
 } catch (Exception $e) {
-  $conn->rollBack();
+  if ($conn->inTransaction()) $conn->rollBack();
   echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
 }
 ?>

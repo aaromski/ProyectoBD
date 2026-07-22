@@ -20,12 +20,15 @@ if ($id_usuario <= 0 || empty($mes)) {
 
 try {
   /** @var PDO $conn */
-  $sql = "SELECT t.id_transaccion, t.tipo, t.nro_ref, t.monto, t.fecha, t.estado
-          FROM transacciones t
-          WHERE t.id_usuario = :id_usuario
-          AND t.tipo = 'pago_chofer'
-          AND DATE_FORMAT(t.fecha, '%Y-%m') = :mes
-          ORDER BY t.fecha DESC";
+  $sql = "SELECT pc.id_pago, pc.nro_ref, pc.monto, pc.fecha, pc.estado, pc.detalles,
+                 ch.nro_cuenta,
+                 b.nombre_banco
+          FROM pago_chofer pc
+          JOIN choferes ch ON pc.id_chofer = ch.id_chofer
+          LEFT JOIN bancos b ON pc.id_banco = b.id_banco
+          WHERE ch.id_usuario = :id_usuario
+          AND DATE_FORMAT(pc.fecha, '%Y-%m') = :mes
+          ORDER BY pc.fecha DESC";
 
   $stmt = $conn->prepare($sql);
   $stmt->execute([':id_usuario' => $id_usuario, ':mes' => $mes]);

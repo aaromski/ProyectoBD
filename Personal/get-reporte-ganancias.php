@@ -21,15 +21,15 @@ if (empty($desde) || empty($hasta)) {
 try {
   /** @var PDO $conn */
   $sql = "SELECT
-            t.id_transaccion,
-            t.tipo,
-            t.nro_ref,
-            t.monto,
+            t.id_traslado,
+            CONCAT(z1.nombre_zona, ' → ', z2.nombre_zona) AS ruta,
+            t.costo,
             t.fecha,
-            ROUND(t.monto * 0.30, 2) AS comision
-          FROM transacciones t
-          WHERE t.tipo = 'pago_viaje'
-            AND t.estado = 'finalizado'
+            ROUND(t.costo * 0.30, 2) AS comision
+          FROM traslados t
+          JOIN zonas z1 ON t.id_zona_origen = z1.id_zona
+          JOIN zonas z2 ON t.id_zona_destino = z2.id_zona
+          WHERE t.estado = 'finalizado'
             AND DATE_FORMAT(t.fecha, '%Y-%m') BETWEEN :desde AND :hasta
           ORDER BY t.fecha DESC";
 

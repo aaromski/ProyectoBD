@@ -561,6 +561,7 @@
           cuentasEmpresaData = result.data.filter(c => c.estado === 'activo');
           const select = document.getElementById('select-cuenta-empresa');
           select.innerHTML = '<option value="">Seleccione una cuenta...</option>';
+
           cuentasEmpresaData.forEach(c => {
             let option = document.createElement('option');
             option.value = c.id_cuenta;
@@ -745,7 +746,7 @@
             fecha: p.fecha,
             monto: parseFloat(p.monto),
             detalle: 'Recarga Billetera',
-            estado: p.estado
+            estado: p.estado || 'finalizado'
           });
         });
       }
@@ -781,8 +782,9 @@
           tbody.innerHTML = '';
 
           result.data.forEach(t => {
-            const estadoTexto = t.estado.toUpperCase();
-            const claseEstado = (t.estado === 'finalizado') ? 'badge-aprobado' : 'badge-pendiente';
+            const estado = t.estado || 'finalizado';
+            const estadoTexto = estado.toUpperCase();
+            const claseEstado = (estado === 'finalizado') ? 'badge-aprobado' : 'badge-pendiente';
 
             tbody.innerHTML += `
             <tr class="border-b hover:bg-slate-50">

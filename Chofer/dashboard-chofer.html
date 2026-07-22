@@ -41,6 +41,9 @@
         <a href="#" onclick="cambiarVista('vista-retiros', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
           <i data-lucide="wallet" class="h-4 w-4"></i> Retirar Dinero
         </a>
+        <a href="#" onclick="cambiarVista('vista-historial-retiros', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+          <i data-lucide="scroll-text" class="h-4 w-4"></i> Historial Retiros
+        </a>
       </div>
     </div>
 
@@ -233,6 +236,39 @@
     </div>
   </div>
 
+  <!-- VISTA HISTORIAL COMPLETO RETIROS -->
+  <section id="vista-historial-retiros" class="vista-seccion hidden">
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+      <div>
+        <h2 class="text-xl font-bold">Historial de Retiros</h2>
+        <p class="text-sm text-slate-500">Todas tus solicitudes de retiro de fondos.</p>
+      </div>
+      <select id="filtro-estado-retiro" onchange="filtrarRetiros()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
+        <option value="todos">Todos los Estados</option>
+        <option value="pendiente">Pendientes</option>
+        <option value="finalizado">Aprobados</option>
+        <option value="rechazado">Rechazados</option>
+      </select>
+    </div>
+
+    <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+      <table class="w-full text-sm text-left">
+        <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
+        <tr>
+          <th class="px-6 py-4">Fecha</th>
+          <th class="px-6 py-4">Banco</th>
+          <th class="px-6 py-4">Referencia</th>
+          <th class="px-6 py-4 text-right">Monto</th>
+          <th class="px-6 py-4 text-center">Estado</th>
+          <th class="px-6 py-4">Detalles</th>
+        </tr>
+        </thead>
+        <tbody id="tabla-historial-retiros" class="divide-y divide-slate-100">
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <!-- VISTA HISTORIAL COMPLETO VIAJES -->
   <section id="vista-viajes" class="vista-seccion hidden">
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
@@ -401,6 +437,21 @@
     </div>
   </div>
 
+  <!-- MODAL OBSERVACIONES -->
+  <div id="modal-observaciones" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-2xl w-96 shadow-xl">
+      <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+        <i data-lucide="alert-circle" class="h-5 w-5 text-rose-600"></i>
+        Detalles de la Evaluación
+      </h3>
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Observación</p>
+        <p id="texto-observacion" class="text-sm text-slate-700 leading-relaxed">Sin observaciones registradas.</p>
+      </div>
+      <button onclick="document.getElementById('modal-observaciones').classList.add('hidden')" class="mt-5 w-full py-2 bg-slate-200 rounded-lg font-bold text-sm hover:bg-slate-300 transition-all">Cerrar</button>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -430,6 +481,7 @@
       cargarVehiculosChofer();
       cargarEvaluacionChofer();
       cargarMovimientosChofer();
+      cargarHistorialRetiros();
     });
   });
 
@@ -594,6 +646,23 @@
         }
 
         btnContainer.classList.toggle('hidden', estado !== 'reprobado');
+
+        // Btn Detalles (solo si reprobado)
+        let btnObs = document.getElementById('contenedor-btn-detalle-evaluacion');
+        if (!btnObs) {
+          btnObs = document.createElement('div');
+          btnObs.id = 'contenedor-btn-detalle-evaluacion';
+          btnObs.className = 'mt-3';
+          btnContainer.parentNode.insertBefore(btnObs, btnContainer.nextSibling);
+        }
+        if (estado === 'reprobado') {
+          const obs = res.data.observacion || '';
+          const obsEscapada = obs.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, "\\n");
+          btnObs.innerHTML = `<button onclick="abrirModalObservaciones('${obsEscapada}')" class="w-full bg-rose-100 text-rose-700 py-2.5 rounded-lg text-xs font-bold hover:bg-rose-200 transition-all border border-rose-200">Ver Detalles</button>`;
+          btnObs.classList.remove('hidden');
+        } else {
+          btnObs.classList.add('hidden');
+        }
       })
       .catch(() => {
         const badge = document.getElementById('badge-evaluacion-chofer');
@@ -654,6 +723,65 @@
         const tbody = document.getElementById('tabla-movimientos');
         tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-400 text-xs">Error al cargar movimientos.</td></tr>';
       });
+  }
+
+  let historialRetirosCompleto = [];
+
+  function cargarHistorialRetiros() {
+    fetch('get-historial-retiros.php')
+      .then(res => res.json())
+      .then(res => {
+        if (res.success && res.data) {
+          historialRetirosCompleto = res.data;
+          renderizarHistorialRetiros(historialRetirosCompleto);
+        }
+      });
+  }
+
+  function filtrarRetiros() {
+    const filtro = document.getElementById('filtro-estado-retiro').value;
+    if (filtro === 'todos') {
+      renderizarHistorialRetiros(historialRetirosCompleto);
+    } else {
+      renderizarHistorialRetiros(historialRetirosCompleto.filter(r => r.estado === filtro));
+    }
+  }
+
+  function renderizarHistorialRetiros(lista) {
+    const tbody = document.getElementById('tabla-historial-retiros');
+    tbody.innerHTML = '';
+
+    if (lista.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 text-sm">No hay retiros registrados.</td></tr>';
+      return;
+    }
+
+    lista.forEach(r => {
+      const fecha = new Date(r.fecha);
+      const fechaStr = fecha.toLocaleDateString('es-VE') + ' ' + fecha.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
+
+      let badgeClass = 'bg-amber-100 text-amber-700';
+      let estadoTexto = 'Pendiente';
+      if (r.estado === 'finalizado') {
+        badgeClass = 'bg-emerald-100 text-emerald-700';
+        estadoTexto = 'Aprobado';
+      } else if (r.estado === 'rechazado') {
+        badgeClass = 'bg-rose-100 text-rose-700';
+        estadoTexto = 'Rechazado';
+      }
+
+      tbody.innerHTML += `
+        <tr class="hover:bg-slate-50 border-b border-slate-100 transition-colors">
+          <td class="px-6 py-4 text-slate-600 text-xs">${fechaStr}</td>
+          <td class="px-6 py-4 text-sm font-semibold text-slate-800">${r.nombre_banco || 'N/A'}</td>
+          <td class="px-6 py-4 font-mono text-xs text-slate-600">${r.nro_ref || 'Sin ref.'}</td>
+          <td class="px-6 py-4 text-right font-bold text-slate-800 font-mono text-xs">Bs. ${parseFloat(r.monto).toFixed(2)}</td>
+          <td class="px-6 py-4 text-center">
+            <span class="px-2.5 py-1 text-[10px] font-bold rounded-full uppercase ${badgeClass}">${estadoTexto}</span>
+          </td>
+          <td class="px-6 py-4 text-slate-600 text-xs">${r.detalles || '—'}</td>
+        </tr>`;
+    });
   }
 
   function registrarVehiculo() {
@@ -767,6 +895,10 @@
             ? `<button onclick="reevaluarVehiculo(${v.id_vehiculo})" class="bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-blue-200 transition">Reevaluar</button>`
             : `<button disabled class="bg-slate-100 text-slate-400 px-3 py-1.5 rounded-lg text-[10px] font-bold cursor-not-allowed">Reevaluar</button>`;
 
+          const btnDetalles = (estadoNormalizado === 'no_apto' && v.observacion_evaluacion)
+            ? `<button onclick="abrirModalObservaciones('${v.observacion_evaluacion.replace(/'/g, "\\'").replace(/\n/g, "\\n")}')" class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-rose-200 transition ml-1">Detalles</button>`
+            : `<button disabled class="bg-slate-100 text-slate-400 px-3 py-1.5 rounded-lg text-[10px] font-bold cursor-not-allowed ml-1">Detalles</button>`;
+
           html += `
           <tr class="hover:bg-slate-50 border-b border-slate-100 transition-colors">
             <td class="px-6 py-4 font-semibold text-slate-900 capitalize">${v.marca} ${v.modelo}</td>
@@ -778,7 +910,12 @@
                 ${estadoTexto}
               </span>
             </td>
-            <td class="px-6 py-4 text-center">${btnReevaluar}</td>
+            <td class="px-6 py-4 text-center">
+              <div class="flex justify-center gap-1">
+                ${btnReevaluar}
+                ${btnDetalles}
+              </div>
+            </td>
           </tr>`;
         });
 
@@ -916,10 +1053,11 @@
       .then(res => res.json())
       .then(data => {
         if(data.success) {
-          alert("¡Retiro aprobado! El dinero ha sido descontado.");
+          alert("¡Solicitud de retiro enviada! Tu petición está en estado pendiente y será procesada por el personal de administración.");
           document.getElementById('form-solicitar-retiro').reset();
           cargarDatosChofer();
           cargarMovimientosChofer();
+          cargarHistorialRetiros();
         } else {
           alert(data.message || "Ocurrió un error en la transacción.");
         }
@@ -969,6 +1107,11 @@
   }
 
   function cerrarModal() { document.getElementById('modal-vehiculo').classList.add('hidden'); }
+
+  function abrirModalObservaciones(texto) {
+    document.getElementById('texto-observacion').textContent = texto || 'Sin observaciones registradas.';
+    document.getElementById('modal-observaciones').classList.remove('hidden');
+  }
 
   function verDatosPasajero(idViaje) {
     fetch(`ver-pasajero.php?id_viaje=${idViaje}`)

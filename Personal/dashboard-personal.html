@@ -343,6 +343,52 @@
     </div>
   </div>
 
+  <div id="modal-aprobar-pago" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
+      <div class="flex justify-between items-center mb-5">
+        <h3 class="font-bold text-lg text-slate-900">Aprobar Pago a Chofer</h3>
+        <button onclick="cerrarModalPago()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="h-5 w-5"></i></button>
+      </div>
+
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-5 space-y-2">
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-500">Chofer:</span>
+          <div class="text-right">
+            <span id="modal-pago-chofer" class="font-bold text-slate-800"></span>
+            <p id="modal-pago-ci" class="text-[11px] text-slate-400 font-mono"></p>
+          </div>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-500">Cuenta:</span>
+          <span id="modal-pago-cuenta" class="font-mono font-bold text-slate-800"></span>
+        </div>
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-500">Monto:</span>
+          <span id="modal-pago-monto" class="font-bold text-emerald-600"></span>
+        </div>
+      </div>
+
+      <form id="form-aprobar-pago" class="space-y-4">
+        <input type="hidden" id="modal-pago-id">
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Nº Referencia (Últimos 6 dígitos)</label>
+          <input type="text" id="modal-pago-ref" maxlength="6" pattern="\d{6}" required class="w-full border border-slate-300 p-2.5 rounded-lg text-sm font-mono" placeholder="Ej: 123456">
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Detalles (Opcional)</label>
+          <textarea id="modal-pago-detalle" rows="3" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm" placeholder="Notas internas, observaciones..."></textarea>
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <button type="button" onclick="cerrarModalPago()" class="w-1/3 bg-slate-100 text-slate-700 py-2.5 rounded-lg font-bold text-sm hover:bg-slate-200">Cancelar</button>
+          <button type="submit" class="w-full bg-emerald-600 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-emerald-700">Confirmar Aprobación</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -472,7 +518,7 @@
       .then(res => res.json())
       .then(data => {
         const tbody = document.querySelector('#vista-pagos tbody');
-        tbody.innerHTML = ''; // Limpiamos
+        tbody.innerHTML = '';
 
         if (data.length === 0) {
           tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center">No hay pagos pendientes</td></tr>';
@@ -480,13 +526,14 @@
         }
 
         data.forEach(p => {
+          const esc = (s) => (s || '').replace(/'/g, "\\'");
           tbody.innerHTML += `
           <tr>
-            <td class="px-6 py-4 font-bold">${p.nombres}</td>
-            <td class="px-6 py-4 font-mono">${p.nro_ref}</td>
+            <td class="px-6 py-4 font-bold">${p.nombre} ${p.apellido}</td>
+            <td class="px-6 py-4 font-mono text-xs">${p.nro_ref || 'Sin ref.'}</td>
             <td class="px-6 py-4">Bs. ${parseFloat(p.monto).toFixed(2)}</td>
             <td class="px-6 py-4 text-right">
-              <button onclick="aprobarPago(${p.id_transaccion})"
+              <button onclick="abrirModalPago(${p.id_pago}, '${esc(p.nombre)}', '${esc(p.apellido)}', '${esc(p.cedula)}', '${esc(p.nro_cuenta)}', '${esc(p.nombre_banco)}', ${p.monto}, '${esc(p.nro_ref)}', '${esc(p.detalles)}')"
                       class="bg-emerald-600 text-white px-4 py-1.5 rounded text-[10px] font-bold hover:bg-emerald-700">
                 APROBAR
               </button>
@@ -497,24 +544,54 @@
       });
   }
 
-  function aprobarPago(idTransaccion) {
-    if (!confirm("¿Estás seguro de aprobar este pago? Se sumará al saldo del chofer.")) return;
+  function abrirModalPago(id, nombre, apellido, cedula, nroCuenta, banco, monto, nroRef, detalles) {
+    document.getElementById('modal-pago-id').value = id;
+    document.getElementById('modal-pago-chofer').textContent = nombre + ' ' + apellido;
+    document.getElementById('modal-pago-ci').textContent = 'CI: ' + cedula;
+    document.getElementById('modal-pago-cuenta').textContent = banco ? banco + ' ' + nroCuenta : nroCuenta || 'N/A';
+    document.getElementById('modal-pago-monto').textContent = 'Bs. ' + parseFloat(monto).toFixed(2);
+
+    const ultimos6 = nroRef ? nroRef.replace(/\D/g, '').slice(-6) : '';
+    document.getElementById('modal-pago-ref').value = ultimos6;
+    document.getElementById('modal-pago-detalle').value = detalles || '';
+
+    document.getElementById('modal-aprobar-pago').classList.remove('hidden');
+    lucide.createIcons();
+  }
+
+  function cerrarModalPago() {
+    document.getElementById('modal-aprobar-pago').classList.add('hidden');
+  }
+
+  document.getElementById('form-aprobar-pago').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const id = document.getElementById('modal-pago-id').value;
+    const nroRef = document.getElementById('modal-pago-ref').value.trim();
+    const detalles = document.getElementById('modal-pago-detalle').value.trim();
+
+    if (!/^\d{6}$/.test(nroRef)) {
+      alert('La referencia debe ser exactamente 6 dígitos numéricos.');
+      return;
+    }
 
     fetch('aprobar-pago.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: idTransaccion })
+      body: JSON.stringify({ id: parseInt(id), nro_ref: nroRef, detalles: detalles || null })
     })
       .then(res => res.json())
       .then(res => {
         if (res.success) {
           alert("¡Pago aprobado con éxito!");
-          cargarPagosPendientes(); // Refresca la tabla para que desaparezca el registro
+          cerrarModalPago();
+          cargarPagosPendientes();
+          cargarEstadisticas();
         } else {
           alert("Error: " + res.message);
         }
       });
-  }
+  });
 
   function revisarVehiculo(id) {
     document.getElementById('id-evaluacion-input').value = id;
@@ -835,8 +912,8 @@
             <table class="w-full text-sm text-left">
               <thead class="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th class="p-3 text-xs font-semibold text-slate-700">ID Transacción</th>
-                <th class="p-3 text-xs font-semibold text-slate-700">Detalle / Tipo</th>
+                <th class="p-3 text-xs font-semibold text-slate-700">ID Viaje</th>
+                <th class="p-3 text-xs font-semibold text-slate-700">Ruta</th>
                 <th class="p-3 text-xs font-semibold text-slate-700">Fecha</th>
                 <th class="p-3 text-xs font-semibold text-slate-700 text-right">Monto Comisión</th>
               </tr>
@@ -847,10 +924,9 @@
             totalComision += parseFloat(t.comision);
             html += `
               <tr class="hover:bg-slate-50">
-                <td class="p-3 font-mono text-xs">#${String(t.id_transaccion).padStart(4, '0')}</td>
+                <td class="p-3 font-mono text-xs">#${String(t.id_traslado).padStart(4, '0')}</td>
                 <td class="p-3 text-slate-700">
-                  <span class="font-semibold">Viaje</span>
-                  <span class="text-slate-400 text-xs ml-1">(Ref: ${t.nro_ref})</span>
+                  <span class="font-semibold">${t.ruta}</span>
                 </td>
                 <td class="p-3 text-slate-600">${t.fecha}</td>
                 <td class="p-3 text-right font-semibold text-emerald-600">Bs. ${parseFloat(t.comision).toFixed(2)}</td>
@@ -868,7 +944,7 @@
 
           container.innerHTML = html;
         } else {
-          container.innerHTML = '<p class="text-center text-slate-400 text-sm italic">No se encontraron transacciones en el rango seleccionado.</p>';
+          container.innerHTML = '<p class="text-center text-slate-400 text-sm italic">No se encontraron traslados en el rango seleccionado.</p>';
         }
       });
   }

@@ -15,10 +15,10 @@ try {
 
   $stmt = $conn->query("
     SELECT
-      COALESCE(SUM(CASE WHEN tipo = 'pago_viaje' THEN monto * 0.30 ELSE 0 END), 0) AS ganancia_historica,
-      COALESCE(SUM(CASE WHEN tipo = 'pago_viaje' AND DATE_FORMAT(fecha, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m') THEN monto * 0.30 ELSE 0 END), 0) AS ganancia_mes_actual,
-      COALESCE(SUM(CASE WHEN tipo = 'pago_viaje' THEN 1 ELSE 0 END), 0) AS carreras_completadas
-    FROM transacciones
+      COALESCE(SUM(costo * 0.30), 0) AS ganancia_historica,
+      COALESCE(SUM(CASE WHEN DATE_FORMAT(fecha, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m') THEN costo * 0.30 ELSE 0 END), 0) AS ganancia_mes_actual,
+      COALESCE(COUNT(*), 0) AS carreras_completadas
+    FROM traslados
     WHERE estado = 'finalizado'
   ");
 

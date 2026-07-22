@@ -12,25 +12,16 @@ require_once '../conexion.php';
 try {
   /** @var PDO $conn */
   $id_usuario = $_SESSION['id_usuario'];
-  $rol = $_SESSION['rol']; // Asumiendo que guardas el rol en la sesión
 
-  // Construimos la consulta base
-  // Usamos LEFT JOIN para obtener el nombre del banco desde la tabla bancos
-  $sql = "SELECT t.*, b.nombre_banco
-            FROM transacciones t
-            LEFT JOIN bancos b ON t.id_banco = b.id_banco";
-
-  if ($rol === 'cliente') {
-    $sql .= " WHERE t.id_usuario = :id AND t.tipo = 'recarga'";
-  } elseif ($rol === 'chofer') {
-    $sql .= " WHERE t.id_usuario = :id AND t.tipo = 'pago_chofer'";
-  } else {
-    $sql .= " ORDER BY t.fecha DESC"; // Admin ve todo
-  }
+  $sql = "SELECT r.id_recarga AS id, r.monto, r.nro_ref, r.fecha, b.nombre_banco
+          FROM recargas r
+          LEFT JOIN bancos b ON r.id_banco = b.id_banco
+          INNER JOIN clientes c ON r.id_cliente = c.id_cliente
+          WHERE c.id_usuario = :id
+          ORDER BY r.fecha DESC";
 
   $stmt = $conn->prepare($sql);
-  $params = ($rol === 'cliente' || $rol === 'chofer') ? [':id' => $id_usuario] : [];
-  $stmt->execute($params);
+  $stmt->execute([':id' => $id_usuario]);
 
   echo json_encode(['success' => true, 'data' => $stmt->fetchAll(PDO::FETCH_ASSOC)]);
 } catch (Exception $e) {

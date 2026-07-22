@@ -14,12 +14,13 @@ try {
   $id_usuario = $_SESSION['id_usuario'];
   $movimientos = [];
 
-  // 1. Retiros del chofer (desde transacciones)
+  // 1. Retiros del chofer (desde pago_chofer)
   $stmtRetiros = $conn->prepare("
-    SELECT t.nro_ref AS id_ref, t.fecha, t.monto, t.detalles
-    FROM transacciones t
-    WHERE t.id_usuario = ? AND t.tipo = 'retiro'
-    ORDER BY t.fecha DESC
+    SELECT pc.nro_ref AS id_ref, pc.fecha, pc.monto, pc.detalles
+    FROM pago_chofer pc
+    JOIN choferes ch ON pc.id_chofer = ch.id_chofer
+    WHERE ch.id_usuario = ? AND pc.estado = 'finalizado'
+    ORDER BY pc.fecha DESC
     LIMIT 10
   ");
   $stmtRetiros->execute([$id_usuario]);
