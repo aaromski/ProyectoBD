@@ -645,7 +645,17 @@
           fecha.textContent = 'Sin fecha';
         }
 
-        btnContainer.classList.toggle('hidden', estado !== 'reprobado');
+        const hoy = new Date();
+        let puedeReevaluar = false;
+        if (estado === 'reprobado') {
+          puedeReevaluar = true;
+        } else if (estado === 'aprobado' && res.data.fecha) {
+          const d = new Date(res.data.fecha);
+          const unAnoDespues = new Date(d);
+          unAnoDespues.setFullYear(unAnoDespues.getFullYear() + 1);
+          puedeReevaluar = hoy >= unAnoDespues;
+        }
+        btnContainer.classList.toggle('hidden', !puedeReevaluar);
 
         // Btn Detalles (solo si reprobado)
         let btnObs = document.getElementById('contenedor-btn-detalle-evaluacion');
