@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `carreritabd` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci */;
+USE `carreritabd`;
 -- MySQL dump 10.13  Distrib 8.0.46, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: carreritabd
@@ -67,7 +69,7 @@ CREATE TABLE `choferes` (
 
 LOCK TABLES `choferes` WRITE;
 /*!40000 ALTER TABLE `choferes` DISABLE KEYS */;
-INSERT INTO `choferes` VALUES (1,3,4,'23254122558866332254',440.31),(2,6,2,'01024456465465464465',0.00),(6,11,9,'01754684646546546546',0.00),(7,13,23,'01664125432455345345',0.00),(8,12,12,'01745431430450453045',0.00),(11,17,5,'01344534534534534354',0.00),(12,4,6,'01915343543345345354',0.00),(13,18,6,'01918867687678678678',0.00);
+INSERT INTO `choferes` VALUES (1,3,4,'23254122558866332254',271.36),(2,6,2,'01024456465465464465',166.13),(6,11,9,'01754684646546546546',0.00),(7,13,23,'01664125432455345345',0.00),(8,12,12,'01745431430450453045',0.00),(11,17,5,'01344534534534534354',0.00),(12,4,6,'01915343543345345354',0.00),(13,18,6,'01918867687678678678',0.00);
 /*!40000 ALTER TABLE `choferes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -94,7 +96,7 @@ CREATE TABLE `clientes` (
 
 LOCK TABLES `clientes` WRITE;
 /*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
-INSERT INTO `clientes` VALUES (1,1,22237.90),(2,3,0.00),(3,4,0.00),(4,12,0.00);
+INSERT INTO `clientes` VALUES (1,1,18048.69),(2,3,0.00),(3,4,0.00),(4,12,0.00);
 /*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -178,7 +180,7 @@ CREATE TABLE `evaluaciones_choferes` (
   KEY `fk_evaluaciones_usuarios1_idx` (`id_personal`),
   CONSTRAINT `fk_evaluaciones_choferes1` FOREIGN KEY (`id_chofer`) REFERENCES `choferes` (`id_chofer`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_evaluaciones_usuarios1` FOREIGN KEY (`id_personal`) REFERENCES `usuarios` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -187,7 +189,7 @@ CREATE TABLE `evaluaciones_choferes` (
 
 LOCK TABLES `evaluaciones_choferes` WRITE;
 /*!40000 ALTER TABLE `evaluaciones_choferes` DISABLE KEYS */;
-INSERT INTO `evaluaciones_choferes` VALUES (1,5,1,80.00,'2026-07-15 19:11:07','aprobado',NULL),(2,5,2,10.00,'2026-07-16 17:25:36','reprobado',NULL),(3,5,2,50.00,'2026-07-16 17:27:11','reprobado',NULL),(4,NULL,6,NULL,'2026-07-16 19:01:53','pendiente',NULL),(5,NULL,7,NULL,'2026-07-16 19:08:22','pendiente',NULL),(6,NULL,8,NULL,'2026-07-16 19:09:25','pendiente',NULL),(7,NULL,11,NULL,'2026-07-17 11:37:19','pendiente',NULL),(8,NULL,12,NULL,'2026-07-17 11:40:00','pendiente',NULL),(9,NULL,13,NULL,'2026-07-17 11:55:22','pendiente',NULL);
+INSERT INTO `evaluaciones_choferes` VALUES (1,5,1,80.00,'2026-07-15 19:11:07','aprobado',NULL),(2,5,2,10.00,'2026-07-16 17:25:36','reprobado',NULL),(3,5,2,50.00,'2026-07-16 17:27:11','reprobado',NULL),(4,5,6,80.00,'2026-07-16 19:01:53','aprobado',NULL),(5,5,7,60.00,'2026-07-16 19:08:22','reprobado',NULL),(6,5,8,50.00,'2026-07-16 19:09:25','reprobado',NULL),(7,5,11,70.00,'2026-07-17 11:37:19','aprobado',NULL),(8,5,12,60.00,'2026-07-17 11:40:00','reprobado',NULL),(9,5,13,85.00,'2026-07-17 11:55:22','aprobado',NULL),(10,5,2,100.00,'2026-07-18 20:09:37','aprobado',NULL),(11,5,7,20.00,'2026-07-22 12:07:05','reprobado',NULL);
 /*!40000 ALTER TABLE `evaluaciones_choferes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -211,7 +213,7 @@ CREATE TABLE `evaluaciones_vehiculos` (
   KEY `fk_evaluaciones_usuarios1_idx` (`id_personal`),
   CONSTRAINT `fk_evaluaciones_usuarios10` FOREIGN KEY (`id_personal`) REFERENCES `usuarios` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_evaluaciones_vehiculos10` FOREIGN KEY (`id_vehiculo`) REFERENCES `vehiculos` (`id_vehiculo`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -220,8 +222,78 @@ CREATE TABLE `evaluaciones_vehiculos` (
 
 LOCK TABLES `evaluaciones_vehiculos` WRITE;
 /*!40000 ALTER TABLE `evaluaciones_vehiculos` DISABLE KEYS */;
-INSERT INTO `evaluaciones_vehiculos` VALUES (1,5,1,80.00,'2026-07-15 19:11:55','apto','bien'),(2,5,2,50.00,'2026-07-15 19:12:07','no_apto','regular'),(3,NULL,3,NULL,'2026-07-17 14:10:06','pendiente',NULL);
+INSERT INTO `evaluaciones_vehiculos` VALUES (1,5,1,80.00,'2026-07-15 19:11:55','apto','bien'),(2,5,2,50.00,'2026-07-15 19:12:07','no_apto','regular'),(3,5,3,100.00,'2026-07-17 14:10:06','apto',''),(4,5,4,90.00,'2026-07-22 11:27:36','apto','Sin opinion'),(5,5,5,20.00,'2026-07-22 12:20:29','no_apto','Datos no coinciden e incorrectos');
 /*!40000 ALTER TABLE `evaluaciones_vehiculos` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `pago_chofer`
+--
+
+DROP TABLE IF EXISTS `pago_chofer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `pago_chofer` (
+  `id_pago` int(11) NOT NULL AUTO_INCREMENT,
+  `id_chofer` int(11) NOT NULL,
+  `id_personal` int(11) DEFAULT NULL,
+  `id_banco` int(11) NOT NULL,
+  `numero_cuenta` varchar(30) NOT NULL,
+  `monto` decimal(10,2) NOT NULL,
+  `nro_ref` varchar(100) DEFAULT NULL,
+  `fecha` datetime NOT NULL,
+  `estado` enum('pendiente','finalizado') DEFAULT 'pendiente',
+  `detalles` text DEFAULT NULL,
+  PRIMARY KEY (`id_pago`),
+  KEY `fk_pago_chofer` (`id_chofer`),
+  KEY `fk_pago_personal` (`id_personal`),
+  KEY `fk_pago_banco` (`id_banco`),
+  CONSTRAINT `fk_pago_banco` FOREIGN KEY (`id_banco`) REFERENCES `bancos` (`id_banco`) ON DELETE CASCADE,
+  CONSTRAINT `fk_pago_chofer` FOREIGN KEY (`id_chofer`) REFERENCES `choferes` (`id_chofer`) ON DELETE CASCADE,
+  CONSTRAINT `fk_pago_personal` FOREIGN KEY (`id_personal`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `pago_chofer`
+--
+
+LOCK TABLES `pago_chofer` WRITE;
+/*!40000 ALTER TABLE `pago_chofer` DISABLE KEYS */;
+INSERT INTO `pago_chofer` VALUES (1,1,5,4,'23254122558866332254',2000.00,'265256','2026-07-22 11:20:13','finalizado','Transferencia a Mercantil (Cta: 23254122558866332254)'),(3,2,5,2,'01024456465465464465',2500.00,'865651','2026-07-22 11:42:34','finalizado','Transferencia a Banco Venezuela (Cta: 01024456465465464465)'),(4,2,5,2,'01024456465465464465',100.00,'654654','2026-07-22 11:42:42','finalizado','Nada'),(5,2,5,2,'01024456465465464465',2500.00,'646546','2026-07-22 11:45:44','finalizado','Transferencia a Banco Venezuela (Cta: 01024456465465464465)'),(6,2,NULL,2,'01024456465465464465',200.00,NULL,'2026-07-22 12:02:34','pendiente','Transferencia a Banco Venezuela (Cta: 01024456465465464465)'),(7,2,NULL,2,'01024456465465464465',100.00,NULL,'2026-07-22 12:04:12','pendiente','Transferencia a Banco Venezuela (Cta: 01024456465465464465)');
+/*!40000 ALTER TABLE `pago_chofer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `recargas`
+--
+
+DROP TABLE IF EXISTS `recargas`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `recargas` (
+  `id_recarga` int(11) NOT NULL AUTO_INCREMENT,
+  `id_cliente` int(11) NOT NULL,
+  `id_banco` int(11) NOT NULL,
+  `monto` decimal(10,2) NOT NULL,
+  `nro_ref` varchar(100) NOT NULL,
+  `fecha` datetime NOT NULL,
+  PRIMARY KEY (`id_recarga`),
+  KEY `fk_recarga_cliente` (`id_cliente`),
+  KEY `fk_recarga_banco` (`id_banco`),
+  CONSTRAINT `fk_recarga_banco` FOREIGN KEY (`id_banco`) REFERENCES `bancos` (`id_banco`) ON DELETE CASCADE,
+  CONSTRAINT `fk_recarga_cliente` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `recargas`
+--
+
+LOCK TABLES `recargas` WRITE;
+/*!40000 ALTER TABLE `recargas` DISABLE KEYS */;
+INSERT INTO `recargas` VALUES (1,1,3,15000.00,'REC-125425','2026-07-15 03:06:04'),(2,1,1,15000.00,'REC-545435','2026-07-16 02:33:10'),(3,1,1,1000.00,'REC-254534','2026-07-16 02:39:46'),(4,1,1,1000.00,'REC-453543','2026-07-16 02:40:37'),(5,1,1,1000.00,'REC-635478','2026-07-16 02:41:41'),(6,1,1,1000.00,'REC-565435','2026-07-16 02:43:51'),(7,1,3,1000.00,'REC-415635','2026-07-16 02:47:38'),(8,1,2,3000.00,'REC-868767','2026-07-17 22:10:56'),(16,1,4,5000.00,'REC-463546','2026-07-22 18:05:52'),(22,1,10,1000.00,'REC-598592','2026-07-22 18:52:35'),(23,1,7,3000.00,'REC-156165','2026-07-22 18:53:12');
+/*!40000 ALTER TABLE `recargas` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -252,42 +324,6 @@ INSERT INTO `roles_asignados` VALUES (1,1,'cliente'),(2,2,'admin'),(3,3,'cliente
 UNLOCK TABLES;
 
 --
--- Table structure for table `transacciones`
---
-
-DROP TABLE IF EXISTS `transacciones`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `transacciones` (
-  `id_transaccion` int(11) NOT NULL AUTO_INCREMENT,
-  `id_usuario` int(11) NOT NULL,
-  `tipo` enum('recarga','pago_viaje','pago_chofer','retiro') NOT NULL,
-  `id_banco` int(11) DEFAULT NULL,
-  `monto` decimal(10,2) NOT NULL,
-  `nro_ref` varchar(45) NOT NULL,
-  `fecha` datetime NOT NULL,
-  `estado` enum('pendiente','finalizado') NOT NULL,
-  `detalles` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id_transaccion`),
-  UNIQUE KEY `nro_ref_UNIQUE` (`nro_ref`),
-  KEY `fk_transacciones_usuarios1_idx` (`id_usuario`),
-  KEY `fk_transaccion_banco` (`id_banco`),
-  CONSTRAINT `fk_transaccion_banco` FOREIGN KEY (`id_banco`) REFERENCES `bancos` (`id_banco`),
-  CONSTRAINT `fk_transacciones_usuarios1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `transacciones`
---
-
-LOCK TABLES `transacciones` WRITE;
-/*!40000 ALTER TABLE `transacciones` DISABLE KEYS */;
-INSERT INTO `transacciones` VALUES (1,1,'recarga',3,15000.00,'REC-125425','2026-07-15 03:06:04','finalizado',NULL),(2,1,'pago_viaje',1,7215.19,'VIAJE-496598','2026-07-15 19:20:23','finalizado',NULL),(3,3,'pago_chofer',1,5050.63,'CHOFER-496598','2026-07-15 19:20:23','finalizado',NULL),(4,1,'pago_viaje',1,3699.54,'VIAJE-498863','2026-07-15 19:29:17','finalizado',NULL),(5,3,'pago_chofer',1,2589.68,'CHOFER-498863','2026-07-15 19:29:17','finalizado','Traslado de Alta Vista a Castillito'),(6,3,'retiro',1,1500.00,'RETIRO-814646','2026-07-15 19:30:39','finalizado','Transferencia a Banesco'),(7,3,'retiro',1,5200.00,'RETIRO-268040','2026-07-15 19:50:19','finalizado','Transferencia a Banesco'),(8,3,'retiro',1,500.00,'RETIRO-584366','2026-07-15 20:01:00','finalizado','Transferencia a Mercantil'),(9,1,'recarga',1,15000.00,'REC-545435','2026-07-16 02:33:10','finalizado',NULL),(10,1,'recarga',1,1000.00,'REC-254534','2026-07-16 02:39:46','finalizado',NULL),(11,1,'recarga',1,1000.00,'REC-453543','2026-07-16 02:40:37','finalizado','Recarga a Sistema'),(12,1,'recarga',1,1000.00,'REC-635478','2026-07-16 02:41:41','finalizado','Recarga de saldo'),(13,1,'recarga',1,1000.00,'REC-565435','2026-07-16 02:43:51','finalizado','Recarga a Sistema'),(14,1,'recarga',3,1000.00,'REC-415635','2026-07-16 02:47:38','finalizado','Recarga a Banco Provincial'),(15,1,'recarga',2,3000.00,'REC-868767','2026-07-17 22:10:56','finalizado','Recarga a Banco Venezuela');
-/*!40000 ALTER TABLE `transacciones` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `traslados`
 --
 
@@ -315,7 +351,7 @@ CREATE TABLE `traslados` (
   CONSTRAINT `fk_traslados_vehiculos1` FOREIGN KEY (`id_vehiculo`) REFERENCES `vehiculos` (`id_vehiculo`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_traslados_zonas1` FOREIGN KEY (`id_zona_origen`) REFERENCES `zonas` (`id_zona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_traslados_zonas2` FOREIGN KEY (`id_zona_destino`) REFERENCES `zonas` (`id_zona`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -324,7 +360,7 @@ CREATE TABLE `traslados` (
 
 LOCK TABLES `traslados` WRITE;
 /*!40000 ALTER TABLE `traslados` DISABLE KEYS */;
-INSERT INTO `traslados` VALUES (1,1,1,1,14,26,7215.19,'2026-07-15 19:16:02','finalizado'),(2,1,1,1,14,21,3699.54,'2026-07-15 19:29:02','finalizado'),(3,1,1,1,15,21,2615.79,'2026-07-17 12:26:05','en_curso'),(4,1,1,NULL,2,3,2231.58,'2026-07-17 14:11:38','pendiente');
+INSERT INTO `traslados` VALUES (1,1,1,1,14,26,7215.19,'2026-07-15 19:16:02','finalizado'),(2,1,1,1,14,21,3699.54,'2026-07-15 19:29:02','finalizado'),(3,1,1,1,15,21,2615.79,'2026-07-17 12:26:05','finalizado'),(4,1,2,NULL,2,3,2231.58,'2026-07-17 14:11:38','pendiente'),(5,1,2,NULL,14,17,5930.78,'2026-07-18 19:33:03','pendiente'),(6,1,2,3,9,13,3108.05,'2026-07-18 20:11:00','cancelado'),(7,1,2,3,7,20,3021.10,'2026-07-18 20:10:58','finalizado'),(8,1,2,3,28,26,4237.33,'2026-07-22 11:26:52','finalizado');
 /*!40000 ALTER TABLE `traslados` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -377,7 +413,7 @@ CREATE TABLE `vehiculos` (
   UNIQUE KEY `placa_UNIQUE` (`placa`),
   KEY `fk_carros_choferes_idx` (`id_chofer`),
   CONSTRAINT `fk_carros_choferes` FOREIGN KEY (`id_chofer`) REFERENCES `choferes` (`id_chofer`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -386,7 +422,7 @@ CREATE TABLE `vehiculos` (
 
 LOCK TABLES `vehiculos` WRITE;
 /*!40000 ALTER TABLE `vehiculos` DISABLE KEYS */;
-INSERT INTO `vehiculos` VALUES (1,'aa111bbb','toyota','yaris',2006,1),(2,'aa12vc','honda','ranger',2005,1),(3,'DD52bc','hyundai','sonic',2006,2);
+INSERT INTO `vehiculos` VALUES (1,'aa111bbb','toyota','yaris',2006,1),(2,'aa12vc','honda','ranger',2005,1),(3,'DD52bc','hyundai','sonic',2006,2),(4,'11552ab','Toyota ','honda',2006,2),(5,'BCD523ee','toyota','honda',2006,7);
 /*!40000 ALTER TABLE `vehiculos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -425,4 +461,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-07-17 14:17:59
+-- Dump completed on 2026-07-22 12:31:58
