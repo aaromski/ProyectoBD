@@ -808,6 +808,9 @@
     $.post('guardar_transaccion.php', $(this).serialize(), function(response) {
       alert(response.message);
       if(response.success) cerrarModalRecarga();
+      cargarDatosUsuario();
+      cargarHistorialFinanciero();
+      cargarHistorialPagos();
     }, 'json');
   });
 

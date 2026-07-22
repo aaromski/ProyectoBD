@@ -10,8 +10,7 @@ if (!isset($_SESSION['id_usuario'])) {
 $id_usuario = $_SESSION['id_usuario'];
 $monto = $_POST['monto'];
 $id_cuenta_empresa = isset($_POST['id_cuenta_empresa']) ? (int)$_POST['id_cuenta_empresa'] : 1;
-$fecha_usuario = !empty($_POST['fecha']) ? $_POST['fecha'] : date('Y-m-d');
-$fecha = $fecha_usuario . ' ' . date('H:i:s');
+$fecha_pago = !empty($_POST['fecha']) ? $_POST['fecha'] : date('Y-m-d');
 
 $nro_ref = $_POST['nro_ref'];
 if (!preg_match('/^\d{6}$/', $nro_ref)) {
@@ -38,8 +37,8 @@ try {
 
   $conn->beginTransaction();
 
-  $stmt = $conn->prepare("INSERT INTO recargas (id_cliente, id_banco, monto, nro_ref, fecha) VALUES (?, ?, ?, ?, ?)");
-  $stmt->execute([$id_cliente, $id_banco, $monto, $nro_ref_completo, $fecha]);
+  $stmt = $conn->prepare("INSERT INTO recargas (id_cliente, id_banco, monto, nro_ref, fecha_pago) VALUES (?, ?, ?, ?, ?)");
+  $stmt->execute([$id_cliente, $id_banco, $monto, $nro_ref_completo, $fecha_pago]);
 
   $conn->prepare("UPDATE clientes SET saldo = saldo + ? WHERE id_cliente = ?")->execute([$monto, $id_cliente]);
 
