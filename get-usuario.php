@@ -78,7 +78,7 @@ try {
       echo json_encode(['error' => 'Perfil de chofer no encontrado']);
     }
   } else if ($rol === 'personal' || $rol === 'admin') {
-    $sql = "SELECT nombres, apellidos, cedula, telefono, correo
+    $sql = "SELECT id_usuario, nombres, apellidos, cedula, telefono, correo
             FROM usuarios
             WHERE id_usuario = :id";
 

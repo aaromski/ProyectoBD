@@ -170,12 +170,21 @@
         <button onclick="document.getElementById('modal-recarga').classList.remove('hidden')" class="bg-[#0f172a] text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-800">Notificar Pago</button>
       </div>
 
+      <div class="flex gap-3 mb-4">
+        <select id="filtro-mes-recarga" onchange="aplicarFiltroRecargas()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
+          <option value="">Todos los Meses</option>
+        </select>
+        <select id="filtro-ano-recarga" onchange="aplicarFiltroRecargas()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
+          <option value="">Todos los Años</option>
+        </select>
+      </div>
+
       <div class="border border-slate-200 rounded-xl overflow-hidden bg-white">
         <table class="w-full text-sm text-left">
           <thead class="text-[#64748b] bg-slate-50 text-[10px] uppercase tracking-wider border-b border-slate-200">
           <tr>
             <th class="px-6 py-3">Fecha Registro</th>
-            <th class="px-6 py-3">Banco</th>
+            <th class="px-6 py-3">Banco Destino</th>
             <th class="px-6 py-3">Nº Referencia Bancaria</th>
             <th class="px-6 py-3">Monto</th>
             <th class="px-6 py-3 text-center">Estado</th>
@@ -195,11 +204,17 @@
           <h2 class="font-bold text-lg text-slate-900">Historial de Destinos y Viajes</h2>
           <p class="text-xs text-slate-500">Listado logístico de rutas ejecutadas y costos finales cobrados en Bolívares.</p>
         </div>
-        <select id="filtro-estado-traslado" onchange="aplicarFiltro()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
+        <select id="filtro-estado-traslado" onchange="aplicarFiltroTraslados()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
           <option value="todos">Todos los Estados</option>
-          <option value="pendiente">Pendientes</option>
+          <option value="en_curso">En Curso</option>
           <option value="cancelado">Cancelados</option>
           <option value="finalizado">Finalizados</option>
+        </select>
+        <select id="filtro-mes-traslado" onchange="aplicarFiltroTraslados()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
+          <option value="">Todos los Meses</option>
+        </select>
+        <select id="filtro-ano-traslado" onchange="aplicarFiltroTraslados()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
+          <option value="">Todos los Años</option>
         </select>
       </div>
 
@@ -208,6 +223,7 @@
           <thead class="text-[#64748b] bg-slate-50 text-[10px] uppercase tracking-wider border-b border-slate-200">
           <tr>
             <th class="px-6 py-3">Código Viaje</th>
+            <th class="px-6 py-3">Fecha / Hora</th>
             <th class="px-6 py-3">Ruta (Origen &rarr; Destino)</th>
             <th class="px-6 py-3">Costo (Bs.)</th>
             <th class="px-6 py-3 text-center">Estado</th>
@@ -367,6 +383,17 @@
 
   lucide.createIcons();
 
+  function formatearFecha(fechaStr) {
+    if (!fechaStr) return 'N/A';
+    const d = new Date(fechaStr);
+    const dia = String(d.getDate()).padStart(2, '0');
+    const mes = String(d.getMonth() + 1).padStart(2, '0');
+    const ano = d.getFullYear();
+    const hora = String(d.getHours()).padStart(2, '0');
+    const min = String(d.getMinutes()).padStart(2, '0');
+    return `${dia}/${mes}/${ano} ${hora}:${min}`;
+  }
+
   // Reloj en tiempo real
   function updateClock() {
     const opciones = { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true };
@@ -436,8 +463,6 @@
             <button onclick="abrirModalDetalle(${t.id_traslado})" class="text-blue-600 text-[10px] font-bold hover:underline">Ver Perfil</button>
           </div>
         `;
-      } else if (estadoRaw === 'aceptado') {
-        accion = `<button onclick="abrirModalDetalle(${t.id_traslado})" class="text-blue-600 underline font-bold hover:text-blue-800">Ver Chofer</button>`;
       } else {
         accion = `<span class="text-slate-400 text-xs italic">N/A</span>`;
       }
@@ -445,12 +470,9 @@
       let badgeClass = 'bg-slate-100 text-slate-700 border-slate-200';
       let textoMostrar = t.estado;
 
-      if (estadoRaw === 'pendiente') {
+      if (estadoRaw === 'en_curso') {
         badgeClass = 'bg-amber-100 text-amber-700 border-amber-200';
-        textoMostrar = 'Pendiente';
-      } else if (estadoRaw === 'en_curso' || estadoRaw === 'aceptado') {
-        badgeClass = 'bg-amber-100 text-amber-700 border-amber-200';
-        textoMostrar = estadoRaw === 'en_curso' ? 'En Curso' : 'Aceptado';
+        textoMostrar = 'En Curso';
       } else if (estadoRaw === 'finalizado') {
         badgeClass = 'bg-emerald-100 text-emerald-700 border-emerald-200';
         textoMostrar = 'Finalizado';
@@ -464,6 +486,7 @@
       const row = `
     <tr class="border-b hover:bg-slate-50">
       <td class="px-6 py-4 font-mono text-slate-500">#${t.id_traslado}</td>
+      <td class="px-6 py-4 text-xs text-slate-600">${formatearFecha(t.fecha)}</td>
       <td class="px-6 py-4">${t.nombre_origen} &rarr; ${t.nombre_destino}</td>
       <td class="px-6 py-4 font-bold text-slate-900">Bs. ${precio}</td>
       <td class="px-6 py-4 text-center">
@@ -480,7 +503,7 @@
 
   function actualizarEstado(idTraslado, nuevoEstado) {
     if (nuevoEstado === 'cancelado') {
-      if (!confirm("¿Estás seguro de cancelar este viaje? Se te reembolsará el dinero a tu saldo.")) {
+      if (!confirm("¿Estás seguro de cancelar este viaje? Solo puedes cancelar dentro de los primeros 15 minutos. Se te reembolsará el dinero.")) {
         return;
       }
 
@@ -494,6 +517,7 @@
           if (res.success) {
             alert("Viaje cancelado y saldo devuelto correctamente.");
             cargarHistorialTraslados();
+            cargarHistorialFinanciero();
             if (typeof cargarDatosUsuario === 'function') cargarDatosUsuario();
           } else {
             alert("Error: " + res.message);
@@ -513,6 +537,7 @@
           if (res.success) {
             alert("Viaje finalizado correctamente.");
             cargarHistorialTraslados();
+            cargarHistorialFinanciero();
           } else {
             alert("Error: " + res.message);
           }
@@ -620,15 +645,72 @@
     renderizarMontos();
   }
 
-  function aplicarFiltro() {
+  function aplicarFiltroTraslados() {
     const estadoSeleccionado = document.getElementById('filtro-estado-traslado').value;
+    const mesSeleccionado = document.getElementById('filtro-mes-traslado').value;
+    const anoSeleccionado = document.getElementById('filtro-ano-traslado').value;
 
-    if (estadoSeleccionado === 'todos') {
-      renderizarTabla(historialCompleto);
-    } else {
-      const datosFiltrados = historialCompleto.filter(t => t.estado === estadoSeleccionado);
-      renderizarTabla(datosFiltrados);
+    let datosFiltrados = historialCompleto;
+
+    if (estadoSeleccionado !== 'todos') {
+      datosFiltrados = datosFiltrados.filter(t => t.estado === estadoSeleccionado);
     }
+
+    if (mesSeleccionado || anoSeleccionado) {
+      datosFiltrados = datosFiltrados.filter(t => {
+        const fecha = new Date(t.fecha);
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const ano = String(fecha.getFullYear());
+        if (mesSeleccionado && mes !== mesSeleccionado) return false;
+        if (anoSeleccionado && ano !== anoSeleccionado) return false;
+        return true;
+      });
+    }
+
+    renderizarTabla(datosFiltrados);
+  }
+
+  function aplicarFiltroRecargas() {
+    const mesSeleccionado = document.getElementById('filtro-mes-recarga').value;
+    const anoSeleccionado = document.getElementById('filtro-ano-recarga').value;
+    cargarHistorialPagos(mesSeleccionado, anoSeleccionado);
+  }
+
+  function poblarFiltrosFechas() {
+    const meses = [
+      { val: '01', label: 'Enero' }, { val: '02', label: 'Febrero' },
+      { val: '03', label: 'Marzo' }, { val: '04', label: 'Abril' },
+      { val: '05', label: 'Mayo' }, { val: '06', label: 'Junio' },
+      { val: '07', label: 'Julio' }, { val: '08', label: 'Agosto' },
+      { val: '09', label: 'Septiembre' }, { val: '10', label: 'Octubre' },
+      { val: '11', label: 'Noviembre' }, { val: '12', label: 'Diciembre' }
+    ];
+    const ahora = new Date();
+    const anoActual = ahora.getFullYear();
+
+    ['filtro-mes-traslado', 'filtro-mes-recarga'].forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      meses.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.val;
+        opt.textContent = m.label;
+        sel.appendChild(opt);
+      });
+      sel.value = String(ahora.getMonth() + 1).padStart(2, '0');
+    });
+
+    ['filtro-ano-traslado', 'filtro-ano-recarga'].forEach(id => {
+      const sel = document.getElementById(id);
+      if (!sel) return;
+      for (let a = anoActual; a >= anoActual - 5; a--) {
+        const opt = document.createElement('option');
+        opt.value = a;
+        opt.textContent = a;
+        sel.appendChild(opt);
+      }
+      sel.value = anoActual;
+    });
   }
 
   // Renderizador unificado en pantalla
@@ -707,7 +789,9 @@
       const signo = esPositivo ? '+' : '-';
 
       let badgeClass = 'bg-slate-100 text-slate-600';
-      if (m.estado === 'finalizado') {
+      if (m.estado === 'en_curso') {
+        badgeClass = 'bg-amber-100 text-amber-700';
+      } else if (m.estado === 'finalizado') {
         badgeClass = 'bg-emerald-100 text-emerald-700';
       } else if (m.estado === 'cancelado') {
         badgeClass = 'bg-rose-100 text-rose-700';
@@ -771,8 +855,18 @@
     }
   }
 
-  function cargarHistorialPagos() {
-    fetch('get_historial_transaccion.php')
+  function cargarHistorialPagos(mes, ano) {
+    let url = 'get_historial_transaccion.php';
+    const params = [];
+    if (mes || ano) {
+      const desde = ano && mes ? `${ano}-${mes}` : null;
+      const hasta = ano && mes ? `${ano}-${mes}` : null;
+      if (desde) params.push(`desde=${desde}`);
+      if (hasta) params.push(`hasta=${hasta}`);
+      if (params.length) url += '?' + params.join('&');
+    }
+
+    fetch(url)
       .then(response => response.json())
       .then(result => {
         if (result.success) {
@@ -890,6 +984,7 @@
 
   window.addEventListener('DOMContentLoaded', () => {
     Promise.all([obtenerTasaLocal(), cargarZonas()]).then(() => {
+      poblarFiltrosFechas();
       cargarDatosUsuario();
       cargarCuentasEmpresa();
       cargarHistorialFinanciero();

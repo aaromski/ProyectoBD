@@ -29,18 +29,19 @@ try {
 
   $conn->prepare("UPDATE clientes SET saldo = saldo - ? WHERE id_usuario = ?")->execute([$costo, $id_cliente]);
 
-  // 2. Seleccionar un chofer que tenga evaluaciones aprobadas (psicológica y técnica)
-  $stmt_chofer = $conn->prepare("SELECT c.id_chofer
+  // 2. Seleccionar un chofer que tenga evaluaciones aprobadas y un vehículo activo
+  $stmt_chofer = $conn->prepare("SELECT c.id_chofer, v.id_vehiculo
     FROM choferes c
-      WHERE EXISTS (
-      SELECT 1 FROM evaluaciones_choferes ec
-      WHERE ec.id_chofer = c.id_chofer AND ec.estado = 'aprobado'
-  )
+    INNER JOIN vehiculos v ON v.id_chofer = c.id_chofer
+    WHERE v.activo = 1
       AND EXISTS (
-      SELECT 1 FROM vehiculos v
-      INNER JOIN evaluaciones_vehiculos ev ON v.id_vehiculo = ev.id_vehiculo
-      WHERE v.id_chofer = c.id_chofer AND ev.estado = 'apto'
-  )
+        SELECT 1 FROM evaluaciones_choferes ec
+        WHERE ec.id_chofer = c.id_chofer AND ec.estado = 'aprobado'
+      )
+      AND EXISTS (
+        SELECT 1 FROM evaluaciones_vehiculos ev
+        WHERE ev.id_vehiculo = v.id_vehiculo AND ev.estado = 'apto'
+      )
     ORDER BY RAND()
     LIMIT 1");
   $stmt_chofer->execute();
@@ -50,10 +51,9 @@ try {
     throw new Exception("No hay choferes disponibles actualmente.");
   }
 
-  // 3. Registrar el traslado con las columnas correctas
-  // id_vehiculo se deja NULL para que el chofer lo elija al aceptar
+  // 3. Registrar el traslado directamente en curso con el vehículo activo del chofer
   $sql_traslado = "INSERT INTO traslados (id_cliente, id_chofer, id_zona_origen, id_zona_destino, costo, estado, id_vehiculo, fecha)
-                     VALUES (?, ?, ?, ?, ?, 'pendiente', NULL, NOW())";
+                     VALUES (?, ?, ?, ?, ?, 'en_curso', ?, NOW())";
 
   $stmt_insert = $conn->prepare($sql_traslado);
   $stmt_insert->execute([
@@ -61,7 +61,8 @@ try {
     $chofer['id_chofer'],
     $id_zona_origen,
     $id_zona_destino,
-    $costo
+    $costo,
+    $chofer['id_vehiculo']
   ]);
 
   $conn->commit();

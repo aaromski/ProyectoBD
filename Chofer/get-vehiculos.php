@@ -32,7 +32,9 @@ try {
                 v.modelo,
                 v.placa,
                 v.anio,
+                v.activo,
                 e.id_evaluacion,
+                e.nota_tecnica,
                 COALESCE(e.estado, 'pendiente') AS estado_evaluacion,
                 e.fecha AS fecha_evaluacion,
                 e.observacion AS observacion_evaluacion
