@@ -22,6 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // 2. Verificamos la contraseña encriptada
     if ($usuario && password_verify($password, $usuario['password'])) {
+
+      // NUEVO: Escudo de validación de estado
+      if (isset($usuario['estado']) && $usuario['estado'] === 'bloqueado') {
+        header("Location: login.html?error=cuenta_bloqueada");
+        exit();
+      }
+
       $id_usuario = $usuario['id_usuario'];
 
       // 3. Verificación de Seguridad Relacional según el rol seleccionado

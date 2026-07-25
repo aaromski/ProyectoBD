@@ -57,6 +57,13 @@
     </div>
 
     <div>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Tablas Base</p>
+      <a href="#" onclick="cambiarVista('vista-bancos', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+        <i data-lucide="landmark" class="h-4 w-4"></i> Gestión de Bancos
+      </a>
+    </div>
+
+    <div>
       <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Ajustes</p>
       <a href="#" onclick="cambiarVista('vista-ajustes', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
         <i data-lucide="settings" class="h-4 w-4"></i> Cuenta
@@ -194,11 +201,16 @@
   </section>
 
   <section id="vista-pagos" class="vista-seccion hidden p-8">
-    <h2 class="text-xl font-bold mb-6">Validación de Pagos</h2>
+    <h2 class="text-xl font-bold mb-6">Validación de Pagos a Choferes</h2>
     <div class="bg-white rounded-xl border border-slate-300 overflow-hidden">
       <table class="w-full text-sm text-left">
         <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold">
-        <tr><th class="px-6 py-4">Usuario</th><th class="px-6 py-4">Referencia</th><th class="px-6 py-4">Monto</th><th class="px-6 py-4 text-right">Acción</th></tr>
+        <tr>
+          <th class="px-6 py-4">Usuario Chofer</th>
+          <th class="px-6 py-4">Cuenta Destino</th>
+          <th class="px-6 py-4">Deuda Pendiente</th>
+          <th class="px-6 py-4 text-right">Acción</th>
+        </tr>
         </thead>
         <tbody class="divide-y divide-slate-200">
         </tbody>
@@ -206,7 +218,27 @@
     </div>
   </section>
 
+  <section id="vista-bancos" class="vista-seccion hidden p-8">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-bold">Gestión de Bancos</h2>
+    </div>
 
+    <div class="bg-white rounded-xl border border-slate-300 overflow-hidden shadow-sm">
+      <table class="w-full text-sm text-left">
+        <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-200">
+        <tr>
+          <th class="px-6 py-4">ID</th>
+          <th class="px-6 py-4">Nombre de la Entidad Bancaria</th>
+          <th class="px-6 py-4 text-center">Prefijo</th>
+          <th class="px-6 py-4 text-center">Estado</th>
+          <th class="px-6 py-4 text-right">Acción</th>
+        </tr>
+        </thead>
+        <tbody id="tabla-bancos" class="divide-y divide-slate-100">
+        </tbody>
+      </table>
+    </div>
+  </section>
 
   <section id="vista-vehiculos" class="vista-seccion hidden p-8">
       <h2 class="text-2xl font-bold mb-6">Vehículos Pendientes de Revisión</h2>
@@ -350,21 +382,29 @@
         <button onclick="cerrarModalPago()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="h-5 w-5"></i></button>
       </div>
 
-      <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-5 space-y-2">
-        <div class="flex justify-between text-sm">
-          <span class="text-slate-500">Chofer:</span>
+      <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-5 space-y-3">
+        <!-- Chofer y Cédula -->
+        <div class="flex justify-between items-start text-sm">
+          <span class="text-slate-500 font-medium">Chofer:</span>
           <div class="text-right">
-            <span id="modal-pago-chofer" class="font-bold text-slate-800"></span>
-            <p id="modal-pago-ci" class="text-[11px] text-slate-400 font-mono"></p>
+            <span id="modal-pago-chofer" class="font-bold text-slate-800 block"></span>
+            <span id="modal-pago-ci" class="text-xs text-slate-400 font-mono"></span>
           </div>
         </div>
-        <div class="flex justify-between text-sm">
-          <span class="text-slate-500">Cuenta:</span>
-          <span id="modal-pago-cuenta" class="font-mono font-bold text-slate-800"></span>
+
+        <!-- Banco y Cuenta -->
+        <div class="flex justify-between items-start text-sm border-t border-slate-200 pt-2">
+          <span class="text-slate-500 font-medium">Cuenta:</span>
+          <div class="text-right">
+            <span id="modal-pago-banco" class="font-bold text-slate-800 block text-xs uppercase"></span>
+            <span id="modal-pago-cuenta" class="font-mono text-sm text-slate-600"></span>
+          </div>
         </div>
-        <div class="flex justify-between text-sm">
-          <span class="text-slate-500">Monto:</span>
-          <span id="modal-pago-monto" class="font-bold text-emerald-600"></span>
+
+        <!-- Monto -->
+        <div class="flex justify-between items-center text-sm border-t border-slate-200 pt-2">
+          <span class="text-slate-500 font-medium">Monto a Pagar:</span>
+          <span id="modal-pago-monto" class="font-bold text-emerald-600 text-base"></span>
         </div>
       </div>
 
@@ -439,6 +479,8 @@
     cargarPruebasPendientes();
     cargarEstadisticasGanancias();
     cargarEvaluacionesRecientes();
+    cargarBancosAdmin();
+    cargarChoferesParaReporte();
   });
 
   let idUsuarioGlobal = null;
@@ -521,21 +563,26 @@
         tbody.innerHTML = '';
 
         if (data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center">No hay pagos pendientes</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center">No hay deudas pendientes con los choferes.</td></tr>';
           return;
         }
 
         data.forEach(p => {
           const esc = (s) => (s || '').replace(/'/g, "\\'");
           tbody.innerHTML += `
-          <tr>
-            <td class="px-6 py-4 font-bold">${p.nombre} ${p.apellido}</td>
-            <td class="px-6 py-4 font-mono text-xs">${p.nro_ref || 'Sin ref.'}</td>
-            <td class="px-6 py-4">Bs. ${parseFloat(p.monto).toFixed(2)}</td>
+          <tr class="hover:bg-slate-50 border-b border-slate-100">
+            <td class="px-6 py-4">
+               <p class="font-bold text-slate-900">${p.nombres} ${p.apellidos}</p>
+            </td>
+            <td class="px-6 py-4">
+               <p class="text-xs font-bold text-slate-500 uppercase">${p.nombre_banco}</p>
+               <p class="font-mono text-sm">${p.numero_cuenta}</p>
+            </td>
+            <td class="px-6 py-4 font-bold text-slate-900 font-mono text-lg text-rose-600">Bs. ${parseFloat(p.saldo).toFixed(2)}</td>
             <td class="px-6 py-4 text-right">
-              <button onclick="abrirModalPago(${p.id_pago}, '${esc(p.nombre)}', '${esc(p.apellido)}', '${esc(p.cedula)}', '${esc(p.nro_cuenta)}', '${esc(p.nombre_banco)}', ${p.monto}, '${esc(p.nro_ref)}', '${esc(p.detalles)}')"
-                      class="bg-emerald-600 text-white px-4 py-1.5 rounded text-[10px] font-bold hover:bg-emerald-700">
-                APROBAR
+               <button onclick="abrirModalPago(${p.id_chofer}, '${esc(p.nombres)}', '${esc(p.apellidos)}', '${esc(p.cedula)}', '${esc(p.numero_cuenta)}', '${esc(p.nombre_banco)}', ${p.saldo})"
+                    class="bg-emerald-600 text-white px-4 py-1.5 rounded text-[10px] font-bold hover:bg-emerald-700">
+                PAGAR DEUDA
               </button>
             </td>
           </tr>
@@ -548,7 +595,11 @@
     document.getElementById('modal-pago-id').value = id;
     document.getElementById('modal-pago-chofer').textContent = nombre + ' ' + apellido;
     document.getElementById('modal-pago-ci').textContent = 'CI: ' + cedula;
-    document.getElementById('modal-pago-cuenta').textContent = banco ? banco + ' ' + nroCuenta : nroCuenta || 'N/A';
+
+    // Separamos el banco de la cuenta
+    document.getElementById('modal-pago-banco').textContent = banco || 'Banco no especificado';
+    document.getElementById('modal-pago-cuenta').textContent = nroCuenta || 'N/A';
+
     document.getElementById('modal-pago-monto').textContent = 'Bs. ' + parseFloat(monto).toFixed(2);
 
     const ultimos6 = nroRef ? nroRef.replace(/\D/g, '').slice(-6) : '';
@@ -981,6 +1032,66 @@
       });
   }
 
+  function cargarBancosAdmin() {
+    fetch('get-bancos-admin.php')
+      .then(res => res.json())
+      .then(res => {
+        const tbody = document.getElementById('tabla-bancos');
+        tbody.innerHTML = '';
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(b => {
+            const isActivo = b.estado === 'activo';
+            const badgeClass = isActivo ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700';
+            const textEstado = isActivo ? 'Disponible' : 'Inhabilitado';
+            const btnClass = isActivo ? 'bg-rose-600 hover:bg-rose-700' : 'bg-emerald-600 hover:bg-emerald-700';
+            const textBtn = isActivo ? 'Deshabilitar' : 'Habilitar';
+
+            tbody.innerHTML += `
+              <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
+                <td class="px-6 py-4 font-mono text-xs text-slate-400">#${String(b.id_banco).padStart(2, '0')}</td>
+                <td class="px-6 py-4 font-bold text-slate-900">${b.nombre_banco}</td>
+                <td class="px-6 py-4 font-mono font-bold text-slate-700 text-center">${b.prefijo}</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${badgeClass}">${textEstado}</span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <button onclick="cambiarEstadoBanco(${b.id_banco}, '${b.estado}')" class="${btnClass} text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition shadow-sm">
+                    ${textBtn}
+                  </button>
+                </td>
+              </tr>
+            `;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400 italic">No hay bancos registrados en el sistema.</td></tr>';
+        }
+        lucide.createIcons();
+      });
+  }
+
+  function cambiarEstadoBanco(idBanco, estadoActual) {
+    const nuevoEstado = estadoActual === 'activo' ? 'inactivo' : 'activo';
+    const accion = estadoActual === 'activo' ? 'deshabilitar' : 'habilitar';
+
+    if(!confirm(`¿Estás seguro de que deseas ${accion} este banco en el sistema?`)) return;
+
+    const formData = new FormData();
+    formData.append('id_banco', idBanco);
+    formData.append('nuevo_estado', nuevoEstado);
+
+    fetch('cambiar-estado-banco.php', {
+      method: 'POST',
+      body: formData
+    })
+      .then(res => res.json())
+      .then(res => {
+        if(res.success) {
+          cargarBancosAdmin();
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
 
 </script>
 </body>

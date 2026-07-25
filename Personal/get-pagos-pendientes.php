@@ -3,23 +3,23 @@ session_start();
 header('Content-Type: application/json');
 require_once '../conexion.php';
 
-$sql = "SELECT
-            pc.id_pago,
-            SUBSTRING_INDEX(u.nombres, ' ', 1) AS nombre,
-            SUBSTRING_INDEX(u.apellidos, ' ', 1) AS apellido,
-            u.cedula,
-            pc.nro_ref,
-            pc.monto,
-            ch.nro_cuenta,
-            b.nombre_banco,
-            pc.detalles
-        FROM pago_chofer pc
-        JOIN choferes ch ON pc.id_chofer = ch.id_chofer
-        JOIN usuarios u ON ch.id_usuario = u.id_usuario
-        LEFT JOIN bancos b ON ch.id_banco = b.id_banco
-        WHERE pc.estado = 'pendiente'";
+ /** @var PDO $conn */
+    // Buscamos a los choferes a los que la empresa les debe dinero (saldo > 0)
+    $sql = "SELECT
+                c.id_chofer,
+                u.nombres,
+                u.apellidos,
+                u.cedula,
+                b.nombre_banco,
+                c.nro_cuenta AS numero_cuenta,
+                c.saldo
+            FROM choferes c
+            JOIN usuarios u ON c.id_usuario = u.id_usuario
+            JOIN bancos b ON c.id_banco = b.id_banco
+            WHERE c.saldo > 0
+            ORDER BY c.saldo DESC";
 
-/** @var PDO $conn */
+
 $stmt = $conn->prepare($sql);
 $stmt->execute();
 echo json_encode($stmt->fetchAll(PDO::FETCH_ASSOC));
