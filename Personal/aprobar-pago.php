@@ -42,8 +42,8 @@ try {
   $numero_cuenta = $chofer['nro_cuenta'];
 
   // 2. Insertar el registro completo en la tabla pago_chofer con sus campos correspondientes
-  $sqlInsert = "INSERT INTO pago_chofer (id_chofer, id_personal, id_banco, numero_cuenta, monto, nro_ref, estado, detalles, fecha)
-                VALUES (?, ?, ?, ?, ?, ?, 'finalizado', ?, NOW())";
+  $sqlInsert = "INSERT INTO pago_chofer (id_chofer, id_personal, id_banco, numero_cuenta, monto, nro_ref, detalles, fecha)
+                VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
   $stmtInsert = $conn->prepare($sqlInsert);
   $stmtInsert->execute([
       $id_chofer,

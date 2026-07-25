@@ -54,7 +54,7 @@ try {
   $historial = [];
 
   foreach ($viajes as $v) {
-    if (in_array($v['estado'], ['pendiente', 'en_curso'])) {
+    if ($v['estado'] === 'en_curso') {
       $asignados[] = $v;
     } else {
       $historial[] = $v;

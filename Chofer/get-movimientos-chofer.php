@@ -19,7 +19,7 @@ try {
     SELECT pc.nro_ref AS id_ref, pc.fecha, pc.monto, pc.detalles
     FROM pago_chofer pc
     JOIN choferes ch ON pc.id_chofer = ch.id_chofer
-    WHERE ch.id_usuario = ? AND pc.estado = 'finalizado'
+    WHERE ch.id_usuario = ?
     ORDER BY pc.fecha DESC
     LIMIT 10
   ");

@@ -16,20 +16,26 @@ try {
   $conn->beginTransaction();
 
   // 1. Obtenemos el ID del cliente y el monto que se le descontó originalmente
-  $stmt = $conn->prepare("SELECT id_cliente, costo, estado
+  $stmt = $conn->prepare("SELECT id_cliente, costo, estado, fecha
                             FROM traslados
                             WHERE id_traslado = ? FOR UPDATE");
   $stmt->execute([$id_traslado]);
   $viaje = $stmt->fetch(PDO::FETCH_ASSOC);
-  // Debug: Ver qué valor tiene el costo antes de actualizar
-  error_log("Costo recuperado: " . $viaje['costo']);
-  error_log("ID Cliente recuperado: " . $viaje['id_cliente']);
   if (!$viaje) {
     throw new Exception("Traslado no encontrado.");
   }
 
   if ($viaje['estado'] === 'cancelado') {
     throw new Exception("El viaje ya fue cancelado previamente.");
+  }
+
+  // 2. Validar que no hayan pasado más de 15 minutos desde la creación del viaje (usar NOW() de MySQL para evitar desfase de zona horaria)
+  $stmtCheck = $conn->prepare("SELECT TIMESTAMPDIFF(MINUTE, fecha, NOW()) AS minutos FROM traslados WHERE id_traslado = ?");
+  $stmtCheck->execute([$id_traslado]);
+  $diff = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+
+  if ($diff && $diff['minutos'] > 15) {
+    throw new Exception("No es posible cancelar el viaje. Han pasado más de 15 minutos desde su creación.");
   }
 
   // 2. Marcamos el traslado como cancelado

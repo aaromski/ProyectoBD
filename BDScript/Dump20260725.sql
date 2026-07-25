@@ -28,6 +28,7 @@ CREATE TABLE `bancos` (
   `id_banco` int(11) NOT NULL AUTO_INCREMENT,
   `nombre_banco` varchar(50) NOT NULL,
   `prefijo` varchar(4) NOT NULL,
+  `estado` varchar(20) DEFAULT 'activo',
   PRIMARY KEY (`id_banco`)
 ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -38,7 +39,7 @@ CREATE TABLE `bancos` (
 
 LOCK TABLES `bancos` WRITE;
 /*!40000 ALTER TABLE `bancos` DISABLE KEYS */;
-INSERT INTO `bancos` VALUES (1,'Sistema','0000'),(2,'Banco Venezuela','0102'),(3,'Banco Provincial','0108'),(4,'Mercantil','0105'),(5,'Banesco','0134'),(6,'Banco Nacional de Crédito BNC','0191'),(7,'Bancamiga','0172'),(8,'Banco del Tesoro','0163'),(9,'Banco Bicentenario','0175'),(10,'Bancaribe','0114'),(11,'Banco Exterior','0115'),(12,'Banplus','0174'),(13,'Banco Plaza','0138'),(14,'Banco Fondo Común BFC','0151'),(15,'Banco Activo','0171'),(16,'Bancrecer','0168'),(17,'100% Banco','0156'),(18,'DelSur Banco Universal','0157'),(19,'Banco Caroní','0128'),(20,'Venezolano de Crédito','0104'),(21,'Mi Banco','0169'),(22,'BANFANB','0177'),(23,'Banco Agrícola de Venezuela','0166');
+INSERT INTO `bancos` VALUES (1,'Sistema','0000','activo'),(2,'Banco Venezuela','0102','activo'),(3,'Banco Provincial','0108','activo'),(4,'Mercantil','0105','activo'),(5,'Banesco','0134','activo'),(6,'Banco Nacional de Crédito BNC','0191','activo'),(7,'Bancamiga','0172','activo'),(8,'Banco del Tesoro','0163','activo'),(9,'Banco Bicentenario','0175','activo'),(10,'Bancaribe','0114','activo'),(11,'Banco Exterior','0115','activo'),(12,'Banplus','0174','activo'),(13,'Banco Plaza','0138','activo'),(14,'Banco Fondo Común BFC','0151','activo'),(15,'Banco Activo','0171','activo'),(16,'Bancrecer','0168','activo'),(17,'100% Banco','0156','activo'),(18,'DelSur Banco Universal','0157','activo'),(19,'Banco Caroní','0128','activo'),(20,'Venezolano de Crédito','0104','activo'),(21,'Mi Banco','0169','activo'),(22,'BANFANB','0177','activo'),(23,'Banco Agrícola de Venezuela','0166','activo');
 /*!40000 ALTER TABLE `bancos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -69,7 +70,7 @@ CREATE TABLE `choferes` (
 
 LOCK TABLES `choferes` WRITE;
 /*!40000 ALTER TABLE `choferes` DISABLE KEYS */;
-INSERT INTO `choferes` VALUES (1,3,4,'23254122558866332254',271.36),(2,6,2,'01024456465465464465',166.13),(6,11,9,'01754684646546546546',0.00),(7,13,23,'01664125432455345345',0.00),(8,12,12,'01745431430450453045',0.00),(11,17,5,'01344534534534534354',0.00),(12,4,6,'01915343543345345354',0.00),(13,18,6,'01918867687678678678',0.00);
+INSERT INTO `choferes` VALUES (1,3,4,'23254122558866332254',9409.67),(2,6,2,'01024456465465464465',8970.40),(6,11,9,'01754684646546546546',0.00),(7,13,23,'01664125432455345345',0.00),(8,12,12,'01745431430450453045',0.00),(11,17,5,'01344534534534534354',0.00),(12,4,6,'01915343543345345354',0.00),(13,18,6,'01918867687678678678',0.00);
 /*!40000 ALTER TABLE `choferes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -87,7 +88,7 @@ CREATE TABLE `clientes` (
   PRIMARY KEY (`id_cliente`),
   KEY `fk_clientes_usuarios1_idx` (`id_usuario`),
   CONSTRAINT `fk_clientes_usuarios1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,7 +97,7 @@ CREATE TABLE `clientes` (
 
 LOCK TABLES `clientes` WRITE;
 /*!40000 ALTER TABLE `clientes` DISABLE KEYS */;
-INSERT INTO `clientes` VALUES (1,1,26548.69),(2,3,0.00),(3,4,0.00),(4,12,0.00);
+INSERT INTO `clientes` VALUES (1,1,14028.77),(2,3,0.00),(3,4,0.00),(4,12,0.00),(5,20,0.00);
 /*!40000 ALTER TABLE `clientes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -189,7 +190,7 @@ CREATE TABLE `evaluaciones_choferes` (
 
 LOCK TABLES `evaluaciones_choferes` WRITE;
 /*!40000 ALTER TABLE `evaluaciones_choferes` DISABLE KEYS */;
-INSERT INTO `evaluaciones_choferes` VALUES (1,5,1,80.00,'2026-07-15 19:11:07','aprobado',NULL),(2,5,2,10.00,'2026-07-16 17:25:36','reprobado',NULL),(3,5,2,50.00,'2026-07-16 17:27:11','reprobado',NULL),(4,5,6,80.00,'2026-07-16 19:01:53','aprobado',NULL),(5,5,7,60.00,'2026-07-16 19:08:22','reprobado',NULL),(6,5,8,50.00,'2026-07-16 19:09:25','reprobado',NULL),(7,5,11,70.00,'2026-07-17 11:37:19','aprobado',NULL),(8,5,12,60.00,'2026-07-17 11:40:00','reprobado',NULL),(9,5,13,85.00,'2026-07-17 11:55:22','aprobado',NULL),(10,5,2,100.00,'2026-07-18 20:09:37','aprobado',NULL),(11,5,7,20.00,'2026-07-22 12:07:05','reprobado',NULL);
+INSERT INTO `evaluaciones_choferes` VALUES (1,5,1,80.00,'2025-07-15 19:11:07','aprobado',NULL),(2,5,2,10.00,'2026-07-16 17:25:36','reprobado',NULL),(3,5,2,50.00,'2026-07-16 17:27:11','reprobado',NULL),(4,5,6,80.00,'2026-07-16 19:01:53','aprobado',NULL),(5,5,7,60.00,'2026-07-16 19:08:22','reprobado',NULL),(6,5,8,50.00,'2026-07-16 19:09:25','reprobado',NULL),(7,5,11,70.00,'2026-07-17 11:37:19','aprobado',NULL),(8,5,12,60.00,'2026-07-17 11:40:00','reprobado',NULL),(9,5,13,85.00,'2026-07-17 11:55:22','aprobado',NULL),(10,5,2,100.00,'2026-07-18 20:09:37','aprobado',NULL),(11,5,7,20.00,'2026-07-22 12:07:05','reprobado',NULL);
 /*!40000 ALTER TABLE `evaluaciones_choferes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -213,7 +214,7 @@ CREATE TABLE `evaluaciones_vehiculos` (
   KEY `fk_evaluaciones_usuarios1_idx` (`id_personal`),
   CONSTRAINT `fk_evaluaciones_usuarios10` FOREIGN KEY (`id_personal`) REFERENCES `usuarios` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_evaluaciones_vehiculos10` FOREIGN KEY (`id_vehiculo`) REFERENCES `vehiculos` (`id_vehiculo`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -222,7 +223,7 @@ CREATE TABLE `evaluaciones_vehiculos` (
 
 LOCK TABLES `evaluaciones_vehiculos` WRITE;
 /*!40000 ALTER TABLE `evaluaciones_vehiculos` DISABLE KEYS */;
-INSERT INTO `evaluaciones_vehiculos` VALUES (1,5,1,80.00,'2026-07-15 19:11:55','apto','bien'),(2,5,2,50.00,'2026-07-15 19:12:07','no_apto','regular'),(3,5,3,100.00,'2026-07-17 14:10:06','apto',''),(4,5,4,90.00,'2026-07-22 11:27:36','apto','Sin opinion'),(5,5,5,20.00,'2026-07-22 12:20:29','no_apto','Datos no coinciden e incorrectos');
+INSERT INTO `evaluaciones_vehiculos` VALUES (1,5,1,80.00,'2025-07-15 19:11:55','apto','bien'),(2,5,2,50.00,'2026-07-15 19:12:07','no_apto','regular'),(3,5,3,100.00,'2026-07-17 14:10:06','apto',''),(4,5,4,90.00,'2026-07-22 11:27:36','apto','Sin opinion'),(5,5,5,20.00,'2026-07-22 12:20:29','no_apto','Datos no coinciden e incorrectos'),(6,5,6,90.00,'2026-07-25 13:13:44','apto','yes');
 /*!40000 ALTER TABLE `evaluaciones_vehiculos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -242,7 +243,6 @@ CREATE TABLE `pago_chofer` (
   `monto` decimal(10,2) NOT NULL,
   `nro_ref` varchar(100) DEFAULT NULL,
   `fecha` datetime NOT NULL,
-  `estado` enum('pendiente','finalizado') DEFAULT 'pendiente',
   `detalles` text DEFAULT NULL,
   PRIMARY KEY (`id_pago`),
   KEY `fk_pago_chofer` (`id_chofer`),
@@ -251,7 +251,7 @@ CREATE TABLE `pago_chofer` (
   CONSTRAINT `fk_pago_banco` FOREIGN KEY (`id_banco`) REFERENCES `bancos` (`id_banco`) ON DELETE CASCADE,
   CONSTRAINT `fk_pago_chofer` FOREIGN KEY (`id_chofer`) REFERENCES `choferes` (`id_chofer`) ON DELETE CASCADE,
   CONSTRAINT `fk_pago_personal` FOREIGN KEY (`id_personal`) REFERENCES `usuarios` (`id_usuario`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -260,7 +260,7 @@ CREATE TABLE `pago_chofer` (
 
 LOCK TABLES `pago_chofer` WRITE;
 /*!40000 ALTER TABLE `pago_chofer` DISABLE KEYS */;
-INSERT INTO `pago_chofer` VALUES (1,1,5,4,'23254122558866332254',2000.00,'265256','2026-07-22 11:20:13','finalizado','Transferencia a Mercantil (Cta: 23254122558866332254)'),(3,2,5,2,'01024456465465464465',2500.00,'865651','2026-07-22 11:42:34','finalizado','Transferencia a Banco Venezuela (Cta: 01024456465465464465)'),(4,2,5,2,'01024456465465464465',100.00,'654654','2026-07-22 11:42:42','finalizado','Nada'),(5,2,5,2,'01024456465465464465',2500.00,'646546','2026-07-22 11:45:44','finalizado','Transferencia a Banco Venezuela (Cta: 01024456465465464465)'),(6,2,NULL,2,'01024456465465464465',200.00,NULL,'2026-07-22 12:02:34','pendiente','Transferencia a Banco Venezuela (Cta: 01024456465465464465)'),(7,2,NULL,2,'01024456465465464465',100.00,NULL,'2026-07-22 12:04:12','pendiente','Transferencia a Banco Venezuela (Cta: 01024456465465464465)');
+INSERT INTO `pago_chofer` VALUES (1,1,5,4,'23254122558866332254',2000.00,'265256','2026-07-22 11:20:13','Transferencia a Mercantil (Cta: 23254122558866332254)'),(3,2,5,2,'01024456465465464465',2500.00,'865651','2026-07-22 11:42:34','Transferencia a Banco Venezuela (Cta: 01024456465465464465)'),(4,2,5,2,'01024456465465464465',100.00,'654654','2026-07-22 11:42:42','Nada'),(5,2,5,2,'01024456465465464465',2500.00,'646546','2026-07-22 11:45:44','Transferencia a Banco Venezuela (Cta: 01024456465465464465)'),(6,2,NULL,2,'01024456465465464465',200.00,NULL,'2026-07-22 12:02:34','Transferencia a Banco Venezuela (Cta: 01024456465465464465)'),(7,2,NULL,2,'01024456465465464465',100.00,NULL,'2026-07-22 12:04:12','Transferencia a Banco Venezuela (Cta: 01024456465465464465)'),(9,1,5,4,'23254122558866332254',271.36,'454646','2026-07-25 11:38:13','hi');
 /*!40000 ALTER TABLE `pago_chofer` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -284,7 +284,7 @@ CREATE TABLE `recargas` (
   KEY `fk_recarga_banco` (`id_banco`),
   CONSTRAINT `fk_recarga_banco` FOREIGN KEY (`id_banco`) REFERENCES `bancos` (`id_banco`) ON DELETE CASCADE,
   CONSTRAINT `fk_recarga_cliente` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -293,7 +293,7 @@ CREATE TABLE `recargas` (
 
 LOCK TABLES `recargas` WRITE;
 /*!40000 ALTER TABLE `recargas` DISABLE KEYS */;
-INSERT INTO `recargas` VALUES (1,1,3,15000.00,'REC-125425','2026-07-15','2026-07-22 00:00:00'),(2,1,1,15000.00,'REC-545435','2026-07-16','2026-07-22 00:00:00'),(3,1,1,1000.00,'REC-254534','2026-07-16','2026-07-22 00:00:00'),(4,1,1,1000.00,'REC-453543','2026-07-16','2026-07-22 00:00:00'),(5,1,1,1000.00,'REC-635478','2026-07-16','2026-07-22 00:00:00'),(6,1,1,1000.00,'REC-565435','2026-07-16','2026-07-22 00:00:00'),(7,1,3,1000.00,'REC-415635','2026-07-16','2026-07-22 00:00:00'),(8,1,2,3000.00,'REC-868767','2026-07-17','2026-07-22 00:00:00'),(16,1,4,5000.00,'REC-463546','2026-07-22','2026-07-22 00:00:00'),(22,1,10,1000.00,'REC-598592','2026-07-22','2026-07-22 00:00:00'),(23,1,7,3000.00,'REC-156165','2026-07-22','2026-07-22 00:00:00'),(24,1,7,1000.00,'REC-416512','2026-07-22','2026-07-22 00:00:00'),(25,1,2,1500.00,'REC-586484','2026-07-22','2026-07-22 00:00:00'),(26,1,10,5000.00,'REC-545435','2026-07-22','2026-07-22 00:00:00'),(27,1,7,1000.00,'REC-435434','2026-07-22','2026-07-22 13:08:59');
+INSERT INTO `recargas` VALUES (1,1,3,15000.00,'REC-125425','2026-07-15','2026-07-22 00:00:00'),(2,1,1,15000.00,'REC-545435','2026-07-16','2026-07-22 00:00:00'),(3,1,1,1000.00,'REC-254534','2026-07-16','2026-07-22 00:00:00'),(4,1,1,1000.00,'REC-453543','2026-07-16','2026-07-22 00:00:00'),(5,1,1,1000.00,'REC-635478','2026-07-16','2026-07-22 00:00:00'),(6,1,1,1000.00,'REC-565435','2026-07-16','2026-07-22 00:00:00'),(7,1,3,1000.00,'REC-415635','2026-07-16','2026-07-22 00:00:00'),(8,1,2,3000.00,'REC-868767','2026-07-17','2026-07-22 00:00:00'),(16,1,4,5000.00,'REC-463546','2026-07-22','2026-07-22 00:00:00'),(22,1,10,1000.00,'REC-598592','2026-07-22','2026-07-22 00:00:00'),(23,1,7,3000.00,'REC-156165','2026-07-22','2026-07-22 00:00:00'),(24,1,7,1000.00,'REC-416512','2026-07-22','2026-07-22 00:00:00'),(25,1,2,1500.00,'REC-586484','2026-07-22','2026-07-22 00:00:00'),(26,1,10,5000.00,'REC-545435','2026-07-22','2026-07-22 00:00:00'),(27,1,7,1000.00,'REC-435434','2026-07-22','2026-07-22 13:08:59'),(28,1,2,3000.00,'REC-544645','2026-07-25','2026-07-25 07:48:51'),(29,1,10,500.00,'REC-566535','2026-07-25','2026-07-25 13:44:11'),(30,1,7,10000.00,'REC-524334','2026-07-25','2026-07-25 13:50:58');
 /*!40000 ALTER TABLE `recargas` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -311,7 +311,7 @@ CREATE TABLE `roles_asignados` (
   PRIMARY KEY (`id_rol`),
   KEY `fk_roles_asignados_usuarios1_idx` (`id_usuario`),
   CONSTRAINT `fk_roles_asignados_usuarios1` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -320,7 +320,7 @@ CREATE TABLE `roles_asignados` (
 
 LOCK TABLES `roles_asignados` WRITE;
 /*!40000 ALTER TABLE `roles_asignados` DISABLE KEYS */;
-INSERT INTO `roles_asignados` VALUES (1,1,'cliente'),(2,2,'admin'),(3,3,'cliente'),(4,4,'cliente'),(5,3,'chofer'),(6,5,'personal'),(7,6,'chofer'),(8,11,'chofer'),(9,12,'cliente'),(10,13,'chofer'),(11,12,'chofer'),(12,13,'cliente'),(13,17,'chofer'),(14,4,'chofer'),(15,18,'chofer'),(16,19,'admin');
+INSERT INTO `roles_asignados` VALUES (1,1,'cliente'),(2,2,'admin'),(3,3,'cliente'),(4,4,'cliente'),(5,3,'chofer'),(6,5,'personal'),(7,6,'chofer'),(8,11,'chofer'),(9,12,'cliente'),(10,13,'chofer'),(11,12,'chofer'),(12,13,'cliente'),(13,17,'chofer'),(14,4,'chofer'),(15,18,'chofer'),(16,19,'admin'),(17,20,'cliente'),(18,21,'personal'),(19,22,'admin');
 /*!40000 ALTER TABLE `roles_asignados` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -340,7 +340,7 @@ CREATE TABLE `traslados` (
   `id_zona_destino` int(11) NOT NULL,
   `costo` decimal(10,2) NOT NULL,
   `fecha` datetime NOT NULL,
-  `estado` enum('pendiente','en_curso','finalizado','cancelado') NOT NULL,
+  `estado` enum('en_curso','finalizado','cancelado') NOT NULL,
   PRIMARY KEY (`id_traslado`),
   KEY `fk_traslados_choferes1_idx` (`id_chofer`),
   KEY `fk_traslados_clientes1_idx` (`id_cliente`),
@@ -352,7 +352,7 @@ CREATE TABLE `traslados` (
   CONSTRAINT `fk_traslados_vehiculos1` FOREIGN KEY (`id_vehiculo`) REFERENCES `vehiculos` (`id_vehiculo`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_traslados_zonas1` FOREIGN KEY (`id_zona_origen`) REFERENCES `zonas` (`id_zona`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_traslados_zonas2` FOREIGN KEY (`id_zona_destino`) REFERENCES `zonas` (`id_zona`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -361,7 +361,7 @@ CREATE TABLE `traslados` (
 
 LOCK TABLES `traslados` WRITE;
 /*!40000 ALTER TABLE `traslados` DISABLE KEYS */;
-INSERT INTO `traslados` VALUES (1,1,1,1,14,26,7215.19,'2026-07-15 19:16:02','finalizado'),(2,1,1,1,14,21,3699.54,'2026-07-15 19:29:02','finalizado'),(3,1,1,1,15,21,2615.79,'2026-07-17 12:26:05','finalizado'),(4,1,2,NULL,2,3,2231.58,'2026-07-17 14:11:38','pendiente'),(5,1,2,NULL,14,17,5930.78,'2026-07-18 19:33:03','pendiente'),(6,1,2,3,9,13,3108.05,'2026-07-18 20:11:00','cancelado'),(7,1,2,3,7,20,3021.10,'2026-07-18 20:10:58','finalizado'),(8,1,2,3,28,26,4237.33,'2026-07-22 11:26:52','finalizado');
+INSERT INTO `traslados` VALUES (1,1,1,1,14,26,7215.19,'2026-07-15 19:16:02','finalizado'),(2,1,1,1,14,21,3699.54,'2026-07-15 19:29:02','finalizado'),(3,1,1,1,15,21,2615.79,'2026-07-17 12:26:05','finalizado'),(4,1,2,NULL,2,3,2231.58,'2026-07-17 14:11:38','cancelado'),(5,1,2,NULL,14,17,5930.78,'2026-07-18 19:33:03','cancelado'),(6,1,2,3,9,13,3108.05,'2026-07-18 20:11:00','cancelado'),(7,1,2,3,7,20,3021.10,'2026-07-18 20:10:58','finalizado'),(8,1,2,3,28,26,4237.33,'2026-07-22 11:26:52','finalizado'),(9,1,2,4,14,17,6152.88,'2026-07-25 07:19:11',''),(10,1,2,4,15,26,6424.65,'2026-07-25 08:13:17',''),(11,1,1,6,14,21,3858.09,'2026-07-25 13:37:43','finalizado'),(12,1,1,6,14,2,7562.02,'2026-07-25 13:47:08','finalizado'),(13,1,1,6,13,8,4492.47,'2026-07-25 13:48:35','cancelado'),(14,1,1,6,18,10,2022.28,'2026-07-25 13:50:19','finalizado'),(15,1,1,6,24,30,5049.87,'2026-07-25 13:51:02','cancelado');
 /*!40000 ALTER TABLE `traslados` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -380,10 +380,11 @@ CREATE TABLE `usuarios` (
   `apellidos` varchar(45) NOT NULL,
   `cedula` varchar(15) NOT NULL,
   `telefono` varchar(15) NOT NULL,
+  `estado` enum('activo','bloqueado') NOT NULL DEFAULT 'activo',
   PRIMARY KEY (`id_usuario`),
   UNIQUE KEY `correo_UNIQUE` (`correo`),
   UNIQUE KEY `cedula_UNIQUE` (`cedula`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -392,7 +393,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'aaromarmando3@gmail.com','$2y$10$5YuDYzVGyY.GZ9bfRObRu.zutUBG.fIo7i7KFWLXP5eDU/4k4KTF6','aarom armando','luces bolivar','28162993','04242282256'),(2,'admin@decarrerita.com','$2y$10$5YuDYzVGyY.GZ9bfRObRu.zutUBG.fIo7i7KFWLXP5eDU/4k4KTF6','Luis Miguel','Perez Lopez','25684235',''),(3,'juancarlos@gmail.com','$2y$10$m4kOEzgiAWfezs4/0D1Br.22EPOBMQnQG/zRdt/KZIK8hHj54KYx.','juan carlos','perez garcia','25683215','04125656516'),(4,'miguelsamuel@gmail.com','$2y$10$6KP4H6uwsAeUhiZ0S6cmge7Xafuggp/4aNmyWiM.EBF2fgJ4kao6G','miguel samuel','lugo hernandez','25836952','04144127566'),(5,'personallaura@decarrerita.com','$2y$10$VXU5mk9lxJ7iwTlFJ22HCeyqz.Bm4OrM.Pw/MooZoN0fHBuYzqL9W','Laura Gabriela','Perez Angelica','8845629','04162586256'),(6,'libelisyemes@gmail.com','$2y$10$5RebXPcyuBeIJNNZGdAiIO292n3K4GLAZWDs20fI4xW3JxEI3J2T6','Lisbelis','yemes','28653154','04141532696'),(11,'manue@gmail.com','$2y$10$LlIXZa5WxahSRkETAjtSmua9x4zGtd9uhhlBxiSNe3ZF2yEpwodAK','manuekl','rivas','51651651','04141653232'),(12,'prueba@gmail.com','$2y$10$107o7sHCngUHUou78HIcsuLOZKWAwP3US/PkueR0Y59/Lly7agDq.','prueba','pasajero','132156351','04141354561'),(13,'choferprueba1@gmail.com','$2y$10$n1wWb4ca35RGHP9DOSKd4upcJ4Q1wVVdzvlaFxI/5fRYnGCWvsCZi','chofer','chofer','8523161','04146168416'),(17,'romero@gmail.com','$2y$10$iCjfSY3vf/3o1ec9SSDtj.1Fs9W/miDQVo6PlkQLc5JhdZU4.FXsy','jose','romero','V-22665165','04146185165'),(18,'yani@gmail.com','$2y$10$a7VqSR4ItkC6gy9HKAi8A.HlzDAcNBvK.YqxKnUH1IWM9ZEgKaOJ6','yani','lopez','V-65455145','04143121323'),(19,'admin2@gmail.com','$2y$10$p/dw.reTS3PrHKhZNAdMAeqPklOChIlolkFv3uUFtZMMkolTzwMfW','Admin','ApellidoAdmin','256850145','041685632548');
+INSERT INTO `usuarios` VALUES (1,'aaromarmando3@gmail.com','$2y$10$5YuDYzVGyY.GZ9bfRObRu.zutUBG.fIo7i7KFWLXP5eDU/4k4KTF6','aarom armando','luces bolivar','28162993','04242282256','activo'),(2,'admin@decarrerita.com','$2y$10$5YuDYzVGyY.GZ9bfRObRu.zutUBG.fIo7i7KFWLXP5eDU/4k4KTF6','Luis Miguel','Perez Lopez','25684235','','activo'),(3,'juancarlos@gmail.com','$2y$10$m4kOEzgiAWfezs4/0D1Br.22EPOBMQnQG/zRdt/KZIK8hHj54KYx.','juan carlos','perez garcia','25683215','04125656516','activo'),(4,'miguelsamuel@gmail.com','$2y$10$6KP4H6uwsAeUhiZ0S6cmge7Xafuggp/4aNmyWiM.EBF2fgJ4kao6G','miguel samuel','lugo hernandez','25836952','04144127566','bloqueado'),(5,'personallaura@decarrerita.com','$2y$10$VXU5mk9lxJ7iwTlFJ22HCeyqz.Bm4OrM.Pw/MooZoN0fHBuYzqL9W','Laura Gabriela','Perez Angelica','8845629','04162586256','activo'),(6,'libelisyemes@gmail.com','$2y$10$5RebXPcyuBeIJNNZGdAiIO292n3K4GLAZWDs20fI4xW3JxEI3J2T6','Lisbelis','yemes','28653154','04141532696','activo'),(11,'manue@gmail.com','$2y$10$LlIXZa5WxahSRkETAjtSmua9x4zGtd9uhhlBxiSNe3ZF2yEpwodAK','manuekl','rivas','51651651','04141653232','activo'),(12,'prueba@gmail.com','$2y$10$107o7sHCngUHUou78HIcsuLOZKWAwP3US/PkueR0Y59/Lly7agDq.','prueba','pasajero','132156351','04141354561','activo'),(13,'choferprueba1@gmail.com','$2y$10$n1wWb4ca35RGHP9DOSKd4upcJ4Q1wVVdzvlaFxI/5fRYnGCWvsCZi','chofer','chofer','8523161','04146168416','activo'),(17,'romero@gmail.com','$2y$10$iCjfSY3vf/3o1ec9SSDtj.1Fs9W/miDQVo6PlkQLc5JhdZU4.FXsy','jose','romero','V-22665165','04146185165','activo'),(18,'yani@gmail.com','$2y$10$a7VqSR4ItkC6gy9HKAi8A.HlzDAcNBvK.YqxKnUH1IWM9ZEgKaOJ6','yani','lopez','V-65455145','04143121323','activo'),(19,'admin2@gmail.com','$2y$10$p/dw.reTS3PrHKhZNAdMAeqPklOChIlolkFv3uUFtZMMkolTzwMfW','Admin','ApellidoAdmin','256850145','041685632548','activo'),(20,'aarom@gmail.com','$2y$10$Z/JUkHvDCQmCJz2OIQZPXetDgvkemjhjN5uGXmQu/oMs8NpR5FU06','aarom','luces','V-25815616','04141516813','activo'),(21,'maria@gmail.com','$2y$10$nB.o37DKg/briLvZoeiYjOmm3mAYz5s3LxsXvS29uUgyjeI1UzD/6','marian','ana','251656511','0141622555545','activo'),(22,'a@gmail.com','$2y$10$6/h./BDifqM/BFixeQT1QOarDMN1iE5urvibi7hWf.tFI8c/NC28.','amin3','ami','26655878','041696526585','activo');
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -410,11 +411,12 @@ CREATE TABLE `vehiculos` (
   `modelo` varchar(45) NOT NULL,
   `anio` int(11) NOT NULL,
   `id_chofer` int(11) NOT NULL,
+  `activo` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id_vehiculo`),
   UNIQUE KEY `placa_UNIQUE` (`placa`),
   KEY `fk_carros_choferes_idx` (`id_chofer`),
   CONSTRAINT `fk_carros_choferes` FOREIGN KEY (`id_chofer`) REFERENCES `choferes` (`id_chofer`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -423,7 +425,7 @@ CREATE TABLE `vehiculos` (
 
 LOCK TABLES `vehiculos` WRITE;
 /*!40000 ALTER TABLE `vehiculos` DISABLE KEYS */;
-INSERT INTO `vehiculos` VALUES (1,'aa111bbb','toyota','yaris',2006,1),(2,'aa12vc','honda','ranger',2005,1),(3,'DD52bc','hyundai','sonic',2006,2),(4,'11552ab','Toyota ','honda',2006,2),(5,'BCD523ee','toyota','honda',2006,7);
+INSERT INTO `vehiculos` VALUES (1,'aa111bbb','toyota','yaris',2006,1,0),(2,'aa12vc','honda','ranger',2005,1,0),(3,'DD52bc','hyundai','sonic',2006,2,0),(4,'11552ab','Toyota ','honda',2006,2,0),(5,'BCD523ee','toyota','honda',2006,7,0),(6,'as66221','hoonda','bebe',2003,1,1);
 /*!40000 ALTER TABLE `vehiculos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -462,4 +464,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-07-22 13:12:42
+-- Dump completed on 2026-07-25 13:55:51

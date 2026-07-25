@@ -10,6 +10,9 @@ if (!isset($_SESSION['id_usuario'])) {
 
 $id_cliente = $_SESSION['id_usuario'];
 
+$desde = $_GET['desde'] ?? null;
+$hasta = $_GET['hasta'] ?? null;
+
 /** @var PDO $conn */
 $sql = "SELECT t.id_traslado, t.costo, t.estado, t.fecha,
                z1.nombre_zona AS nombre_origen,
@@ -17,11 +20,23 @@ $sql = "SELECT t.id_traslado, t.costo, t.estado, t.fecha,
         FROM traslados t
         JOIN zonas z1 ON t.id_zona_origen = z1.id_zona
         JOIN zonas z2 ON t.id_zona_destino = z2.id_zona
-        WHERE t.id_cliente = ?
-        ORDER BY t.id_traslado DESC";
+        WHERE t.id_cliente = ?";
+
+$params = [$id_cliente];
+
+if ($desde && preg_match('/^\d{4}-\d{2}$/', $desde)) {
+  $sql .= " AND DATE_FORMAT(t.fecha, '%Y-%m') >= ?";
+  $params[] = $desde;
+}
+if ($hasta && preg_match('/^\d{4}-\d{2}$/', $hasta)) {
+  $sql .= " AND DATE_FORMAT(t.fecha, '%Y-%m') <= ?";
+  $params[] = $hasta;
+}
+
+$sql .= " ORDER BY t.id_traslado DESC";
 
 $stmt = $conn->prepare($sql);
-$stmt->execute([$id_cliente]);
+$stmt->execute($params);
 $traslados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 echo json_encode(['success' => true, 'data' => $traslados]);

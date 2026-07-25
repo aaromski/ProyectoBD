@@ -14,8 +14,10 @@ try {
   $id_usuario = $_SESSION['id_usuario'];
 
   $stmt = $conn->prepare("
-    SELECT pc.id_pago, pc.monto, pc.nro_ref, pc.fecha, pc.estado, pc.detalles,
-           b.nombre_banco
+    SELECT pc.id_pago, pc.monto, pc.nro_ref, pc.fecha, pc.detalles,
+           pc.numero_cuenta,
+           b.nombre_banco,
+           b.prefijo
     FROM pago_chofer pc
     JOIN choferes ch ON pc.id_chofer = ch.id_chofer
     LEFT JOIN bancos b ON pc.id_banco = b.id_banco

@@ -3,21 +3,31 @@ session_start();
 require_once '../conexion.php';
 header('Content-Type: application/json');
 
-$id_banco = $_POST['id_banco'] ?? null;
-$nuevo_estado = $_POST['nuevo_estado'] ?? null;
+$id_banco = (int)($_POST['id_banco'] ?? 0);
 
-if (!$id_banco || !$nuevo_estado) {
-    echo json_encode(['success' => false, 'message' => 'Datos incompletos.']);
+if (!$id_banco) {
+    echo json_encode(['success' => false, 'message' => 'ID de banco no proporcionado.']);
     exit;
 }
 
 try {
     /** @var PDO $conn */
-    $stmt = $conn->prepare("UPDATE bancos SET estado = ? WHERE id_banco = ?");
-    $stmt->execute([$nuevo_estado, $id_banco]);
+    $stmtActual = $conn->prepare("SELECT estado FROM bancos WHERE id_banco = ?");
+    $stmtActual->execute([$id_banco]);
+    $banco = $stmtActual->fetch(PDO::FETCH_ASSOC);
 
-    echo json_encode(['success' => true]);
-} catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => 'Error al cambiar estado: ' . $e->getMessage()]);
+    if (!$banco) {
+        echo json_encode(['success' => false, 'message' => 'Banco no encontrado.']);
+        exit;
+    }
+
+    $nuevoEstado = ($banco['estado'] === 'activo') ? 'inactivo' : 'activo';
+
+    $stmt = $conn->prepare("UPDATE bancos SET estado = ? WHERE id_banco = ?");
+    $stmt->execute([$nuevoEstado, $id_banco]);
+
+    echo json_encode(['success' => true, 'message' => "Banco actualizado a '$nuevoEstado'.", 'nuevo_estado' => $nuevoEstado]);
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Error al cambiar estado del banco.']);
 }
 ?>
