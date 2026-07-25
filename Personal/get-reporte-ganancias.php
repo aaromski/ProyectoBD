@@ -1,44 +1,38 @@
 <?php
-error_reporting(0);
 session_start();
+require_once '../conexion.php';
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['id_usuario']) || !isset($_SESSION['rol'])) {
-  echo json_encode(['error' => 'No autorizado']);
-  exit();
+$desde = $_GET['desde'] ?? null;
+$hasta = $_GET['hasta'] ?? null;
+
+if (!$desde || !$hasta) {
+    echo json_encode(['success' => false, 'message' => 'Faltan fechas de búsqueda.']);
+    exit;
 }
 
-require_once '../conexion.php';
-
-$desde = isset($_GET['desde']) ? trim($_GET['desde']) : '';
-$hasta = isset($_GET['hasta']) ? trim($_GET['hasta']) : '';
-
-if (empty($desde) || empty($hasta)) {
-  echo json_encode(['success' => false, 'message' => 'Parámetros inválidos.']);
-  exit();
-}
+$fecha_desde = $desde . ' 00:00:00';
+$fecha_hasta = $hasta . ' 23:59:59';
 
 try {
-  /** @var PDO $conn */
-  $sql = "SELECT
-            t.id_transaccion,
-            t.tipo,
-            t.nro_ref,
-            t.monto,
-            t.fecha,
-            ROUND(t.monto * 0.30, 2) AS comision
-          FROM transacciones t
-          WHERE t.tipo = 'pago_viaje'
-            AND t.estado = 'finalizado'
-            AND DATE_FORMAT(t.fecha, '%Y-%m') BETWEEN :desde AND :hasta
-          ORDER BY t.fecha DESC";
+    /** @var PDO $conn */
+    $stmt = $conn->prepare("
+        SELECT 
+            id_traslado AS id_transaccion, 
+            'N/A' AS nro_ref, 
+            fecha, 
+            (costo * 0.30) AS comision 
+        FROM traslados 
+        WHERE fecha BETWEEN ? AND ? 
+        ORDER BY fecha DESC
+    ");
+    
+    $stmt->execute([$fecha_desde, $fecha_hasta]);
+    $ganancias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    echo json_encode(['success' => true, 'data' => $ganancias]);
 
-  $stmt = $conn->prepare($sql);
-  $stmt->execute([':desde' => $desde, ':hasta' => $hasta]);
-  $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-  echo json_encode(['success' => true, 'data' => $data]);
-} catch (PDOException $e) {
-  echo json_encode(['success' => false, 'message' => 'Error en el servidor.']);
+} catch (Exception $e) {
+    echo json_encode(['success' => false, 'message' => 'Error: ' . $e->getMessage()]);
 }
 ?>

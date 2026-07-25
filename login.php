@@ -15,13 +15,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   try {
     /** @var PDO $conn */
     // 1. Buscamos las credenciales globales en la tabla unificada de usuarios usando $conn
-    $sql = "SELECT id_usuario, nombres, apellidos, password FROM usuarios WHERE correo = :correo";
+    $sql = "SELECT id_usuario, nombres, apellidos, password, estado FROM usuarios WHERE correo = :correo";
     $stmt = $conn->prepare($sql);
     $stmt->execute([':correo' => $correo]);
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // 2. Verificamos la contraseña encriptada
     if ($usuario && password_verify($password, $usuario['password'])) {
+      
+      // NUEVO: Escudo de validación de estado
+      if (isset($usuario['estado']) && $usuario['estado'] === 'bloqueado') {
+        header("Location: login.html?error=cuenta_bloqueada");
+        exit();
+      }
+
       $id_usuario = $usuario['id_usuario'];
 
       // 3. Verificación de Seguridad Relacional según el rol seleccionado
@@ -61,7 +68,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_rol = $conn->prepare($sql_rol);
 
         // Mapeamos los valores exactos definidos en tu ENUM de base de datos
-        // Cambia esto:
         $rol_db = ($rol_solicitado === 'personal') ? 'personal' : 'admin';
 
         $stmt_rol->execute([

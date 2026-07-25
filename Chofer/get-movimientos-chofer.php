@@ -1,80 +1,78 @@
 <?php
+include('../conexion.php');
 session_start();
-header('Content-Type: application/json');
 
-if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'chofer') {
-  echo json_encode(['success' => false, 'message' => 'No autorizado']);
-  exit;
+if (!isset($_SESSION['id_usuario'])) {
+    echo json_encode(['success' => false, 'message' => 'No autorizado']);
+    exit;
 }
 
-require_once '../conexion.php';
+$id_usuario = $_SESSION['id_usuario'];
 
 try {
-  /** @var PDO $conn */
-  $id_usuario = $_SESSION['id_usuario'];
-  $movimientos = [];
+    /** @var PDO $conn */
+    // 1. Buscamos el id_chofer real asociado a este usuario
+    $stmt_ch = $conn->prepare("SELECT id_chofer FROM choferes WHERE id_usuario = ?");
+    $stmt_ch->execute([$id_usuario]);
+    $chofer = $stmt_ch->fetch(PDO::FETCH_ASSOC);
 
-  // 1. Retiros del chofer (desde transacciones)
-  $stmtRetiros = $conn->prepare("
-    SELECT t.nro_ref AS id_ref, t.fecha, t.monto, t.detalles
-    FROM transacciones t
-    WHERE t.id_usuario = ? AND t.tipo = 'retiro'
-    ORDER BY t.fecha DESC
-    LIMIT 10
-  ");
-  $stmtRetiros->execute([$id_usuario]);
-  foreach ($stmtRetiros->fetchAll(PDO::FETCH_ASSOC) as $row) {
-    $movimientos[] = [
-      'id_ref'   => $row['id_ref'],
-      'fecha'    => $row['fecha'],
-      'tipo'     => 'RETIRO',
-      'monto'    => $row['monto'],
-      'detalles' => $row['detalles'] ?: 'Retiro de fondos'
-    ];
-  }
+    if (!$chofer) {
+        echo json_encode(['success' => true, 'data' => []]);
+        exit;
+    }
+    
+    $id_chofer = $chofer['id_chofer'];
+    $movimientos = [];
 
-  // 2. Pagos de viaje del chofer (desde traslados finalizados)
-  $stmtViajes = $conn->prepare("
-    SELECT
-        tr.id_traslado,
-        tr.fecha,
-        tr.costo,
-        zo.nombre_zona AS origen,
-        zd.nombre_zona AS destino
-    FROM traslados tr
-    INNER JOIN choferes c ON tr.id_chofer = c.id_chofer
-    LEFT JOIN zonas zo ON tr.id_zona_origen = zo.id_zona
-    LEFT JOIN zonas zd ON tr.id_zona_destino = zd.id_zona
-    WHERE c.id_usuario = ? AND tr.estado = 'finalizado'
-    ORDER BY tr.fecha DESC
-    LIMIT 10
-  ");
-  $stmtViajes->execute([$id_usuario]); // Ahora sí machea perfectamente gracias al JOIN
+    // 2. INGRESOS: Consultamos los viajes realizados para calcular su 70% de ganancia
+    $stmt_viajes = $conn->prepare("
+        SELECT id_traslado, fecha, costo, estado
+        FROM traslados 
+        WHERE id_chofer = ? AND estado IN ('finalizado', 'realizado')
+    ");
+    $stmt_viajes->execute([$id_chofer]);
+    
+    while ($row = $stmt_viajes->fetch(PDO::FETCH_ASSOC)) {
+        // La empresa retiene 30%, el chofer gana 70%
+        $ganancia = $row['costo'] * 0.70; 
+        
+        $movimientos[] = [
+            'id_ref' => '#V-' . $row['id_traslado'],
+            'fecha' => $row['fecha'],
+            'tipo' => 'VIAJE REALIZADO',
+            'monto' => $ganancia, // Monto positivo (suma a su saldo)
+            'detalles' => 'Ganancia por traslado (70%)'
+        ];
+    }
 
-  foreach ($stmtViajes->fetchAll(PDO::FETCH_ASSOC) as $row) {
-    $monto_chofer = $row['costo'] * 0.70;
-    $origen = $row['origen'] ?: 'N/A';
-    $destino = $row['destino'] ?: 'N/A';
+    // 3. EGRESOS (LIQUIDACIÓN): Consultamos los pagos que le ha hecho el administrador
+    $stmt_pagos = $conn->prepare("
+        SELECT id_pago, nro_ref, fecha, monto, detalles, estado
+        FROM pago_chofer 
+        WHERE id_chofer = ?
+    ");
+    $stmt_pagos->execute([$id_chofer]);
+    
+    while ($row = $stmt_pagos->fetch(PDO::FETCH_ASSOC)) {
+        $referencia = !empty($row['nro_ref']) ? 'REF-' . $row['nro_ref'] : '#P-' . $row['id_pago'];
+        
+        $movimientos[] = [
+            'id_ref' => $referencia,
+            'fecha' => $row['fecha'],
+            'tipo' => 'PAGO DE EMPRESA',
+            'monto' => -abs($row['monto']), // Monto negativo (se descuenta de su saldo virtual porque ya se le envió al banco)
+            'detalles' => !empty($row['detalles']) ? $row['detalles'] : 'Liquidación enviada a cuenta bancaria'
+        ];
+    }
 
-    $movimientos[] = [
-      'id_ref'   => '#' . $row['id_traslado'],
-      'fecha'    => $row['fecha'],
-      'tipo'     => 'PAGO VIAJE',
-      'monto'    => $monto_chofer,
-      'detalles' => 'Traslado de ' . $origen . ' a ' . $destino
-    ];
-  }
+    // 4. Ordenamos todo el historial cronológicamente (los más recientes primero)
+    usort($movimientos, function($a, $b) {
+        return strtotime($b['fecha']) - strtotime($a['fecha']);
+    });
 
+    echo json_encode(['success' => true, 'data' => $movimientos]);
 
-
-  // Ordenar por fecha descendente y tomar los últimos 10
-  usort($movimientos, function($a, $b) {
-    return strtotime($b['fecha']) - strtotime($a['fecha']);
-  });
-  $movimientos = array_slice($movimientos, 0, 10);
-
-  echo json_encode(['success' => true, 'data' => $movimientos]);
 } catch (PDOException $e) {
-  echo json_encode(['success' => false, 'message' => 'Error al obtener movimientos.']);
+    echo json_encode(['success' => false, 'message' => 'Error al cargar historial: ' . $e->getMessage()]);
 }
 ?>

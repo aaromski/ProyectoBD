@@ -20,7 +20,7 @@ if (!in_array($rol, $rolesValidos)) {
 
 try {
   /** @var PDO $conn */
-  $sql = "SELECT u.id_usuario, u.nombres, u.apellidos, u.cedula, u.correo, u.telefono
+$sql = "SELECT u.id_usuario, u.nombres, u.apellidos, u.cedula, u.correo, u.telefono, u.estado
           FROM usuarios u
           INNER JOIN roles_asignados ra ON u.id_usuario = ra.id_usuario
           WHERE ra.tipo_rol = :rol

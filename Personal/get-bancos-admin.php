@@ -1,12 +1,11 @@
 <?php
 session_start();
-require_once 'conexion.php';
+require_once '../conexion.php';
 header('Content-Type: application/json');
 
 try {
     /** @var PDO $conn */
-    // MAGIA: El WHERE estado = 'activo' filtra la lista
-    $stmt = $conn->query("SELECT id_banco, nombre_banco, prefijo FROM bancos WHERE estado = 'activo' ORDER BY nombre_banco ASC");
+    $stmt = $conn->query("SELECT id_banco, nombre_banco, prefijo, estado FROM bancos ORDER BY nombre_banco ASC");
     $bancos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     echo json_encode(['success' => true, 'data' => $bancos]);

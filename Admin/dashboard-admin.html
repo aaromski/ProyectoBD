@@ -104,7 +104,7 @@
         <h3 id="stat-choferes" class="text-3xl font-bold mt-2">Cargando...</h3>
       </div>
       <div class="bg-white p-6 rounded-xl border border-slate-200">
-        <p class="text-xs text-slate-500 uppercase">BANCOS REGISTRADOS</p>
+        <p class="text-xs text-slate-500 uppercase">CUENTAS AUTORIZADAS</p>
         <h3 id="stat-bancos" class="text-3xl font-bold mt-2">Cargando...</h3>
       </div>
     </div>
@@ -133,11 +133,12 @@
                 <th class="px-5 py-4">Nombre</th>
                 <th class="px-5 py-4">Rol</th>
                 <th class="px-5 py-4">Correo</th>
+                <th class="px-5 py-4 text-center">Estado</th>
                 <th class="px-5 py-4 text-right">Acciones</th>
               </tr>
             </thead>
             <tbody id="tabla-admins" class="divide-y divide-slate-200 text-slate-700">
-              <tr><td colspan="5" class="px-5 py-4 text-center text-slate-400">Cargando administradores...</td></tr>
+              <tr><td colspan="6" class="px-5 py-4 text-center text-slate-400">Cargando administradores...</td></tr>
             </tbody>
           </table>
         </div>
@@ -191,11 +192,12 @@
               <th class="px-5 py-4">ID</th>
               <th class="px-5 py-4">Nombre</th>
               <th class="px-5 py-4">Correo</th>
+              <th class="px-5 py-4 text-center">Estado</th>
               <th class="px-5 py-4 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody id="tabla-choferes" class="divide-y divide-slate-200 text-slate-700">
-            <tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">Cargando choferes...</td></tr>
+            <tr><td colspan="5" class="px-5 py-4 text-center text-slate-400">Cargando choferes...</td></tr>
           </tbody>
         </table>
       </div>
@@ -222,11 +224,12 @@
               <th class="px-5 py-4">ID</th>
               <th class="px-5 py-4">Nombre</th>
               <th class="px-5 py-4">Correo</th>
+              <th class="px-5 py-4 text-center">Estado</th>
               <th class="px-5 py-4 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody id="tabla-clientes" class="divide-y divide-slate-200 text-slate-700">
-            <tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">Cargando clientes...</td></tr>
+            <tr><td colspan="5" class="px-5 py-4 text-center text-slate-400">Cargando clientes...</td></tr>
           </tbody>
         </table>
       </div>
@@ -256,11 +259,12 @@
               <th class="px-5 py-4">ID</th>
               <th class="px-5 py-4">Nombre</th>
               <th class="px-5 py-4">Correo</th>
+              <th class="px-5 py-4 text-center">Estado</th>
               <th class="px-5 py-4 text-right">Acciones</th>
             </tr>
           </thead>
           <tbody id="tabla-personal" class="divide-y divide-slate-200 text-slate-700">
-            <tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">Cargando personal...</td></tr>
+            <tr><td colspan="5" class="px-5 py-4 text-center text-slate-400">Cargando personal...</td></tr>
           </tbody>
         </table>
       </div>
@@ -564,15 +568,15 @@
       <input type="hidden" id="ead-id">
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nombres</label>
-        <input id="ead-nombres" type="text" readonly class="w-full bg-gray-100 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed" placeholder="Nombres">
+        <input id="ead-nombres" type="text" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed" placeholder="Nombres">
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Apellidos</label>
-        <input id="ead-apellidos" type="text" readonly class="w-full bg-gray-100 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed" placeholder="Apellidos">
+        <input id="ead-apellidos" type="text" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed" placeholder="Apellidos">
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Cédula</label>
-        <input id="ead-cedula" type="text" readonly class="w-full bg-gray-100 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed" placeholder="Cédula">
+        <input id="ead-cedula" type="text" readonly class="w-full bg-slate-100 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-500 cursor-not-allowed" placeholder="Cédula">
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Correo</label>
@@ -607,7 +611,7 @@
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Banco</label>
         <select id="ab-banco" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
-          <option value="">Seleccione un banco</option>
+          <option value="">Seleccione un banco del catálogo</option>
         </select>
       </div>
       <div>
@@ -660,7 +664,7 @@
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Banco</label>
         <select id="ec-banco" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
-          <option value="">Seleccione un banco</option>
+          <option value="">Seleccione un banco del catálogo</option>
         </select>
       </div>
       <div>
@@ -706,6 +710,7 @@
 </div>
 
 <script>
+  let adminIdLogueado = null;
   function initDashboard() {
     lucide.createIcons();
     updateClock();
@@ -768,6 +773,7 @@
         }
 
         const u = data.data;
+        adminIdLogueado = u.id_usuario;
         const nombres = u.nombres || '';
         const apellidos = u.apellidos || '';
         const cedula = u.cedula || '';
@@ -979,20 +985,13 @@
     if (eliminarData.tipo === 'cuenta_empresa') {
       formData.append('id_cuenta', eliminarData.id);
       endpoint = 'eliminar-cuenta-empresa.php';
-    } else if (['admin', 'personal', 'chofer', 'cliente'].includes(eliminarData.tipo)) {
-      formData.append('id_usuario', eliminarData.id);
-      endpoint = 'eliminar-usuario.php';
-    }
+    } 
 
     if (endpoint) {
       fetch(endpoint, { method: 'POST', body: formData })
         .then(res => res.json())
         .then(res => {
           if (res.success) {
-            cargarAdmins();
-            cargarPersonal();
-            cargarChoferes();
-            cargarClientes();
             cargarCuentasEmpresa();
             actualizarEstadisticas();
             alert(res.message);
@@ -1003,37 +1002,63 @@
     }
   }
 
-  function mostrarModalCrearPersonal() {
-    document.getElementById('form-crear-personal').reset();
-    const modal = document.getElementById('modal-crear-personal');
-    modal.classList.remove('hidden');
-    modal.classList.add('flex');
-  }
+  function cambiarEstadoUsuario(id, nombre) {
+    if (!confirm(`¿Está seguro de cambiar el estado de acceso de "${nombre}" (ID #${String(id).padStart(3, '0')})?`)) return;
 
-  function ocultarModalCrearPersonal() {
-    const modal = document.getElementById('modal-crear-personal');
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
-  }
-
-  function crearPersonal() {
     const formData = new FormData();
-    formData.append('nombres', document.getElementById('cp-nombres').value.trim());
-    formData.append('apellidos', document.getElementById('cp-apellidos').value.trim());
-    formData.append('cedula', document.getElementById('cp-cedula').value.trim());
-    formData.append('correo', document.getElementById('cp-correo').value.trim());
-    formData.append('telefono', document.getElementById('cp-telefono').value.trim());
-    formData.append('password', document.getElementById('cp-password').value);
+    formData.append('id_usuario', id);
 
-    fetch('crear-personal.php', { method: 'POST', body: formData })
+    fetch('cambiar-estado-usuario.php', { method: 'POST', body: formData })
       .then(res => res.json())
       .then(res => {
         if (res.success) {
-          ocultarModalCrearPersonal();
+          cargarAdmins();
           cargarPersonal();
-          alert(res.message);
+          cargarChoferes();
+          cargarClientes();
+          actualizarEstadisticas();
         } else {
           alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function cargarAdmins() {
+    fetch('get-usuarios-rol.php?tipo_rol=admin')
+      .then(res => res.json())
+      .then(res => {
+        const tbody = document.getElementById('tabla-admins');
+        tbody.innerHTML = '';
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(u => {
+            const esActivo = u.estado !== 'bloqueado';
+            const badge = esActivo ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[10px] font-bold">Activo</span>` : `<span class="px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-full text-[10px] font-bold">Bloqueado</span>`;
+            
+            let btnEstado = '';
+            if (u.id_usuario === adminIdLogueado) {
+               btnEstado = `<span class="text-xs text-slate-400 italic px-3 py-1.5 border border-dashed border-slate-300 rounded-lg">Tú (Sesión actual)</span>`;
+            } else {
+               btnEstado = esActivo
+                ? `<button onclick="cambiarEstadoUsuario(${u.id_usuario}, '${u.nombres.split(' ')[0]}')" class="bg-amber-100 text-amber-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-amber-200 transition">Bloquear</button>`
+                : `<button onclick="cambiarEstadoUsuario(${u.id_usuario}, '${u.nombres.split(' ')[0]}')" class="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-emerald-200 transition">Activar</button>`;
+            }
+
+            tbody.innerHTML += `
+              <tr class="hover:bg-slate-50" data-id="${u.id_usuario}">
+                <td class="px-5 py-4 font-mono font-bold">#${String(u.id_usuario).padStart(3, '0')}</td>
+                <td class="px-5 py-4">${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}</td>
+                <td class="px-5 py-4">Admin</td>
+                <td class="px-5 py-4">${u.correo}</td>
+                <td class="px-5 py-4 text-center">${badge}</td>
+                <td class="px-5 py-4 text-right flex flex-wrap justify-end gap-2">
+                  <button onclick="editarAdmin(${u.id_usuario}, '${u.nombres.replace(/'/g, "\\'")}', '${u.apellidos.replace(/'/g, "\\'")}', '${u.cedula}', '${u.correo}', '${u.telefono || ''}')"
+                    class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Modificar</button>
+                  ${btnEstado}
+                </td>
+              </tr>`;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="6" class="px-5 py-4 text-center text-slate-400">No hay administradores registrados.</td></tr>';
         }
       });
   }
@@ -1046,21 +1071,93 @@
         tbody.innerHTML = '';
         if (res.success && res.data.length > 0) {
           res.data.forEach(u => {
+            const esActivo = u.estado !== 'bloqueado';
+            const badge = esActivo ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[10px] font-bold">Activo</span>` : `<span class="px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-full text-[10px] font-bold">Bloqueado</span>`;
+            const btnEstado = esActivo
+              ? `<button onclick="cambiarEstadoUsuario(${u.id_usuario}, '${u.nombres.split(' ')[0]}')" class="bg-amber-100 text-amber-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-amber-200 transition">Bloquear</button>`
+              : `<button onclick="cambiarEstadoUsuario(${u.id_usuario}, '${u.nombres.split(' ')[0]}')" class="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-emerald-200 transition">Activar</button>`;
+
             tbody.innerHTML += `
               <tr class="hover:bg-slate-50" data-id="${u.id_usuario}">
                 <td class="px-5 py-4 font-mono font-bold">#${String(u.id_usuario).padStart(3, '0')}</td>
                 <td class="px-5 py-4">${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}</td>
                 <td class="px-5 py-4">${u.correo}</td>
+                <td class="px-5 py-4 text-center">${badge}</td>
                 <td class="px-5 py-4 text-right flex flex-wrap justify-end gap-2">
                   <button onclick="editarPersonal(${u.id_usuario}, '${u.nombres.replace(/'/g, "\\'")}', '${u.apellidos.replace(/'/g, "\\'")}', '${u.cedula}', '${u.correo}', '${u.telefono || ''}')"
                     class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Modificar</button>
-                  <button onclick="confirmarEliminarPersonal(${u.id_usuario}, '${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}')"
-                    class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-rose-200 transition">Eliminar</button>
+                  ${btnEstado}
                 </td>
               </tr>`;
           });
         } else {
-          tbody.innerHTML = '<tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">No hay usuarios personal registrados.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-4 text-center text-slate-400">No hay personal registrado.</td></tr>';
+        }
+      });
+  }
+
+  function cargarChoferes() {
+    fetch('get-usuarios-rol.php?tipo_rol=chofer')
+      .then(res => res.json())
+      .then(res => {
+        const tbody = document.getElementById('tabla-choferes');
+        tbody.innerHTML = '';
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(u => {
+            const esActivo = u.estado !== 'bloqueado';
+            const badge = esActivo ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[10px] font-bold">Activo</span>` : `<span class="px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-full text-[10px] font-bold">Bloqueado</span>`;
+            const btnEstado = esActivo
+              ? `<button onclick="cambiarEstadoUsuario(${u.id_usuario}, '${u.nombres.split(' ')[0]}')" class="bg-amber-100 text-amber-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-amber-200 transition">Bloquear</button>`
+              : `<button onclick="cambiarEstadoUsuario(${u.id_usuario}, '${u.nombres.split(' ')[0]}')" class="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-emerald-200 transition">Activar</button>`;
+
+            tbody.innerHTML += `
+              <tr class="hover:bg-slate-50" data-id="${u.id_usuario}">
+                <td class="px-5 py-4 font-mono font-bold">#${String(u.id_usuario).padStart(3, '0')}</td>
+                <td class="px-5 py-4">${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}</td>
+                <td class="px-5 py-4">${u.correo}</td>
+                <td class="px-5 py-4 text-center">${badge}</td>
+                <td class="px-5 py-4 text-right flex flex-wrap justify-end gap-2">
+                  <button onclick="editarChofer(${u.id_usuario}, '${u.nombres.replace(/'/g, "\\'")}', '${u.apellidos.replace(/'/g, "\\'")}', '${u.cedula}', '${u.correo}', '${u.telefono || ''}')"
+                    class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Modificar</button>
+                  ${btnEstado}
+                </td>
+              </tr>`;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-4 text-center text-slate-400">No hay choferes registrados.</td></tr>';
+        }
+      });
+  }
+
+  function cargarClientes() {
+    fetch('get-usuarios-rol.php?tipo_rol=cliente')
+      .then(res => res.json())
+      .then(res => {
+        const tbody = document.getElementById('tabla-clientes');
+        tbody.innerHTML = '';
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(u => {
+            const esActivo = u.estado !== 'bloqueado';
+            const badge = esActivo ? `<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[10px] font-bold">Activo</span>` : `<span class="px-2.5 py-1 bg-rose-50 text-rose-700 border border-rose-200 rounded-full text-[10px] font-bold">Bloqueado</span>`;
+            const btnEstado = esActivo
+              ? `<button onclick="cambiarEstadoUsuario(${u.id_usuario}, '${u.nombres.split(' ')[0]}')" class="bg-amber-100 text-amber-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-amber-200 transition">Bloquear</button>`
+              : `<button onclick="cambiarEstadoUsuario(${u.id_usuario}, '${u.nombres.split(' ')[0]}')" class="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-emerald-200 transition">Activar</button>`;
+
+            tbody.innerHTML += `
+              <tr class="hover:bg-slate-50" data-id="${u.id_usuario}">
+                <td class="px-5 py-4 font-mono font-bold">#${String(u.id_usuario).padStart(3, '0')}</td>
+                <td class="px-5 py-4">${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}</td>
+                <td class="px-5 py-4">${u.correo}</td>
+                <td class="px-5 py-4 text-center">${badge}</td>
+                <td class="px-5 py-4 text-right flex flex-wrap justify-end gap-2">
+                  <button onclick="editarCliente(${u.id_usuario}, '${u.nombres.replace(/'/g, "\\'")}', '${u.apellidos.replace(/'/g, "\\'")}', '${u.cedula}', '${u.correo}', '${u.telefono || ''}')"
+                    class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Modificar</button>
+                  ${btnEstado}
+                </td>
+              </tr>`;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-4 text-center text-slate-400">No hay clientes registrados.</td></tr>';
         }
       });
   }
@@ -1113,51 +1210,6 @@
       });
   }
 
-  function confirmarEliminarPersonal(id, nombre) {
-    if (!confirm(`¿Está seguro de eliminar al usuario "${nombre}" (ID #${String(id).padStart(3, '0')})? Esta acción no se puede deshacer.`)) return;
-
-    const formData = new FormData();
-    formData.append('id_usuario', id);
-
-    fetch('eliminar-usuario.php', { method: 'POST', body: formData })
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) {
-          cargarPersonal();
-          alert(res.message);
-        } else {
-          alert('Error: ' + res.message);
-        }
-      });
-  }
-
-  function cargarChoferes() {
-    fetch('get-usuarios-rol.php?tipo_rol=chofer')
-      .then(res => res.json())
-      .then(res => {
-        const tbody = document.getElementById('tabla-choferes');
-        tbody.innerHTML = '';
-        if (res.success && res.data.length > 0) {
-          res.data.forEach(u => {
-            tbody.innerHTML += `
-              <tr class="hover:bg-slate-50" data-id="${u.id_usuario}">
-                <td class="px-5 py-4 font-mono font-bold">#${String(u.id_usuario).padStart(3, '0')}</td>
-                <td class="px-5 py-4">${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}</td>
-                <td class="px-5 py-4">${u.correo}</td>
-                <td class="px-5 py-4 text-right flex flex-wrap justify-end gap-2">
-                  <button onclick="editarChofer(${u.id_usuario}, '${u.nombres.replace(/'/g, "\\'")}', '${u.apellidos.replace(/'/g, "\\'")}', '${u.cedula}', '${u.correo}', '${u.telefono || ''}')"
-                    class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Modificar</button>
-                  <button onclick="confirmarEliminarChofer(${u.id_usuario}, '${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}')"
-                    class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-rose-200 transition">Eliminar</button>
-                </td>
-              </tr>`;
-          });
-        } else {
-          tbody.innerHTML = '<tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">No hay choferes registrados.</td></tr>';
-        }
-      });
-  }
-
   function filtrarChoferes() {
     const filtro = document.getElementById('filtro-choferes').value.trim();
     const filas = document.querySelectorAll('#tabla-choferes tr[data-id]');
@@ -1206,51 +1258,6 @@
       });
   }
 
-  function confirmarEliminarChofer(id, nombre) {
-    if (!confirm(`¿Está seguro de eliminar al chofer "${nombre}" (ID #${String(id).padStart(3, '0')})? Esta acción no se puede deshacer.`)) return;
-
-    const formData = new FormData();
-    formData.append('id_usuario', id);
-
-    fetch('eliminar-usuario.php', { method: 'POST', body: formData })
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) {
-          cargarChoferes();
-          alert(res.message);
-        } else {
-          alert('Error: ' + res.message);
-        }
-      });
-  }
-
-  function cargarClientes() {
-    fetch('get-usuarios-rol.php?tipo_rol=cliente')
-      .then(res => res.json())
-      .then(res => {
-        const tbody = document.getElementById('tabla-clientes');
-        tbody.innerHTML = '';
-        if (res.success && res.data.length > 0) {
-          res.data.forEach(u => {
-            tbody.innerHTML += `
-              <tr class="hover:bg-slate-50" data-id="${u.id_usuario}">
-                <td class="px-5 py-4 font-mono font-bold">#${String(u.id_usuario).padStart(3, '0')}</td>
-                <td class="px-5 py-4">${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}</td>
-                <td class="px-5 py-4">${u.correo}</td>
-                <td class="px-5 py-4 text-right flex flex-wrap justify-end gap-2">
-                  <button onclick="editarCliente(${u.id_usuario}, '${u.nombres.replace(/'/g, "\\'")}', '${u.apellidos.replace(/'/g, "\\'")}', '${u.cedula}', '${u.correo}', '${u.telefono || ''}')"
-                    class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Modificar</button>
-                  <button onclick="confirmarEliminarCliente(${u.id_usuario}, '${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}')"
-                    class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-rose-200 transition">Eliminar</button>
-                </td>
-              </tr>`;
-          });
-        } else {
-          tbody.innerHTML = '<tr><td colspan="4" class="px-5 py-4 text-center text-slate-400">No hay clientes registrados.</td></tr>';
-        }
-      });
-  }
-
   function filtrarClientes() {
     const filtro = document.getElementById('filtro-clientes').value.trim();
     const filas = document.querySelectorAll('#tabla-clientes tr[data-id]');
@@ -1295,52 +1302,6 @@
           alert(res.message);
         } else {
           alert('Error: ' + res.message);
-        }
-      });
-  }
-
-  function confirmarEliminarCliente(id, nombre) {
-    if (!confirm(`¿Está seguro de eliminar al cliente "${nombre}" (ID #${String(id).padStart(3, '0')})? Esta acción no se puede deshacer.`)) return;
-
-    const formData = new FormData();
-    formData.append('id_usuario', id);
-
-    fetch('eliminar-usuario.php', { method: 'POST', body: formData })
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) {
-          cargarClientes();
-          alert(res.message);
-        } else {
-          alert('Error: ' + res.message);
-        }
-      });
-  }
-
-  function cargarAdmins() {
-    fetch('get-usuarios-rol.php?tipo_rol=admin')
-      .then(res => res.json())
-      .then(res => {
-        const tbody = document.getElementById('tabla-admins');
-        tbody.innerHTML = '';
-        if (res.success && res.data.length > 0) {
-          res.data.forEach(u => {
-            tbody.innerHTML += `
-              <tr class="hover:bg-slate-50" data-id="${u.id_usuario}">
-                <td class="px-5 py-4 font-mono font-bold">#${String(u.id_usuario).padStart(3, '0')}</td>
-                <td class="px-5 py-4">${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}</td>
-                <td class="px-5 py-4">Admin</td>
-                <td class="px-5 py-4">${u.correo}</td>
-                <td class="px-5 py-4 text-right flex flex-wrap justify-end gap-2">
-                  <button onclick="editarAdmin(${u.id_usuario}, '${u.nombres.replace(/'/g, "\\'")}', '${u.apellidos.replace(/'/g, "\\'")}', '${u.cedula}', '${u.correo}', '${u.telefono || ''}')"
-                    class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-200 transition">Modificar</button>
-                  <button onclick="confirmarEliminarAdmin(${u.id_usuario}, '${u.nombres.split(' ')[0]} ${u.apellidos.split(' ')[0]}')"
-                    class="bg-rose-100 text-rose-700 px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-rose-200 transition">Eliminar</button>
-                </td>
-              </tr>`;
-          });
-        } else {
-          tbody.innerHTML = '<tr><td colspan="5" class="px-5 py-4 text-center text-slate-400">No hay administradores registrados.</td></tr>';
         }
       });
   }
@@ -1432,25 +1393,6 @@
       });
   }
 
-  function confirmarEliminarAdmin(id, nombre) {
-    if (!confirm(`¿Está seguro de eliminar al administrador "${nombre}" (ID #${String(id).padStart(3, '0')})? Esta acción no se puede deshacer.`)) return;
-
-    const formData = new FormData();
-    formData.append('id_usuario', id);
-
-    fetch('eliminar-usuario.php', { method: 'POST', body: formData })
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) {
-          cargarAdmins();
-          actualizarEstadisticas();
-          alert(res.message);
-        } else {
-          alert('Error: ' + res.message);
-        }
-      });
-  }
-
   function cargarCatalogoBancos(selectId) {
     fetch('../get-bancos-catalogo.php', { headers: { 'Accept': 'application/json' } })
       .then(res => res.json())
@@ -1471,7 +1413,7 @@
   function mostrarModalAgregarCuentaEmpresa() {
     document.getElementById('form-agregar-cuenta-empresa').reset();
     const select = document.getElementById('ab-banco');
-    select.innerHTML = '<option value="">Seleccione un banco</option>';
+    select.innerHTML = '<option value="">Seleccione un banco del catálogo</option>';
     cargarCatalogoBancos('ab-banco');
     const modal = document.getElementById('modal-agregar-cuenta-empresa');
     modal.classList.remove('hidden');
@@ -1526,7 +1468,7 @@
     }
 
     const select = document.getElementById('ec-banco');
-    select.innerHTML = '<option value="">Seleccione un banco</option>';
+    select.innerHTML = '<option value="">Seleccione un banco del catálogo</option>';
     cargarCatalogoBancos('ec-banco');
     setTimeout(() => { select.value = idBanco; }, 200);
 
@@ -1619,6 +1561,41 @@
       })
       .catch(() => {
         mensaje.innerText = 'Error de conexión al guardar los cambios.';
+      });
+  }
+
+  function mostrarModalCrearPersonal() {
+    document.getElementById('form-crear-personal').reset();
+    const modal = document.getElementById('modal-crear-personal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+  }
+
+  function ocultarModalCrearPersonal() {
+    const modal = document.getElementById('modal-crear-personal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+
+  function crearPersonal() {
+    const formData = new FormData();
+    formData.append('nombres', document.getElementById('cp-nombres').value.trim());
+    formData.append('apellidos', document.getElementById('cp-apellidos').value.trim());
+    formData.append('cedula', document.getElementById('cp-cedula').value.trim());
+    formData.append('correo', document.getElementById('cp-correo').value.trim());
+    formData.append('telefono', document.getElementById('cp-telefono').value.trim());
+    formData.append('password', document.getElementById('cp-password').value);
+
+    fetch('crear-personal.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          ocultarModalCrearPersonal();
+          cargarPersonal();
+          alert(res.message);
+        } else {
+          alert('Error: ' + res.message);
+        }
       });
   }
 

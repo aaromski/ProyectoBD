@@ -2,73 +2,64 @@
 include('../conexion.php');
 session_start();
 
-
 if (!isset($_SESSION['id_usuario'])) {
   die(json_encode(['success' => false, 'message' => 'No autorizado']));
 }
+
 /** @var PDO $conn */
 $id_usuario = $_SESSION['id_usuario'];
-$tipo = strtolower($_POST['tipo']);
-$monto = $_POST['monto'];
-$id_banco = isset($_POST['id_cuenta_empresa']) ? (int)$_POST['id_cuenta_empresa'] : 1;
-$fecha_usuario = !empty($_POST['fecha']) ? $_POST['fecha'] : date('Y-m-d');
-$fecha = $fecha_usuario . ' ' . date('H:i:s');
-$detalles = null;
-// Lógica de blindaje para el número de referencia
-if ($tipo === 'recarga') {
-  // Para recargas, validamos que el usuario ingrese 6 dígitos reales
-  $nro_ref = $_POST['nro_ref'];
-  if (!preg_match('/^\d{6}$/', $nro_ref)) {
-    die(json_encode(['success' => false, 'message' => 'La referencia de recarga debe ser de 6 dígitos']));
-  }
-  $nro_ref_completo = 'REC-' . $nro_ref;
+$monto = (float)$_POST['monto'];
+$id_cuenta_empresa = isset($_POST['id_cuenta_empresa']) ? (int)$_POST['id_cuenta_empresa'] : 0;
+$fecha_pago = !empty($_POST['fecha']) ? $_POST['fecha'] : date('Y-m-d');
+$id_banco = 1; // Valor por defecto
 
-  try {
-    $stmt_banco = $conn->prepare("SELECT nombre_banco FROM bancos WHERE id_banco = ?");
-    $stmt_banco->execute([$id_banco]);
-    $banco = $stmt_banco->fetch(PDO::FETCH_ASSOC);
+$nro_ref = trim($_POST['nro_ref']);
 
-    if ($banco) {
-      $detalles = "Recarga a " . $banco['nombre_banco'];
-    } else {
-      $detalles = "Recarga a Banco no especificado";
-    }
-  } catch (PDOException $e) {
-    // Si falla la búsqueda del banco por alguna razón, ponemos un texto por defecto
-    $detalles = "Recarga de saldo";
-  }
-
-} else {
-  // Para movimientos internos (viajes/pagos), generamos referencia automática
-  $ref_num = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT);
-  if ($tipo === 'pago_viaje') {
-    $nro_ref_completo = 'VIAJE-' . $ref_num;
-  } else {
-    $nro_ref_completo = 'PAGO-' . $ref_num;
-  }
+if (!preg_match('/^\d{6}$/', $nro_ref)) {
+  die(json_encode(['success' => false, 'message' => 'La referencia de recarga debe ser de 6 dígitos exactos.']));
 }
 
-// Lógica de estado
-$estado = ($tipo === 'recarga') ? 'finalizado' : 'pendiente';
-
+// Así guardaba tu grupo las referencias en la nueva tabla recargas
+$nro_ref_completo = 'REC-' . $nro_ref; 
 
 try {
   $conn->beginTransaction();
 
-  // Insertar la transacción principal
-  $stmt = $conn->prepare("INSERT INTO transacciones (id_usuario, tipo, id_banco, monto, nro_ref, fecha, estado, detalles) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-  $stmt->execute([$id_usuario, $tipo, $id_banco, $monto, $nro_ref_completo, $fecha, $estado, $detalles]);
+  // 1. Obtener el ID REAL del cliente (la tabla recargas exige id_cliente, no id_usuario)
+  $stmt_cliente = $conn->prepare("SELECT id_cliente FROM clientes WHERE id_usuario = ?");
+  $stmt_cliente->execute([$id_usuario]);
+  $cliente = $stmt_cliente->fetch(PDO::FETCH_ASSOC);
+  
+  if (!$cliente) {
+    throw new Exception("Cliente no encontrado en la base de datos.");
+  }
+  $id_cliente = $cliente['id_cliente'];
 
-  if ($tipo === 'recarga') {
-    $stmt_c = $conn->prepare("UPDATE clientes SET saldo = saldo + ? WHERE id_usuario = ?");
-    $stmt_c->execute([$monto, $id_usuario]);
+  // 2. Obtener el banco al que se transfirió
+  $stmt_cuenta = $conn->prepare("SELECT id_banco FROM cuentas_empresa WHERE id_cuenta = ?");
+  $stmt_cuenta->execute([$id_cuenta_empresa]);
+  $cuenta_data = $stmt_cuenta->fetch(PDO::FETCH_ASSOC);
+  
+  if ($cuenta_data) {
+      $id_banco = $cuenta_data['id_banco'];
   }
 
-  $conn->commit();
+  // 3. MAGIA: Insertar en la NUEVA tabla 'recargas' en vez de la vieja 'transacciones'
+  $stmt = $conn->prepare("INSERT INTO recargas (id_cliente, id_banco, monto, nro_ref, fecha_pago, fecha_registro) VALUES (?, ?, ?, ?, ?, NOW())");
+  $stmt->execute([$id_cliente, $id_banco, $monto, $nro_ref_completo, $fecha_pago]);
 
-  echo json_encode(['success' => true, 'message' => 'Transacción registrada. Ref: ' . $nro_ref_completo]);
+  // 4. Aumentar el saldo del cliente
+  $stmt_c = $conn->prepare("UPDATE clientes SET saldo = saldo + ? WHERE id_cliente = ?");
+  $stmt_c->execute([$monto, $id_cliente]);
+
+  $conn->commit();
+  echo json_encode(['success' => true, 'message' => '¡Recarga registrada exitosamente!']);
+  
 } catch (PDOException $e) {
   $conn->rollBack();
-  echo json_encode(['success' => false, 'message' => 'Error: La referencia ya existe o datos inválidos']);
+  echo json_encode(['success' => false, 'message' => 'Error SQL: ' . $e->getMessage()]);
+} catch (Exception $e) {
+  $conn->rollBack();
+  echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
 ?>

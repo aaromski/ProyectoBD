@@ -377,10 +377,31 @@
 <script>
   lucide.createIcons();
 
-  window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
+    
+    // Si viene de una pestaña específica
     if (urlParams.get('tab') === 'register') cambiarTab('registro');
-    if (urlParams.has('error')) document.getElementById('error-msg').classList.remove('hidden');
+    
+    // LÓGICA DE MANEJO DE ERRORES DINÁMICOS
+    const errorType = urlParams.get('error');
+    if (errorType) {
+      const errorMsgBox = document.getElementById('error-msg');
+      
+      // Evaluamos qué error viene en la URL y cambiamos el texto
+      if (errorType === 'cuenta_bloqueada') {
+        errorMsgBox.innerText = 'Tu cuenta ha sido bloqueada por seguridad. Por favor, contacta a un administrador.';
+      } else if (errorType === 'campos_vacios') {
+        errorMsgBox.innerText = 'Por favor, completa todos los campos antes de continuar.';
+      } else {
+        // El mensaje por defecto para 'incorrecto' o cualquier otro
+        errorMsgBox.innerText = 'Correo, contraseña o tipo de perfil incorrectos. Por favor, intenta de nuevo.';
+      }
+      
+      // Mostramos la caja roja ya con el texto correcto
+      errorMsgBox.classList.remove('hidden');
+    }
+    
     setModo('nuevo');
   });
 

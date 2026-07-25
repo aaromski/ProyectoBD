@@ -1,68 +1,64 @@
 <?php
+include('../conexion.php');
 session_start();
-header('Content-Type: application/json');
 
-if (!isset($_SESSION['id_usuario']) || $_SESSION['rol'] !== 'chofer') {
-  echo json_encode(['success' => false, 'msg' => 'No autorizado']);
-  exit();
+if (!isset($_SESSION['id_usuario'])) {
+    echo json_encode(['success' => false, 'message' => 'No autorizado']);
+    exit;
 }
 
-require_once '../conexion.php';
+$id_usuario = $_SESSION['id_usuario'];
+// Recibimos las fechas si el chofer usa el filtro
+$desde = isset($_GET['desde']) ? $_GET['desde'] : '';
+$hasta = isset($_GET['hasta']) ? $_GET['hasta'] : '';
 
 try {
-  $id_usuario = $_SESSION['id_usuario'];
-  /** @var PDO $conn */
+    /** @var PDO $conn */
+    // 1. Validar al chofer
+    $stmt_ch = $conn->prepare("SELECT id_chofer FROM choferes WHERE id_usuario = ?");
+    $stmt_ch->execute([$id_usuario]);
+    $chofer = $stmt_ch->fetch(PDO::FETCH_ASSOC);
 
-  $stmtChofer = $conn->prepare("SELECT id_chofer FROM choferes WHERE id_usuario = :id_usuario");
-  $stmtChofer->execute([':id_usuario' => $id_usuario]);
-  $chofer = $stmtChofer->fetch(PDO::FETCH_ASSOC);
-
-  if (!$chofer) {
-    echo json_encode(['success' => true, 'asignados' => [], 'historial' => []]);
-    exit();
-  }
-
-
-
-  $id_chofer = $chofer['id_chofer'];
-
-  $sql = "SELECT t.id_traslado AS id,
-                 CONCAT('C-', c.id_cliente) AS id_pasajero,
-                 CONCAT(
-                    CONCAT(UPPER(SUBSTRING(SUBSTRING_INDEX(u.nombres, ' ', 1), 1, 1)), LOWER(SUBSTRING(SUBSTRING_INDEX(u.nombres, ' ', 1), 2))),
-                    ' ',
-                    CONCAT(UPPER(SUBSTRING(SUBSTRING_INDEX(u.apellidos, ' ', 1), 1, 1)), LOWER(SUBSTRING(SUBSTRING_INDEX(u.apellidos, ' ', 1), 2)))
-                 ) AS pasajero,
-                 z1.nombre_zona AS origen,
-                 z2.nombre_zona AS destino,
-                 t.costo AS costo_total,
-                 ROUND(t.costo * 0.70, 2) AS ganancia,
-                 t.estado AS estado
-          FROM traslados t
-          INNER JOIN clientes c ON t.id_cliente = c.id_cliente
-          INNER JOIN usuarios u ON c.id_usuario = u.id_usuario
-          INNER JOIN zonas z1 ON t.id_zona_origen = z1.id_zona
-          INNER JOIN zonas z2 ON t.id_zona_destino = z2.id_zona
-          WHERE t.id_chofer = :id_chofer
-          ORDER BY t.id_traslado DESC";
-
-  $stmt = $conn->prepare($sql);
-  $stmt->execute([':id_chofer' => $id_chofer]);
-  $viajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-  $asignados = [];
-  $historial = [];
-
-  foreach ($viajes as $v) {
-    if (in_array($v['estado'], ['pendiente', 'en_curso'])) {
-      $asignados[] = $v;
-    } else {
-      $historial[] = $v;
+    if (!$chofer) {
+        echo json_encode(['success' => true, 'data' => []]);
+        exit;
     }
-  }
+    
+    $id_chofer = $chofer['id_chofer'];
 
-  echo json_encode(['success' => true, 'asignados' => $asignados, 'historial' => $historial]);
+    // 2. Consulta base (Sin datos del pasajero, solo la información de la ruta y fecha)
+    $sql = "
+        SELECT 
+            t.id_traslado, 
+            zo.nombre_zona AS origen, 
+            zd.nombre_zona AS destino, 
+            t.estado, 
+            t.costo AS costo_total,
+            t.fecha
+        FROM traslados t
+        INNER JOIN zonas zo ON t.id_zona_origen = zo.id_zona
+        INNER JOIN zonas zd ON t.id_zona_destino = zd.id_zona
+        WHERE t.id_chofer = ?
+    ";
 
-} catch (Exception $e) {
-  echo json_encode(['success' => false, 'msg' => $e->getMessage()]);
+    $params = [$id_chofer];
+
+    // 3. Aplicamos el filtro de fechas si existen
+    if (!empty($desde) && !empty($hasta)) {
+        $sql .= " AND DATE(t.fecha) BETWEEN ? AND ?";
+        $params[] = $desde;
+        $params[] = $hasta;
+    }
+
+    $sql .= " ORDER BY t.fecha DESC";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->execute($params);
+    $viajes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    echo json_encode(['success' => true, 'data' => $viajes]);
+
+} catch (PDOException $e) {
+    echo json_encode(['success' => false, 'message' => 'Error al cargar viajes: ' . $e->getMessage()]);
 }
+?>

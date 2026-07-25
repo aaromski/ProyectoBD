@@ -14,13 +14,12 @@
 </head>
 <body class="flex h-screen overflow-hidden text-[#1e293b]">
 
-<!-- SIDEBAR -->
 <aside class="w-64 bg-white border-r border-slate-300 flex flex-col p-6 h-screen">
   <div class="flex items-center gap-2 mb-10">
     <div class="bg-slate-900 p-1.5 rounded-lg text-white">
       <i data-lucide="shield-check" class="h-5 w-5"></i>
     </div>
-    <span class="text-lg  font-extrabold text-slate-900 whitespace-nowrap">Personal Decarrerita</span>
+    <span class="text-lg font-extrabold text-slate-900 whitespace-nowrap">Personal Decarrerita</span>
   </div>
 
   <nav class="space-y-6 flex-grow">
@@ -57,12 +56,18 @@
     </div>
 
     <div>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Tablas Base</p>
+      <a href="#" onclick="cambiarVista('vista-bancos', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+        <i data-lucide="landmark" class="h-4 w-4"></i> Gestión de Bancos
+      </a>
+    </div>
+
+    <div>
       <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Ajustes</p>
       <a href="#" onclick="cambiarVista('vista-ajustes', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
         <i data-lucide="settings" class="h-4 w-4"></i> Cuenta
       </a>
     </div>
-
   </nav>
 
   <div class="relative group mt-auto min-w-0 w-full">
@@ -80,10 +85,8 @@
       </a>
     </div>
   </div>
-
 </aside>
 
-<!-- CONTENIDO PRINCIPAL -->
 <main class="flex-1 p-8 overflow-y-auto">
 
   <section id="vista-principal" class="vista-seccion">
@@ -144,12 +147,12 @@
       <h3 class="text-sm font-bold mb-4 uppercase text-slate-500">Filtrar Ganancias por Periodo</h3>
       <form id="form-filtrar-ganancias" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" onsubmit="event.preventDefault(); filtrarGanancias();">
         <div>
-          <label class="block text-[10px] font-bold text-slate-400 mb-1">DESDE</label>
-          <input type="month" id="ganancia-desde" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50" required>
+          <label class="block text-[10px] font-bold text-slate-400 mb-1">DESDE (FECHA INICIO)</label>
+          <input type="date" id="ganancia-desde" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50" required>
         </div>
         <div>
-          <label class="block text-[10px] font-bold text-slate-400 mb-1">HASTA</label>
-          <input type="month" id="ganancia-hasta" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50" required>
+          <label class="block text-[10px] font-bold text-slate-400 mb-1">HASTA (FECHA FIN)</label>
+          <input type="date" id="ganancia-hasta" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50" required>
         </div>
         <div class="flex items-end">
           <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-bold hover:bg-blue-700 transition">
@@ -159,7 +162,7 @@
       </form>
 
       <div id="resultados-ganancias" class="border-t border-slate-200 pt-4">
-        <p class="text-center text-slate-400 text-sm italic">Seleccione un rango de meses y haga clic en "Filtrar Ganancias" para ver el reporte.</p>
+        <p class="text-center text-slate-400 text-sm italic">Seleccione un rango de fechas y haga clic en "Filtrar Ganancias" para ver el reporte.</p>
       </div>
     </div>
   </section>
@@ -169,44 +172,51 @@
 
     <div class="bg-white rounded-xl border border-slate-300 p-6 shadow-sm">
       <h3 class="text-sm font-bold mb-4 uppercase text-slate-500">Auditoría de Pagos</h3>
-      <form id="form-reporte-pagos" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" onsubmit="event.preventDefault(); generarInformePagos();">
-        <div class="relative">
+      <form id="form-reporte-pagos" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" onsubmit="event.preventDefault(); generarInformePagos();">
+        <div>
           <label class="block text-[10px] font-bold text-slate-400 mb-1">SELECCIONAR CHOFER</label>
-          <input type="text" id="buscador-chofer" placeholder="Escriba nombre o ID..." autocomplete="off" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50">
-          <input type="hidden" id="buscador-chofer-id">
-          <div id="dropdown-choferes" class="hidden absolute z-10 w-full bg-white border border-slate-300 rounded-lg mt-1 shadow-lg max-h-48 overflow-y-auto"></div>
+          <select id="select-chofer-reporte" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50 focus:ring-2 focus:ring-[#0f172a] outline-none" required>
+            <option value="">Cargando choferes...</option>
+          </select>
         </div>
         <div>
-          <label class="block text-[10px] font-bold text-slate-400 mb-1">MES DE CONSULTA</label>
-          <input type="month" id="mes-reporte-pagos" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50">
+          <label class="block text-[10px] font-bold text-slate-400 mb-1">DESDE</label>
+          <input type="date" id="pagos-desde" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50" required>
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-slate-400 mb-1">HASTA</label>
+          <input type="date" id="pagos-hasta" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50" required>
         </div>
         <div class="flex items-end">
-          <button type="submit" class="w-full bg-[#0f172a] text-white py-2 rounded-lg text-sm font-bold hover:bg-black">
+          <button type="submit" class="w-full bg-[#0f172a] text-white py-2 rounded-lg text-sm font-bold hover:bg-black transition">
             Generar Informe
           </button>
         </div>
       </form>
 
       <div id="resultados-reporte-pagos" class="border-t border-slate-200 pt-4">
-        <p class="text-center text-slate-400 text-sm italic">Seleccione un chofer y fecha para ver el histórico de pagos.</p>
+        <p class="text-center text-slate-400 text-sm italic">Seleccione un chofer y fechas para ver el histórico de pagos.</p>
       </div>
     </div>
   </section>
 
   <section id="vista-pagos" class="vista-seccion hidden p-8">
-    <h2 class="text-xl font-bold mb-6">Validación de Pagos</h2>
+    <h2 class="text-xl font-bold mb-6">Validación de Pagos a Choferes</h2>
     <div class="bg-white rounded-xl border border-slate-300 overflow-hidden">
       <table class="w-full text-sm text-left">
         <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold">
-        <tr><th class="px-6 py-4">Usuario</th><th class="px-6 py-4">Referencia</th><th class="px-6 py-4">Monto</th><th class="px-6 py-4 text-right">Acción</th></tr>
+        <tr>
+          <th class="px-6 py-4">Usuario Chofer</th>
+          <th class="px-6 py-4">Cuenta Destino</th>
+          <th class="px-6 py-4">Deuda Pendiente</th>
+          <th class="px-6 py-4 text-right">Acción</th>
+        </tr>
         </thead>
         <tbody class="divide-y divide-slate-200">
         </tbody>
       </table>
     </div>
   </section>
-
-
 
   <section id="vista-vehiculos" class="vista-seccion hidden p-8">
       <h2 class="text-2xl font-bold mb-6">Vehículos Pendientes de Revisión</h2>
@@ -242,6 +252,29 @@
         </tr>
         </thead>
         <tbody id="tabla-pruebas-pendientes">
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SECCIÓN GESTIÓN DE BANCOS -->
+  <section id="vista-bancos" class="vista-seccion hidden p-8">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-bold">Gestión de Bancos</h2>
+    </div>
+    
+    <div class="bg-white rounded-xl border border-slate-300 overflow-hidden shadow-sm">
+      <table class="w-full text-sm text-left">
+        <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-200">
+          <tr>
+            <th class="px-6 py-4">ID</th>
+            <th class="px-6 py-4">Nombre de la Entidad Bancaria</th>
+            <th class="px-6 py-4 text-center">Prefijo</th>
+            <th class="px-6 py-4 text-center">Estado</th>
+            <th class="px-6 py-4 text-right">Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-bancos" class="divide-y divide-slate-100">
         </tbody>
       </table>
     </div>
@@ -343,6 +376,31 @@
     </div>
   </div>
 
+  <div id="modal-pagar-chofer" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-xl w-96 shadow-xl relative">
+      <button type="button" onclick="cerrarModalPago()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+         <i data-lucide="x" class="h-5 w-5"></i>
+      </button>
+      <h3 class="text-lg font-bold mb-1">Liquidar Pago a Chofer</h3>
+      <p class="text-xs text-slate-500 mb-5">Destinatario: <span id="texto-chofer-pago" class="font-bold text-slate-700"></span></p>
+      
+      <form id="form-procesar-pago">
+        <input type="hidden" id="input-pago-id">
+
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Monto a Transferir (Bs.)</label>
+        <input type="number" step="0.01" id="input-pago-monto" class="w-full border border-slate-300 rounded-lg p-2.5 mb-4 text-sm font-mono font-bold" required>
+
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Nº Referencia Bancaria</label>
+        <input type="text" id="input-pago-ref" class="w-full border border-slate-300 rounded-lg p-2.5 mb-4 text-sm font-mono" placeholder="Ej: 456789" required>
+        
+        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Fecha de Transferencia</label>
+        <input type="date" id="input-pago-fecha" class="w-full border border-slate-300 rounded-lg p-2.5 mb-6 text-sm" required>
+
+        <button type="submit" class="w-full bg-[#0f172a] text-white py-3 rounded-lg text-sm font-bold hover:bg-slate-800 transition">Confirmar y Registrar Pago</button>
+      </form>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -351,17 +409,14 @@
   setInterval(updateClock, 1000); updateClock();
 
   function cambiarVista(idVista, event) {
-    // 1. Ocultar todas las secciones que tengan la clase 'vista-seccion'
     document.querySelectorAll('.vista-seccion').forEach(v => v.classList.add('hidden'));
 
-    // 2. Mostrar la vista seleccionada
     const target = document.getElementById(idVista);
     if(target) target.classList.remove('hidden');
 
-    // 3. Cambiar estilos del nav (quitar activo a todos, poner al clicado)
     document.querySelectorAll('.nav-link').forEach(l => {
       l.classList.remove('bg-[#0f172a]', 'text-white');
-      l.classList.add('text-slate-600'); // Asegúrate que sea el color original
+      l.classList.add('text-slate-600'); 
     });
 
     if(event) {
@@ -370,7 +425,6 @@
     }
   }
 
-  // Lógica para abrir/cerrar el menú al hacer clic
   const btnPerfil = document.getElementById('btn-perfil');
   const menuPerfil = document.getElementById('menu-perfil');
 
@@ -378,7 +432,6 @@
     menuPerfil.classList.toggle('hidden');
   });
 
-  // Cerrar el menú si haces clic fuera de él
   window.addEventListener('click', (e) => {
     if (!btnPerfil.contains(e.target)) {
       menuPerfil.classList.add('hidden');
@@ -393,6 +446,8 @@
     cargarPruebasPendientes();
     cargarEstadisticasGanancias();
     cargarEvaluacionesRecientes();
+    cargarBancosAdmin(); 
+    cargarChoferesParaReporte();
   });
 
   let idUsuarioGlobal = null;
@@ -438,20 +493,16 @@
       .then(res => res.json())
       .then(res => {
         const tbody = document.getElementById('tabla-vehiculos-pendientes');
-        tbody.innerHTML = ''; // Limpiar tabla
+        tbody.innerHTML = ''; 
 
         if (res.success && res.data.length > 0) {
           res.data.forEach(v => {
             tbody.innerHTML += `
                 <tr class="border-b border-slate-100 hover:bg-slate-50">
                     <td class="p-4">${v.nombres} ${v.apellidos}</td>
-
                     <td class="p-4">${v.marca} ${v.modelo}</td>
-
                     <td class="p-4 font-mono font-bold">${v.placa}</td>
-
                     <td class="p-4 text-sm text-slate-600">${v.fecha_solicitud}</td>
-
                     <td class="p-4 text-center">
                         <button onclick="revisarVehiculo(${v.id_evaluacion})"
                                 class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition">
@@ -470,25 +521,30 @@
   function cargarPagosPendientes() {
     fetch('get-pagos-pendientes.php')
       .then(res => res.json())
-      .then(data => {
+      .then(res => {
         const tbody = document.querySelector('#vista-pagos tbody');
-        tbody.innerHTML = ''; // Limpiamos
+        tbody.innerHTML = ''; 
 
-        if (data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center">No hay pagos pendientes</td></tr>';
+        if (!res.success || res.data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">No hay deudas pendientes con los choferes.</td></tr>';
           return;
         }
 
-        data.forEach(p => {
+        res.data.forEach(p => {
           tbody.innerHTML += `
-          <tr>
-            <td class="px-6 py-4 font-bold">${p.nombres}</td>
-            <td class="px-6 py-4 font-mono">${p.nro_ref}</td>
-            <td class="px-6 py-4">Bs. ${parseFloat(p.monto).toFixed(2)}</td>
+          <tr class="hover:bg-slate-50 border-b border-slate-100">
+            <td class="px-6 py-4">
+               <p class="font-bold text-slate-900">${p.nombres} ${p.apellidos}</p>
+            </td>
+            <td class="px-6 py-4">
+               <p class="text-xs font-bold text-slate-500 uppercase">${p.nombre_banco}</p>
+               <p class="font-mono text-sm">${p.numero_cuenta}</p>
+            </td>
+            <td class="px-6 py-4 font-bold text-slate-900 font-mono text-lg text-rose-600">Bs. ${parseFloat(p.saldo).toFixed(2)}</td>
             <td class="px-6 py-4 text-right">
-              <button onclick="aprobarPago(${p.id_transaccion})"
-                      class="bg-emerald-600 text-white px-4 py-1.5 rounded text-[10px] font-bold hover:bg-emerald-700">
-                APROBAR
+              <button onclick="abrirModalPago(${p.id_chofer}, ${p.saldo}, '${p.nombres} ${p.apellidos}')"
+                      class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-emerald-700 shadow-sm transition">
+                Pagar Deuda
               </button>
             </td>
           </tr>
@@ -497,24 +553,46 @@
       });
   }
 
-  function aprobarPago(idTransaccion) {
-    if (!confirm("¿Estás seguro de aprobar este pago? Se sumará al saldo del chofer.")) return;
-
-    fetch('aprobar-pago.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: idTransaccion })
-    })
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) {
-          alert("¡Pago aprobado con éxito!");
-          cargarPagosPendientes(); // Refresca la tabla para que desaparezca el registro
-        } else {
-          alert("Error: " + res.message);
-        }
-      });
+  function abrirModalPago(idChofer, saldo, nombreChofer) {
+    document.getElementById('input-pago-id').value = idChofer; 
+    document.getElementById('input-pago-monto').value = parseFloat(saldo).toFixed(2);
+    document.getElementById('input-pago-monto').setAttribute('max', saldo);
+    document.getElementById('texto-chofer-pago').innerText = `${nombreChofer} (Deuda: Bs. ${parseFloat(saldo).toFixed(2)})`;
+    document.getElementById('modal-pagar-chofer').classList.remove('hidden');
   }
+
+  function cerrarModalPago() {
+    document.getElementById('form-procesar-pago').reset();
+    document.getElementById('input-pago-monto').removeAttribute('max');
+    document.getElementById('modal-pagar-chofer').classList.add('hidden');
+  }
+
+  document.getElementById('form-procesar-pago').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const data = {
+      id_chofer: document.getElementById('input-pago-id').value,
+      monto: document.getElementById('input-pago-monto').value,
+      nro_ref: document.getElementById('input-pago-ref').value,
+      fecha: document.getElementById('input-pago-fecha').value
+    };
+
+    fetch('procesar-pago-chofer.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(res => {
+      if(res.success) {
+        alert(res.message);
+        cerrarModalPago();
+        cargarPagosPendientes();
+        cargarEstadisticas();
+      } else {
+        alert(res.message);
+      }
+    });
+  });
 
   function revisarVehiculo(id) {
     document.getElementById('id-evaluacion-input').value = id;
@@ -615,76 +693,44 @@
       });
   });
 
-  // --- BUSCADOR DE CHOFERES (AUTOCOMPLETE) ---
-  const inputBuscador = document.getElementById('buscador-chofer');
-  const inputBuscadorId = document.getElementById('buscador-chofer-id');
-  const dropdownChof = document.getElementById('dropdown-choferes');
-  let debounceTimer;
+function cargarChoferesParaReporte() {
+    fetch('get-lista-choferes.php')
+      .then(res => res.json())
+      .then(res => {
+        const select = document.getElementById('select-chofer-reporte');
+        select.innerHTML = '<option value="">Seleccione un chofer...</option>';
+        
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(c => {
+            select.innerHTML += `<option value="${c.id_chofer}">${c.nombres.split(' ')[0]} ${c.apellidos.split(' ')[0]} (ID Chofer: #${String(c.id_chofer).padStart(3, '0')})</option>`;
+          });
+        } else {
+          select.innerHTML = '<option value="">No hay choferes registrados</option>';
+        }
+      })
+      .catch(err => console.error('Error cargando choferes:', err));
+  }
 
-  inputBuscador.addEventListener('input', function() {
-    const q = this.value.trim();
-    inputBuscadorId.value = '';
-
-    if (q.length < 1) {
-      dropdownChof.classList.add('hidden');
-      return;
-    }
-
-    clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => {
-      fetch(`get-choferes-buscar.php?q=${encodeURIComponent(q)}`)
-        .then(res => res.json())
-        .then(res => {
-          dropdownChof.innerHTML = '';
-          if (res.success && res.data.length > 0) {
-            res.data.forEach(c => {
-              const div = document.createElement('div');
-              div.className = 'px-3 py-2 text-sm cursor-pointer hover:bg-slate-100';
-              div.innerHTML = `<span class="font-semibold">${c.nombres.split(' ')[0]} ${c.apellidos.split(' ')[0]}</span> <span class="text-slate-400 text-xs">#${String(c.id_usuario).padStart(3, '0')}</span>`;
-              div.addEventListener('click', () => {
-                inputBuscador.value = `${c.nombres.split(' ')[0]} ${c.apellidos.split(' ')[0]} (#${String(c.id_usuario).padStart(3, '0')})`;
-                inputBuscadorId.value = c.id_usuario;
-                dropdownChof.classList.add('hidden');
-              });
-              dropdownChof.appendChild(div);
-            });
-            dropdownChof.classList.remove('hidden');
-          } else {
-            dropdownChof.innerHTML = '<div class="px-3 py-2 text-sm text-slate-400 italic">Sin resultados</div>';
-            dropdownChof.classList.remove('hidden');
-          }
-        });
-    }, 300);
-  });
-
-  inputBuscador.addEventListener('focus', function() {
-    if (this.value.trim().length >= 1 && dropdownChof.children.length > 0) {
-      dropdownChof.classList.remove('hidden');
-    }
-  });
-
-  document.addEventListener('click', function(e) {
-    if (!inputBuscador.contains(e.target) && !dropdownChof.contains(e.target)) {
-      dropdownChof.classList.add('hidden');
-    }
-  });
-
-  // --- GENERAR INFORME DE PAGOS ---
   function generarInformePagos() {
-    const idUsuario = inputBuscadorId.value;
-    const mes = document.getElementById('mes-reporte-pagos').value;
+    const idUsuario = document.getElementById('select-chofer-reporte').value;
+    const desde = document.getElementById('pagos-desde').value;
+    const hasta = document.getElementById('pagos-hasta').value;
     const container = document.getElementById('resultados-reporte-pagos');
 
     if (!idUsuario) {
-      alert('Seleccione un chofer válido del buscador.');
+      alert('Seleccione un chofer válido de la lista.');
       return;
     }
-    if (!mes) {
-      alert('Seleccione un mes de consulta.');
+    if (!desde || !hasta) {
+      alert('Seleccione un rango de fechas válido.');
+      return;
+    }
+    if (desde > hasta) {
+      alert('La fecha "Desde" no puede ser mayor que "Hasta".');
       return;
     }
 
-    fetch(`get-reporte-pagos.php?id_usuario=${idUsuario}&mes=${mes}`)
+    fetch(`get-reporte-pagos.php?id_usuario=${idUsuario}&desde=${desde}&hasta=${hasta}`)
       .then(res => res.json())
       .then(res => {
         if (res.success && res.data.length > 0) {
@@ -719,12 +765,11 @@
             </div>`;
           container.innerHTML = html;
         } else {
-          container.innerHTML = '<p class="text-center text-slate-400 text-sm italic">No se encontraron pagos para el chofer y mes seleccionados.</p>';
+          container.innerHTML = '<p class="text-center text-slate-400 text-sm italic">No se encontraron pagos para el chofer y fechas seleccionadas.</p>';
         }
       });
   }
 
-  // --- ESTADÍSTICAS DE GANANCIAS ---
   function cargarEstadisticasGanancias() {
     fetch('get-estadisticas-ganancias.php')
       .then(res => res.json())
@@ -737,7 +782,6 @@
       });
   }
 
-  // --- HISTORIAL DE EVALUACIONES RECIENTES ---
   function cargarEvaluacionesRecientes() {
     fetch('get-evaluaciones-recientes.php')
       .then(res => res.json())
@@ -810,7 +854,6 @@
       });
   }
 
-  // --- FILTRAR GANANCIAS POR RANGO ---
   function filtrarGanancias() {
     const desde = document.getElementById('ganancia-desde').value;
     const hasta = document.getElementById('ganancia-hasta').value;
@@ -822,7 +865,7 @@
     }
 
     if (desde > hasta) {
-      alert('El mes "Desde" no puede ser mayor que el mes "Hasta".');
+      alert('La fecha "Desde" no puede ser mayor que la fecha "Hasta".');
       return;
     }
 
@@ -882,7 +925,6 @@
       return;
     }
 
-
     const formData = new FormData();
     formData.append('correo', document.getElementById('ajuste-correo').value.trim());
     formData.append('telefono', document.getElementById('ajuste-tlf').value.trim());
@@ -905,7 +947,66 @@
       });
   }
 
+  function cargarBancosAdmin() {
+    fetch('get-bancos-admin.php')
+      .then(res => res.json())
+      .then(res => {
+        const tbody = document.getElementById('tabla-bancos');
+        tbody.innerHTML = '';
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(b => {
+            const isActivo = b.estado === 'activo';
+            const badgeClass = isActivo ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700';
+            const textEstado = isActivo ? 'Disponible' : 'Inhabilitado';
+            const btnClass = isActivo ? 'bg-rose-600 hover:bg-rose-700' : 'bg-emerald-600 hover:bg-emerald-700';
+            const textBtn = isActivo ? 'Deshabilitar' : 'Habilitar';
 
+            tbody.innerHTML += `
+              <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
+                <td class="px-6 py-4 font-mono text-xs text-slate-400">#${String(b.id_banco).padStart(2, '0')}</td>
+                <td class="px-6 py-4 font-bold text-slate-900">${b.nombre_banco}</td>
+                <td class="px-6 py-4 font-mono font-bold text-slate-700 text-center">${b.prefijo}</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${badgeClass}">${textEstado}</span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <button onclick="cambiarEstadoBanco(${b.id_banco}, '${b.estado}')" class="${btnClass} text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition shadow-sm">
+                    ${textBtn}
+                  </button>
+                </td>
+              </tr>
+            `;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-8 text-center text-slate-400 italic">No hay bancos registrados en el sistema.</td></tr>';
+        }
+        lucide.createIcons();
+      });
+  }
+
+  function cambiarEstadoBanco(idBanco, estadoActual) {
+    const nuevoEstado = estadoActual === 'activo' ? 'inactivo' : 'activo';
+    const accion = estadoActual === 'activo' ? 'deshabilitar' : 'habilitar';
+
+    if(!confirm(`¿Estás seguro de que deseas ${accion} este banco en el sistema?`)) return;
+
+    const formData = new FormData();
+    formData.append('id_banco', idBanco);
+    formData.append('nuevo_estado', nuevoEstado);
+
+    fetch('cambiar-estado-banco.php', {
+      method: 'POST',
+      body: formData
+    })
+    .then(res => res.json())
+    .then(res => {
+      if(res.success) {
+        cargarBancosAdmin(); 
+      } else {
+        alert('Error: ' + res.message);
+      }
+    });
+  }
 </script>
 </body>
 </html>
