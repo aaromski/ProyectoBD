@@ -3,7 +3,6 @@ session_start();
 header('Content-Type: application/json');
 require_once '../conexion.php';
 
-// Cambiamos a cliente_id directamente desde la sesión
 if (!isset($_SESSION['cliente_id'])) {
   echo json_encode(['success' => false, 'message' => 'No autorizado']);
   exit();
@@ -18,10 +17,10 @@ try {
   /** @var PDO $conn */
   $conn->beginTransaction();
 
-  // Consultamos el saldo directamente usando el id_cliente de la sesión
-  $stmt_saldo = $conn->prepare("SELECT saldo FROM clientes WHERE id_cliente = ? FOR UPDATE");
-  $stmt_saldo->execute([$id_cliente]);
-  $cliente = $stmt_saldo->fetch(PDO::FETCH_ASSOC);
+  // 1. Obtener el id_usuario del cliente que está solicitando el viaje
+  $stmt_usuario_cliente = $conn->prepare("SELECT id_usuario, saldo FROM clientes WHERE id_cliente = ? FOR UPDATE");
+  $stmt_usuario_cliente->execute([$id_cliente]);
+  $cliente = $stmt_usuario_cliente->fetch(PDO::FETCH_ASSOC);
 
   if (!$cliente) {
       throw new Exception("Perfil de cliente no encontrado.");
@@ -31,10 +30,12 @@ try {
       throw new Exception("Saldo insuficiente.");
   }
 
+  $id_usuario_cliente = $cliente['id_usuario'];
+
   // Descontamos el saldo
   $conn->prepare("UPDATE clientes SET saldo = saldo - ? WHERE id_cliente = ?")->execute([$costo, $id_cliente]);
 
-  // Seleccionar un chofer disponible
+  // 2. Seleccionar un chofer disponible EXCLUYENDO al usuario actual
   $stmt_chofer = $conn->prepare("SELECT c.id_chofer, v.id_vehiculo,
     u.nombres AS chofer_nombres,
     u.apellidos AS chofer_apellidos,
@@ -46,6 +47,7 @@ try {
     INNER JOIN usuarios u ON u.id_usuario = c.id_usuario
     INNER JOIN vehiculos v ON v.id_chofer = c.id_chofer
     WHERE v.activo = 1
+      AND u.id_usuario != ? -- <--- EVITA QUE SE ASIGNE A SÍ MISMO
       AND EXISTS (
         SELECT 1 FROM evaluaciones_choferes ec
         WHERE ec.id_chofer = c.id_chofer AND ec.estado = 'aprobado'
@@ -56,7 +58,9 @@ try {
       )
     ORDER BY RAND()
     LIMIT 1");
-  $stmt_chofer->execute();
+
+  // Pasamos el id_usuario del cliente para excluirlo
+  $stmt_chofer->execute([$id_usuario_cliente]);
   $chofer = $stmt_chofer->fetch(PDO::FETCH_ASSOC);
 
   if (!$chofer) {

@@ -61,6 +61,9 @@
       <a href="#" onclick="cambiarVista('vista-bancos', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
         <i data-lucide="landmark" class="h-4 w-4"></i> Gestión de Bancos
       </a>
+      <a href="#" onclick="cambiarVista('vista-zonas', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+        <i data-lucide="map-pin" class="h-4 w-4"></i> Gestión de Zonas
+      </a>
     </div>
 
     <div>
@@ -229,6 +232,9 @@
   <section id="vista-bancos" class="vista-seccion hidden p-8">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-xl font-bold">Gestión de Bancos</h2>
+      <button onclick="abrirModalBanco()" class="bg-[#0f172a] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition flex items-center gap-2">
+        <i data-lucide="plus" class="h-4 w-4"></i> Agregar Banco
+      </button>
     </div>
 
     <div class="bg-white rounded-xl border border-slate-300 overflow-hidden shadow-sm">
@@ -243,6 +249,32 @@
         </tr>
         </thead>
         <tbody id="tabla-bancos" class="divide-y divide-slate-100">
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="vista-zonas" class="vista-seccion hidden p-8">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-bold">Gestión de Zonas</h2>
+      <button onclick="abrirModalZona()" class="bg-[#0f172a] text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-800 transition flex items-center gap-2">
+        <i data-lucide="plus" class="h-4 w-4"></i> Agregar Zona
+      </button>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-300 overflow-hidden shadow-sm">
+      <table class="w-full text-sm text-left">
+        <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-200">
+        <tr>
+          <th class="px-6 py-4">ID</th>
+          <th class="px-6 py-4">Nombre de la Zona</th>
+          <th class="px-6 py-4 text-center">Coordenada X</th>
+          <th class="px-6 py-4 text-center">Coordenada Y</th>
+          <th class="px-6 py-4 text-center">Estado</th>
+          <th class="px-6 py-4 text-right">Acción</th>
+        </tr>
+        </thead>
+        <tbody id="tabla-zonas" class="divide-y divide-slate-100">
         </tbody>
       </table>
     </div>
@@ -456,6 +488,58 @@
     </div>
   </div>
 
+  <div id="modal-agregar-banco" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
+      <div class="flex justify-between items-center mb-5">
+        <h3 class="font-bold text-lg text-slate-900">Agregar Banco</h3>
+        <button onclick="cerrarModalBanco()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="h-5 w-5"></i></button>
+      </div>
+      <form id="form-agregar-banco" class="space-y-4">
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Nombre del Banco</label>
+          <input type="text" id="banco-nombre" required minlength="3" placeholder="Ej: Banco de Venezuela" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm" maxlength="100">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Prefijo (mín. 4 caracteres)</label>
+          <input type="text" id="banco-prefijo" required minlength="4" maxlength="4" pattern="[A-Za-z0-9]{4}" placeholder="Ej: 0102" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm font-mono uppercase" title="Exactamente 4 caracteres alfanuméricos">
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="button" onclick="cerrarModalBanco()" class="w-1/3 bg-slate-100 text-slate-700 py-2.5 rounded-lg font-bold text-sm hover:bg-slate-200">Cancelar</button>
+          <button type="submit" class="w-full bg-[#0f172a] text-white py-2.5 rounded-lg font-bold text-sm hover:bg-slate-800">Guardar Banco</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modal-agregar-zona" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
+      <div class="flex justify-between items-center mb-5">
+        <h3 class="font-bold text-lg text-slate-900">Agregar Zona</h3>
+        <button onclick="cerrarModalZona()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="h-5 w-5"></i></button>
+      </div>
+      <form id="form-agregar-zona" class="space-y-4">
+        <div>
+          <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Nombre de la Zona</label>
+          <input type="text" id="zona-nombre" required minlength="3" placeholder="Ej: Maracaibo Centro" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm" maxlength="100">
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Coordenada X</label>
+            <input type="number" id="zona-coord-x" required step="any" placeholder="Ej: -71.68" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm font-mono">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Coordenada Y</label>
+            <input type="number" id="zona-coord-y" required step="any" placeholder="Ej: 10.65" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm font-mono">
+          </div>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="button" onclick="cerrarModalZona()" class="w-1/3 bg-slate-100 text-slate-700 py-2.5 rounded-lg font-bold text-sm hover:bg-slate-200">Cancelar</button>
+          <button type="submit" class="w-full bg-[#0f172a] text-white py-2.5 rounded-lg font-bold text-sm hover:bg-slate-800">Guardar Zona</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -517,6 +601,7 @@
     cargarEstadisticasGanancias();
     cargarEvaluacionesRecientes();
     cargarBancosAdmin();
+    cargarZonasAdmin();
   });
 
   let idUsuarioGlobal = null;
@@ -1174,6 +1259,141 @@
         }
       });
   }
+
+  function abrirModalBanco() {
+    document.getElementById('form-agregar-banco').reset();
+    document.getElementById('modal-agregar-banco').classList.remove('hidden');
+  }
+
+  function cerrarModalBanco() {
+    document.getElementById('modal-agregar-banco').classList.add('hidden');
+  }
+
+  document.getElementById('form-agregar-banco').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const nombre = document.getElementById('banco-nombre').value.trim();
+    const prefijo = document.getElementById('banco-prefijo').value.trim().toUpperCase();
+
+    if (prefijo.length !== 4) {
+      alert('El prefijo debe tener exactamente 4 caracteres.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('prefijo', prefijo);
+
+    fetch('crear-banco.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          alert('Banco registrado exitosamente.');
+          cerrarModalBanco();
+          cargarBancosAdmin();
+        } else {
+          alert('Error: ' + res.message);
+        }
+      })
+      .catch(() => alert('Error de conexión al registrar banco.'));
+  });
+
+  function cargarZonasAdmin() {
+    fetch('get-zonas-admin.php')
+      .then(res => res.json())
+      .then(res => {
+        const tbody = document.getElementById('tabla-zonas');
+        tbody.innerHTML = '';
+        if (res.success && res.data.length > 0) {
+          res.data.forEach(z => {
+            const isActivo = z.activo == 1;
+            const badgeClass = isActivo ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700';
+            const textEstado = isActivo ? 'Activo' : 'Desactivado';
+            const btnClass = isActivo ? 'bg-rose-600 hover:bg-rose-700' : 'bg-emerald-600 hover:bg-emerald-700';
+            const textBtn = isActivo ? 'Desactivar' : 'Activar';
+
+            tbody.innerHTML += `
+              <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
+                <td class="px-6 py-4 font-mono text-xs text-slate-400">#${String(z.id_zona).padStart(2, '0')}</td>
+                <td class="px-6 py-4 font-bold text-slate-900">${z.nombre_zona}</td>
+                <td class="px-6 py-4 font-mono text-slate-600 text-center">${parseFloat(z.coord_x).toFixed(4)}</td>
+                <td class="px-6 py-4 font-mono text-slate-600 text-center">${parseFloat(z.coord_y).toFixed(4)}</td>
+                <td class="px-6 py-4 text-center">
+                  <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${badgeClass}">${textEstado}</span>
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <button onclick="cambiarEstadoZona(${z.id_zona}, ${z.activo})" class="${btnClass} text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition shadow-sm">
+                    ${textBtn}
+                  </button>
+                </td>
+              </tr>
+            `;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-8 text-center text-slate-400 italic">No hay zonas registradas en el sistema.</td></tr>';
+        }
+        lucide.createIcons();
+      });
+  }
+
+  function cambiarEstadoZona(idZona, estadoActual) {
+    const nuevoEstado = estadoActual == 1 ? 0 : 1;
+    const accion = estadoActual == 1 ? 'desactivar' : 'activar';
+
+    if (!confirm(`¿Estás seguro de que desea ${accion} esta zona?`)) return;
+
+    const formData = new FormData();
+    formData.append('id_zona', idZona);
+    formData.append('nuevo_estado', nuevoEstado);
+
+    fetch('cambiar-estado-zona.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          cargarZonasAdmin();
+        } else {
+          alert('Error: ' + res.message);
+        }
+      });
+  }
+
+  function abrirModalZona() {
+    document.getElementById('form-agregar-zona').reset();
+    document.getElementById('modal-agregar-zona').classList.remove('hidden');
+  }
+
+  function cerrarModalZona() {
+    document.getElementById('modal-agregar-zona').classList.add('hidden');
+  }
+
+  document.getElementById('form-agregar-zona').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const nombre = document.getElementById('zona-nombre').value.trim();
+    const coordX = document.getElementById('zona-coord-x').value.trim();
+    const coordY = document.getElementById('zona-coord-y').value.trim();
+
+    if (!coordX || !coordY || isNaN(coordX) || isNaN(coordY)) {
+      alert('Las coordenadas deben ser valores numéricos válidos.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('nombre', nombre);
+    formData.append('coord_x', coordX);
+    formData.append('coord_y', coordY);
+
+    fetch('crear-zona.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          alert('Zona registrada exitosamente.');
+          cerrarModalZona();
+          cargarZonasAdmin();
+        } else {
+          alert('Error: ' + res.message);
+        }
+      })
+      .catch(() => alert('Error de conexión al registrar zona.'));
+  });
 
 </script>
 </body>
