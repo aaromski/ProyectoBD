@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 session_start();
-require 'conexion.php';
+require '../conexion.php';
 
 if (!isset($_SESSION['id_usuario'])) {
     echo json_encode(['success' => false, 'msg' => 'No hay sesión activa.']);
@@ -25,7 +25,7 @@ if (!preg_match('/^\d{20}$/', $cuenta)) {
 /** @var PDO $conn */
 
 try {
-    $stmt = $conn->prepare("UPDATE choferes SET banco = :banco, nro_cuenta = :cuenta WHERE id_usuario = :id");
+    $stmt = $conn->prepare("UPDATE choferes SET id_banco = :banco, nro_cuenta = :cuenta WHERE id_usuario = :id");
     $stmt->execute([':banco' => $banco, ':cuenta' => $cuenta, ':id' => $id_usuario]);
 
     $stmt2 = $conn->prepare("UPDATE usuarios SET telefono = :telefono WHERE id_usuario = :id");
@@ -53,5 +53,9 @@ try {
 
     echo json_encode(['success' => true]);
 } catch (PDOException $e) {
-    echo json_encode(['success' => false, 'msg' => 'Error de base de datos.']);
-}
+      // Captura el mensaje técnico exacto de la base de datos
+      echo json_encode([
+          'success' => false,
+          'msg' => 'Error de base de datos: ' . $e->getMessage()
+      ]);
+  }

@@ -2,7 +2,8 @@
 session_start();
 header('Content-Type: application/json');
 
-if (!isset($_SESSION['id_usuario'])) {
+// Si prefieres usar la variable directa del cliente por rendimiento:
+if (!isset($_SESSION['cliente_id'])) {
   echo json_encode(['success' => false, 'message' => 'No autorizado']);
   exit();
 }
@@ -11,18 +12,18 @@ require_once '../conexion.php';
 
 try {
   /** @var PDO $conn */
-  $id_usuario = $_SESSION['id_usuario'];
+  $id_cliente = $_SESSION['cliente_id'];
 
   $desde = $_GET['desde'] ?? null;
   $hasta = $_GET['hasta'] ?? null;
 
+  // Consulta directa usando el id_cliente de la sesión sin necesidad de JOIN extra con clientes
   $sql = "SELECT r.id_recarga AS id, r.monto, r.nro_ref, r.fecha_registro AS fecha, b.nombre_banco
           FROM recargas r
           LEFT JOIN bancos b ON r.id_banco = b.id_banco
-          INNER JOIN clientes c ON r.id_cliente = c.id_cliente
-          WHERE c.id_usuario = :id";
+          WHERE r.id_cliente = :id_cliente";
 
-  $params = [':id' => $id_usuario];
+  $params = [':id_cliente' => $id_cliente];
 
   if ($desde && preg_match('/^\d{4}-\d{2}$/', $desde)) {
     $sql .= " AND DATE_FORMAT(r.fecha_registro, '%Y-%m') >= :desde";

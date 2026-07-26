@@ -37,7 +37,8 @@ try {
                  z2.nombre_zona AS destino,
                  t.costo AS costo_total,
                  ROUND(t.costo * 0.70, 2) AS ganancia,
-                 t.estado AS estado
+                 t.estado AS estado,
+                 t.fecha AS fecha
           FROM traslados t
           INNER JOIN clientes c ON t.id_cliente = c.id_cliente
           INNER JOIN usuarios u ON c.id_usuario = u.id_usuario

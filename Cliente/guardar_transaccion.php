@@ -2,12 +2,13 @@
 include('../conexion.php');
 session_start();
 
-if (!isset($_SESSION['id_usuario'])) {
+// Validamos directamente con el id_cliente de la sesión
+if (!isset($_SESSION['cliente_id'])) {
   die(json_encode(['success' => false, 'message' => 'No autorizado']));
 }
 
 /** @var PDO $conn */
-$id_usuario = $_SESSION['id_usuario'];
+$id_cliente = $_SESSION['cliente_id'];
 $monto = $_POST['monto'];
 $id_cuenta_empresa = isset($_POST['id_cuenta_empresa']) ? (int)$_POST['id_cuenta_empresa'] : 1;
 $fecha_pago = !empty($_POST['fecha']) ? $_POST['fecha'] : date('Y-m-d');
@@ -27,13 +28,7 @@ try {
       die(json_encode(['success' => false, 'message' => 'El banco asociado a la cuenta no existe']));
   }
 
-  $stmt_cliente = $conn->prepare("SELECT id_cliente FROM clientes WHERE id_usuario = ?");
-  $stmt_cliente->execute([$id_usuario]);
-  $id_cliente = $stmt_cliente->fetchColumn();
-
-  if (!$id_cliente) {
-    die(json_encode(['success' => false, 'message' => 'Cliente no encontrado']));
-  }
+  // Ya no necesitamos consultar la tabla clientes porque tenemos el id_cliente en la sesión
 
   $conn->beginTransaction();
 
