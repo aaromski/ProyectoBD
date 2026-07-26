@@ -30,7 +30,7 @@ try {
           JOIN zonas z1 ON t.id_zona_origen = z1.id_zona
           JOIN zonas z2 ON t.id_zona_destino = z2.id_zona
           WHERE t.estado = 'finalizado'
-            AND DATE_FORMAT(t.fecha, '%Y-%m') BETWEEN :desde AND :hasta
+            AND DATE(t.fecha) BETWEEN :desde AND :hasta
           ORDER BY t.fecha DESC";
 
   $stmt = $conn->prepare($sql);

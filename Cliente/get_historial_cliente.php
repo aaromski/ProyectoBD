@@ -3,12 +3,13 @@ session_start();
 header('Content-Type: application/json');
 require_once '../conexion.php';
 
-if (!isset($_SESSION['id_usuario'])) {
+// Validamos que exista la sesión del cliente
+if (!isset($_SESSION['cliente_id'])) {
   echo json_encode(['success' => false, 'message' => 'No autorizado']);
   exit();
 }
 
-$id_cliente = $_SESSION['id_usuario'];
+$id_cliente = $_SESSION['cliente_id']; // Usamos directamente el ID de la tabla clientes
 
 $desde = $_GET['desde'] ?? null;
 $hasta = $_GET['hasta'] ?? null;

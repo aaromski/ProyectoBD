@@ -95,17 +95,35 @@
     </header>
 
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
-      <div class="bg-white p-6 rounded-xl border border-slate-200">
-        <p class="text-xs text-slate-500 uppercase">CLIENTES REGISTRADOS</p>
-        <h3 id="stat-clientes" class="text-3xl font-bold mt-2">Cargando...</h3>
+      <div class="bg-white p-6 rounded-xl border-2 border-slate-300 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-blue-50 border border-blue-200 p-3 rounded-xl">
+            <i data-lucide="users" class="h-6 w-6 text-blue-600"></i>
+          </div>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Registrados</span>
+        </div>
+        <h3 id="stat-clientes" class="text-3xl font-extrabold text-slate-900">Cargando...</h3>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Clientes</p>
       </div>
-      <div class="bg-white p-6 rounded-xl border border-slate-200">
-        <p class="text-xs text-slate-500 uppercase">CHOFERES REGISTRADOS</p>
-        <h3 id="stat-choferes" class="text-3xl font-bold mt-2">Cargando...</h3>
+      <div class="bg-white p-6 rounded-xl border-2 border-slate-300 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
+            <i data-lucide="truck" class="h-6 w-6 text-emerald-600"></i>
+          </div>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Registrados</span>
+        </div>
+        <h3 id="stat-choferes" class="text-3xl font-extrabold text-slate-900">Cargando...</h3>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Choferes</p>
       </div>
-      <div class="bg-white p-6 rounded-xl border border-slate-200">
-        <p class="text-xs text-slate-500 uppercase">CUENTAS AUTORIZADAS</p>
-        <h3 id="stat-bancos" class="text-3xl font-bold mt-2">Cargando...</h3>
+      <div class="bg-white p-6 rounded-xl border-2 border-slate-300 shadow-sm hover:shadow-md transition-shadow">
+        <div class="flex items-center justify-between mb-4">
+          <div class="bg-amber-50 border border-amber-200 p-3 rounded-xl">
+            <i data-lucide="landmark" class="h-6 w-6 text-amber-600"></i>
+          </div>
+          <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Registradas</span>
+        </div>
+        <h3 id="stat-bancos" class="text-3xl font-extrabold text-slate-900">Cargando...</h3>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Cuentas Autorizadas</p>
       </div>
     </div>
 
@@ -344,11 +362,19 @@
         <div class="grid grid-cols-2 gap-6">
           <div>
             <label class="block text-[10px] font-bold uppercase text-[#64748b]">Cédula</label>
-            <input id="ajuste-cedula" type="text" class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed" readonly />
+            <div class="flex gap-2 mt-1">
+              <span class="bg-slate-100 border border-slate-200 px-3 py-3 rounded-lg text-sm text-slate-500 font-semibold">V-</span>
+              <input id="ajuste-cedula" type="text" class="flex-1 bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed" readonly />
+            </div>
           </div>
           <div>
             <label class="block text-[10px] font-bold uppercase text-[#64748b]">Teléfono</label>
-            <input id="ajuste-tlf" type="tel" class="mt-1 w-full border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none" placeholder="0414xxxxxxx" />
+            <div class="flex gap-2 mt-1">
+              <select id="ajuste-tlf-prefijo" class="w-24 border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none bg-white">
+                <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+              </select>
+              <input id="ajuste-tlf" type="text" pattern="\d{7}" maxlength="7" class="flex-1 border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none font-mono" placeholder="1234567" />
+            </div>
           </div>
         </div>
 
@@ -360,8 +386,18 @@
         <div class="pt-4 border-t border-slate-100 space-y-4">
           <h4 class="text-xs font-bold uppercase text-slate-900">Cambiar Contraseña</h4>
           <div class="grid grid-cols-2 gap-4">
-            <input id="ajuste-pass-nueva" type="password" placeholder="Nueva clave" class="w-full border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none" />
-            <input id="ajuste-pass-confirm" type="password" placeholder="Confirmar clave" class="w-full border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none" />
+            <div class="relative">
+              <input id="ajuste-pass-nueva" type="password" placeholder="Nueva clave" class="w-full border border-slate-300 p-3 pr-10 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none" />
+              <button type="button" onclick="togglePass('ajuste-pass-nueva', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                <i data-lucide="eye" class="h-4 w-4"></i>
+              </button>
+            </div>
+            <div class="relative">
+              <input id="ajuste-pass-confirm" type="password" placeholder="Confirmar clave" class="w-full border border-slate-300 p-3 pr-10 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none" />
+              <button type="button" onclick="togglePass('ajuste-pass-confirm', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                <i data-lucide="eye" class="h-4 w-4"></i>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -392,7 +428,14 @@
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Cédula</label>
-        <input id="cp-cedula" type="text" required pattern="[0-9]{5,10}" title="Solo números." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900" placeholder="Ej: 28168956">
+        <div class="flex gap-2">
+          <select id="cp-cedula-prefijo" required class="w-20 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900">
+            <option value="V-">V-</option>
+            <option value="E-">E-</option>
+            <option value="J-">J-</option>
+          </select>
+          <input id="cp-cedula-numero" type="text" required placeholder="Ej: 28168956" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900 font-mono">
+        </div>
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Correo</label>
@@ -400,11 +443,21 @@
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono</label>
-        <input id="cp-telefono" type="tel" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="0414xxxxxxx">
+        <div class="flex gap-2">
+          <select id="cp-telefono-prefijo" class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900">
+            <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+          </select>
+          <input id="cp-telefono-num" type="tel" required maxlength="7" pattern="\d{7}" placeholder="1234567" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none font-mono">
+        </div>
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Contraseña</label>
-        <input id="cp-password" type="password" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+        <div class="relative">
+          <input id="cp-password" type="password" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+          <button type="button" onclick="togglePass('cp-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+            <i data-lucide="eye" class="h-4 w-4"></i>
+          </button>
+        </div>
       </div>
       <div class="md:col-span-2 flex justify-end gap-3">
         <button type="button" onclick="ocultarModalCrearPersonal()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
@@ -443,11 +496,21 @@
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono</label>
-        <input id="ep-telefono" type="tel" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="0414xxxxxxx">
+        <div class="flex gap-2">
+          <select id="ep-telefono-prefijo" class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900">
+            <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+          </select>
+          <input id="ep-telefono-num" type="tel" maxlength="7" pattern="\d{7}" placeholder="1234567" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none font-mono">
+        </div>
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nueva Contraseña <span class="text-slate-400 font-normal">(dejar vacío para no cambiar)</span></label>
-        <input id="ep-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+        <div class="relative">
+          <input id="ep-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+          <button type="button" onclick="togglePass('ep-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+            <i data-lucide="eye" class="h-4 w-4"></i>
+          </button>
+        </div>
       </div>
       <div class="md:col-span-2 flex justify-end gap-3">
         <button type="button" onclick="ocultarModalEditarPersonal()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
@@ -486,11 +549,21 @@
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono</label>
-        <input id="ech-telefono" type="tel" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="0414xxxxxxx">
+        <div class="flex gap-2">
+          <select id="ech-telefono-prefijo" class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900">
+            <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+          </select>
+          <input id="ech-telefono-num" type="tel" maxlength="7" pattern="\d{7}" placeholder="1234567" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none font-mono">
+        </div>
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nueva Contraseña <span class="text-slate-400 font-normal">(dejar vacío para no cambiar)</span></label>
-        <input id="ech-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+        <div class="relative">
+          <input id="ech-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+          <button type="button" onclick="togglePass('ech-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+            <i data-lucide="eye" class="h-4 w-4"></i>
+          </button>
+        </div>
       </div>
       <div class="md:col-span-2 flex justify-end gap-3">
         <button type="button" onclick="ocultarModalEditarChofer()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
@@ -529,11 +602,21 @@
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono</label>
-        <input id="ecl-telefono" type="tel" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="0414xxxxxxx">
+        <div class="flex gap-2">
+          <select id="ecl-telefono-prefijo" class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900">
+            <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+          </select>
+          <input id="ecl-telefono-num" type="tel" maxlength="7" pattern="\d{7}" placeholder="1234567" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none font-mono">
+        </div>
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nueva Contraseña <span class="text-slate-400 font-normal">(dejar vacío para no cambiar)</span></label>
-        <input id="ecl-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+        <div class="relative">
+          <input id="ecl-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+          <button type="button" onclick="togglePass('ecl-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+            <i data-lucide="eye" class="h-4 w-4"></i>
+          </button>
+        </div>
       </div>
       <div class="md:col-span-2 flex justify-end gap-3">
         <button type="button" onclick="ocultarModalEditarCliente()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
@@ -572,11 +655,21 @@
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Teléfono</label>
-        <input id="ead-telefono" type="tel" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="0414xxxxxxx">
+        <div class="flex gap-2">
+          <select id="ead-telefono-prefijo" class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm outline-none focus:ring-2 focus:ring-slate-900">
+            <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+          </select>
+          <input id="ead-telefono-num" type="tel" maxlength="7" pattern="\d{7}" placeholder="1234567" class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none font-mono">
+        </div>
       </div>
       <div>
         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Nueva Contraseña <span class="text-slate-400 font-normal">(dejar vacío para no cambiar)</span></label>
-        <input id="ead-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+        <div class="relative">
+          <input id="ead-password" type="password" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 pr-10 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="********">
+          <button type="button" onclick="togglePass('ead-password', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+            <i data-lucide="eye" class="h-4 w-4"></i>
+          </button>
+        </div>
       </div>
       <div class="md:col-span-2 flex justify-end gap-3">
         <button type="button" onclick="ocultarModalEditarAdmin()" class="bg-slate-100 text-slate-700 px-4 py-3 rounded-xl hover:bg-slate-200 transition">Cancelar</button>
@@ -607,6 +700,7 @@
         <div class="flex gap-2">
           <select id="ab-cedula-prefijo" required class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
             <option value="V-">V-</option>
+            <option value="E-">E-</option>
             <option value="J-">J-</option>
           </select>
           <input id="ab-cedula-numero" type="text" required pattern="\d{6,10}" title="Solo números (6-10 dígitos)." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="Ej: 28168956">
@@ -660,6 +754,7 @@
         <div class="flex gap-2">
           <select id="ec-cedula-prefijo" required class="w-24 bg-slate-50 border border-slate-300 rounded-xl px-3 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
             <option value="V-">V-</option>
+            <option value="E-">E-</option>
             <option value="J-">J-</option>
           </select>
           <input id="ec-cedula-numero" type="text" required pattern="\d{6,10}" title="Solo números (6-10 dígitos)." class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="Ej: 28168956">
@@ -699,6 +794,76 @@
 
 <script>
   let adminIdLogueado = null;
+
+  function togglePass(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    const icon = btn.querySelector('i');
+    if (icon) {
+      icon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+      lucide.createIcons();
+    }
+  }
+
+  function formatearCedula(prefijo, numStr) {
+    if (prefijo === 'V-' || prefijo === 'E-') {
+      const digits = numStr.replace(/\D/g, '');
+      if (digits.length >= 7 && digits.length <= 8) {
+        return prefijo + digits.padStart(8, '0');
+      }
+      return prefijo + digits;
+    } else if (prefijo === 'J-') {
+      const digits = numStr.replace(/\D/g, '');
+      if (digits.length === 10) {
+        return 'J-' + digits.substring(0, 9) + '-' + digits.substring(9);
+      }
+      return 'J-' + digits;
+    }
+    return prefijo + numStr;
+  }
+
+  function parseCedula(cedula) {
+    if (!cedula) return { prefijo: 'V-', numero: '' };
+    if (cedula.startsWith('J-')) {
+      const inner = cedula.substring(2);
+      const parts = inner.split('-');
+      const numStr = parts.join('');
+      return { prefijo: 'J-', numero: numStr };
+    }
+    if (cedula.startsWith('V-')) return { prefijo: 'V-', numero: cedula.substring(2) };
+    if (cedula.startsWith('E-')) return { prefijo: 'E-', numero: cedula.substring(2) };
+    return { prefijo: 'V-', numero: cedula };
+  }
+
+  function parseTelefono(telefono) {
+    if (!telefono || telefono.length < 4) return { prefijo: '0414', numero: telefono || '' };
+    const prefijos = ['0414','0424','0412','0416','0426'];
+    const pref = telefono.substring(0, 4);
+    if (prefijos.includes(pref)) return { prefijo: pref, numero: telefono.substring(4) };
+    return { prefijo: '0414', numero: telefono };
+  }
+
+  function configCedulaInputs(prefijoId, numeroId) {
+    const prefijo = document.getElementById(prefijoId);
+    const numero = document.getElementById(numeroId);
+    if (!prefijo || !numero) return;
+
+    numero.addEventListener('input', function() {
+      const p = prefijo.value;
+      if (p === 'V-' || p === 'E-') {
+        this.value = this.value.replace(/\D/g, '').substring(0, 8);
+      } else {
+        this.value = this.value.replace(/\D/g, '').substring(0, 10);
+      }
+    });
+
+    prefijo.addEventListener('change', function() {
+      numero.value = '';
+      numero.placeholder = (this.value === 'J-') ? '10 dígitos' : '7-8 dígitos';
+    });
+  }
+
   function initDashboard() {
     lucide.createIcons();
     updateClock();
@@ -711,6 +876,8 @@
     cargarChoferes();
     cargarClientes();
     actualizarEstadisticas();
+    configCedulaInputs('cp-cedula-prefijo', 'cp-cedula-numero');
+    configCedulaInputs('ab-cedula-prefijo', 'ab-cedula-numero');
 
     document.getElementById('btn-perfil').addEventListener('click', () => {
       document.getElementById('menu-perfil').classList.toggle('hidden');
@@ -769,12 +936,19 @@
         const telefono = u.telefono || '';
 
         document.getElementById('nombre-usuario').innerText = `${nombres.split(' ')[0] || ''} ${apellidos.split(' ')[0] || ''}`.trim() || 'Administrador';
-        document.getElementById('ci-usuario').innerText = cedula ? `CI: ${cedula}` : 'Administrador';
+        document.getElementById('ci-usuario').innerText = `ID: #${String(u.id_usuario).padStart(3, '0')}`;
         document.getElementById('ajuste-nombres').value = nombres;
         document.getElementById('ajuste-apellidos').value = apellidos;
         document.getElementById('ajuste-cedula').value = cedula;
         document.getElementById('ajuste-correo').value = correo;
-        document.getElementById('ajuste-tlf').value = telefono;
+
+        if (telefono && telefono.length >= 4) {
+          document.getElementById('ajuste-tlf-prefijo').value = telefono.substring(0, 4);
+          document.getElementById('ajuste-tlf').value = telefono.substring(4);
+        } else {
+          document.getElementById('ajuste-tlf-prefijo').value = '0414';
+          document.getElementById('ajuste-tlf').value = telefono || '';
+        }
       })
       .catch(() => {
         document.getElementById('nombre-usuario').innerText = 'Administrador';
@@ -1035,12 +1209,19 @@
   }
 
   function crearPersonal() {
+    const prefijoCed = document.getElementById('cp-cedula-prefijo').value;
+    const numCed = document.getElementById('cp-cedula-numero').value.trim();
+    const cedula = formatearCedula(prefijoCed, numCed);
+    const telPrefijo = document.getElementById('cp-telefono-prefijo').value;
+    const telNum = document.getElementById('cp-telefono-num').value.trim();
+    const telefono = telPrefijo + telNum;
+
     const formData = new FormData();
     formData.append('nombres', document.getElementById('cp-nombres').value.trim());
     formData.append('apellidos', document.getElementById('cp-apellidos').value.trim());
-    formData.append('cedula', document.getElementById('cp-cedula').value.trim());
+    formData.append('cedula', cedula);
     formData.append('correo', document.getElementById('cp-correo').value.trim());
-    formData.append('telefono', document.getElementById('cp-telefono').value.trim());
+    formData.append('telefono', telefono);
     formData.append('password', document.getElementById('cp-password').value);
 
     fetch('crear-personal.php', { method: 'POST', body: formData })
@@ -1210,7 +1391,9 @@
     document.getElementById('ep-apellidos').value = apellidos;
     document.getElementById('ep-cedula').value = cedula;
     document.getElementById('ep-correo').value = correo;
-    document.getElementById('ep-telefono').value = telefono;
+    const tel = parseTelefono(telefono);
+    document.getElementById('ep-telefono-prefijo').value = tel.prefijo;
+    document.getElementById('ep-telefono-num').value = tel.numero;
     document.getElementById('ep-password').value = '';
     const modal = document.getElementById('modal-editar-personal');
     modal.classList.remove('hidden');
@@ -1227,7 +1410,7 @@
     const formData = new FormData();
     formData.append('id_usuario', document.getElementById('ep-id').value);
     formData.append('correo', document.getElementById('ep-correo').value.trim());
-    formData.append('telefono', document.getElementById('ep-telefono').value.trim());
+    formData.append('telefono', document.getElementById('ep-telefono-prefijo').value + document.getElementById('ep-telefono-num').value.trim());
     formData.append('password', document.getElementById('ep-password').value);
 
     fetch('../editar-usuario.php', { method: 'POST', body: formData })
@@ -1259,7 +1442,9 @@
     document.getElementById('ech-apellidos').value = apellidos;
     document.getElementById('ech-cedula').value = cedula;
     document.getElementById('ech-correo').value = correo;
-    document.getElementById('ech-telefono').value = telefono;
+    const tel = parseTelefono(telefono);
+    document.getElementById('ech-telefono-prefijo').value = tel.prefijo;
+    document.getElementById('ech-telefono-num').value = tel.numero;
     document.getElementById('ech-password').value = '';
     const modal = document.getElementById('modal-editar-chofer');
     modal.classList.remove('hidden');
@@ -1276,7 +1461,7 @@
     const formData = new FormData();
     formData.append('id_usuario', document.getElementById('ech-id').value);
     formData.append('correo', document.getElementById('ech-correo').value.trim());
-    formData.append('telefono', document.getElementById('ech-telefono').value.trim());
+    formData.append('telefono', document.getElementById('ech-telefono-prefijo').value + document.getElementById('ech-telefono-num').value.trim());
     formData.append('password', document.getElementById('ech-password').value);
 
     fetch('../editar-usuario.php', { method: 'POST', body: formData })
@@ -1307,7 +1492,9 @@
     document.getElementById('ecl-apellidos').value = apellidos;
     document.getElementById('ecl-cedula').value = cedula;
     document.getElementById('ecl-correo').value = correo;
-    document.getElementById('ecl-telefono').value = telefono;
+    const tel = parseTelefono(telefono);
+    document.getElementById('ecl-telefono-prefijo').value = tel.prefijo;
+    document.getElementById('ecl-telefono-num').value = tel.numero;
     document.getElementById('ecl-password').value = '';
     const modal = document.getElementById('modal-editar-cliente');
     modal.classList.remove('hidden');
@@ -1324,7 +1511,7 @@
     const formData = new FormData();
     formData.append('id_usuario', document.getElementById('ecl-id').value);
     formData.append('correo', document.getElementById('ecl-correo').value.trim());
-    formData.append('telefono', document.getElementById('ecl-telefono').value.trim());
+    formData.append('telefono', document.getElementById('ecl-telefono-prefijo').value + document.getElementById('ecl-telefono-num').value.trim());
     formData.append('password', document.getElementById('ecl-password').value);
 
     fetch('../editar-usuario.php', { method: 'POST', body: formData })
@@ -1359,12 +1546,19 @@
   }
 
   function crearAdmin() {
+    const prefijoCed = document.getElementById('cp-cedula-prefijo').value;
+    const numCed = document.getElementById('cp-cedula-numero').value.trim();
+    const cedula = formatearCedula(prefijoCed, numCed);
+    const telPrefijo = document.getElementById('cp-telefono-prefijo').value;
+    const telNum = document.getElementById('cp-telefono-num').value.trim();
+    const telefono = telPrefijo + telNum;
+
     const formData = new FormData();
     formData.append('nombres', document.getElementById('cp-nombres').value.trim());
     formData.append('apellidos', document.getElementById('cp-apellidos').value.trim());
-    formData.append('cedula', document.getElementById('cp-cedula').value.trim());
+    formData.append('cedula', cedula);
     formData.append('correo', document.getElementById('cp-correo').value.trim());
-    formData.append('telefono', document.getElementById('cp-telefono').value.trim());
+    formData.append('telefono', telefono);
     formData.append('password', document.getElementById('cp-password').value);
     formData.append('rol', 'admin');
 
@@ -1388,7 +1582,9 @@
     document.getElementById('ead-apellidos').value = apellidos;
     document.getElementById('ead-cedula').value = cedula;
     document.getElementById('ead-correo').value = correo;
-    document.getElementById('ead-telefono').value = telefono;
+    const tel = parseTelefono(telefono);
+    document.getElementById('ead-telefono-prefijo').value = tel.prefijo;
+    document.getElementById('ead-telefono-num').value = tel.numero;
     document.getElementById('ead-password').value = '';
     const modal = document.getElementById('modal-editar-admin');
     modal.classList.remove('hidden');
@@ -1405,7 +1601,7 @@
     const formData = new FormData();
     formData.append('id_usuario', document.getElementById('ead-id').value);
     formData.append('correo', document.getElementById('ead-correo').value.trim());
-    formData.append('telefono', document.getElementById('ead-telefono').value.trim());
+    formData.append('telefono', document.getElementById('ead-telefono-prefijo').value + document.getElementById('ead-telefono-num').value.trim());
     formData.append('password', document.getElementById('ead-password').value);
 
     fetch('../editar-usuario.php', { method: 'POST', body: formData })
@@ -1461,7 +1657,7 @@
     const formData = new FormData();
     formData.append('id_banco', document.getElementById('ab-banco').value);
     formData.append('numero_cuenta', document.getElementById('ab-numero-cuenta').value.trim());
-    formData.append('identificacion_titular', prefijo + numero);
+    formData.append('identificacion_titular', formatearCedula(prefijo, numero));
     formData.append('nombre_titular', document.getElementById('ab-nombre-titular').value.trim());
     const telPrefijo = document.getElementById('ab-telefono-prefijo').value;
     const telNumero = document.getElementById('ab-telefono').value.trim();
@@ -1501,13 +1697,13 @@
     cargarCatalogoBancos('ec-banco');
     setTimeout(() => { select.value = idBanco; }, 200);
 
-    if (identificacion && identificacion.includes('-')) {
-      const parts = identificacion.split('-');
-      document.getElementById('ec-cedula-prefijo').value = parts[0] + '-';
-      document.getElementById('ec-cedula-numero').value = parts[1] || '';
+    if (identificacion) {
+      const parsed = parseCedula(identificacion);
+      document.getElementById('ec-cedula-prefijo').value = parsed.prefijo;
+      document.getElementById('ec-cedula-numero').value = parsed.numero;
     } else {
       document.getElementById('ec-cedula-prefijo').value = 'V-';
-      document.getElementById('ec-cedula-numero').value = identificacion || '';
+      document.getElementById('ec-cedula-numero').value = '';
     }
 
     const modal = document.getElementById('modal-editar-cuenta-empresa');
@@ -1528,7 +1724,7 @@
     formData.append('id_cuenta', document.getElementById('ec-id-cuenta').value);
     formData.append('id_banco', document.getElementById('ec-banco').value);
     formData.append('numero_cuenta', document.getElementById('ec-numero-cuenta').value.trim());
-    formData.append('identificacion_titular', prefijo + numero);
+    formData.append('identificacion_titular', formatearCedula(prefijo, numero));
     formData.append('nombre_titular', document.getElementById('ec-nombre-titular').value.trim());
     const telPrefijo = document.getElementById('ec-telefono-prefijo').value;
     const telNumero = document.getElementById('ec-telefono').value.trim();
@@ -1566,10 +1762,24 @@
 
   function guardarCambiosCuenta() {
     const correo = document.getElementById('ajuste-correo').value.trim();
-    const tlf = document.getElementById('ajuste-tlf').value.trim();
+    const prefijo = document.getElementById('ajuste-tlf-prefijo').value;
+    const numTlf = document.getElementById('ajuste-tlf').value.trim();
+    const tlf = prefijo + numTlf;
+    const passNueva = document.getElementById('ajuste-pass-nueva').value;
+    const passConfirm = document.getElementById('ajuste-pass-confirm').value;
     const mensaje = document.getElementById('mensaje-cuenta');
 
+    if (passNueva || passConfirm) {
+      if (passNueva !== passConfirm) {
+        mensaje.innerText = 'Las contraseñas no coinciden.';
+        return;
+      }
+    }
+
     mensaje.innerText = 'Guardando cambios...';
+
+    const params = { correo, telefono: tlf };
+    if (passNueva) params.password = passNueva;
 
     fetch('../editar-usuario.php', {
       method: 'POST',
@@ -1578,7 +1788,7 @@
         'Accept': 'application/json',
         'X-Requested-With': 'XMLHttpRequest'
       },
-      body: new URLSearchParams({ correo, tlf })
+      body: new URLSearchParams(params)
     })
       .then(response => response.json())
       .then(result => {

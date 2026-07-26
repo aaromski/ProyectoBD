@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   try {
     /** @var PDO $conn */
     // 1. Buscamos las credenciales globales en la tabla unificada de usuarios usando $conn
-    $sql = "SELECT id_usuario, nombres, apellidos, password FROM usuarios WHERE correo = :correo";
+    $sql = "SELECT id_usuario, nombres, apellidos, estado, password FROM usuarios WHERE correo = :correo";
     $stmt = $conn->prepare($sql);
     $stmt->execute([':correo' => $correo]);
     $usuario = $stmt->fetch(PDO::FETCH_ASSOC);

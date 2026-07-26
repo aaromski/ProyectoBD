@@ -3,13 +3,13 @@ session_start();
 header('Content-Type: application/json');
 require_once '../conexion.php';
 
-if (!isset($_SESSION['id_usuario'])) {
+// Cambiamos a cliente_id directamente desde la sesión
+if (!isset($_SESSION['cliente_id'])) {
   echo json_encode(['success' => false, 'message' => 'No autorizado']);
   exit();
 }
 
-$id_cliente = $_SESSION['id_usuario'];
-// Corregido: Aseguramos que recibimos los IDs de las zonas
+$id_cliente = $_SESSION['cliente_id'];
 $id_zona_origen = (int)$_POST['origen'];
 $id_zona_destino = (int)$_POST['destino'];
 $costo = (float)$_POST['costo'];
@@ -18,20 +18,32 @@ try {
   /** @var PDO $conn */
   $conn->beginTransaction();
 
-  // 1. Verificar y descontar saldo del cliente
-  $stmt_saldo = $conn->prepare("SELECT saldo FROM clientes WHERE id_usuario = ? FOR UPDATE");
+  // Consultamos el saldo directamente usando el id_cliente de la sesión
+  $stmt_saldo = $conn->prepare("SELECT saldo FROM clientes WHERE id_cliente = ? FOR UPDATE");
   $stmt_saldo->execute([$id_cliente]);
   $cliente = $stmt_saldo->fetch(PDO::FETCH_ASSOC);
 
-  if (!$cliente || $cliente['saldo'] < $costo) {
-    throw new Exception("Saldo insuficiente o usuario no encontrado.");
+  if (!$cliente) {
+      throw new Exception("Perfil de cliente no encontrado.");
   }
 
-  $conn->prepare("UPDATE clientes SET saldo = saldo - ? WHERE id_usuario = ?")->execute([$costo, $id_cliente]);
+  if ($cliente['saldo'] < $costo) {
+      throw new Exception("Saldo insuficiente.");
+  }
 
-  // 2. Seleccionar un chofer que tenga evaluaciones aprobadas y un vehículo activo
-  $stmt_chofer = $conn->prepare("SELECT c.id_chofer, v.id_vehiculo
+  // Descontamos el saldo
+  $conn->prepare("UPDATE clientes SET saldo = saldo - ? WHERE id_cliente = ?")->execute([$costo, $id_cliente]);
+
+  // Seleccionar un chofer disponible
+  $stmt_chofer = $conn->prepare("SELECT c.id_chofer, v.id_vehiculo,
+    u.nombres AS chofer_nombres,
+    u.apellidos AS chofer_apellidos,
+    u.telefono AS chofer_telefono,
+    v.marca,
+    v.modelo,
+    v.placa
     FROM choferes c
+    INNER JOIN usuarios u ON u.id_usuario = c.id_usuario
     INNER JOIN vehiculos v ON v.id_chofer = c.id_chofer
     WHERE v.activo = 1
       AND EXISTS (
@@ -51,7 +63,7 @@ try {
     throw new Exception("No hay choferes disponibles actualmente.");
   }
 
-  // 3. Registrar el traslado directamente en curso con el vehículo activo del chofer
+  // Registrar el traslado
   $sql_traslado = "INSERT INTO traslados (id_cliente, id_chofer, id_zona_origen, id_zona_destino, costo, estado, id_vehiculo, fecha)
                      VALUES (?, ?, ?, ?, ?, 'en_curso', ?, NOW())";
 
@@ -66,7 +78,16 @@ try {
   ]);
 
   $conn->commit();
-  echo json_encode(['success' => true, 'message' => 'Traslado solicitado con éxito']);
+  echo json_encode([
+      'success' => true,
+      'message' => '¡Tu conductor está en camino!',
+      'datos_viaje' => [
+          'chofer' => $chofer['chofer_nombres'] . ' ' . $chofer['chofer_apellidos'],
+          'telefono' => $chofer['chofer_telefono'],
+          'vehiculo' => $chofer['marca'] . ' ' . $chofer['modelo'],
+          'placa' => $chofer['placa']
+      ]
+  ]);
 
 } catch (Exception $e) {
   if ($conn->inTransaction()) {

@@ -39,16 +39,21 @@
           <i data-lucide="history" class="h-4 w-4"></i> Mis viajes
         </a>
         <a href="#" onclick="cambiarVista('vista-historial-retiros', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
-          <i data-lucide="scroll-text" class="h-4 w-4"></i> Historial Retiros
+          <i data-lucide="scroll-text" class="h-4 w-4"></i> Historial de Pagos
         </a>
       </div>
     </div>
 
     <div>
-      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Ajustes</p>
-      <a href="#" onclick="cambiarVista('vista-ajustes', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
-        <i data-lucide="settings" class="h-4 w-4"></i> Cuenta
-      </a>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-4">Ajustes y Perfil</p>
+      <div class="space-y-1">
+        <a href="#" onclick="cambiarVista('vista-psicologica', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+          <i data-lucide="brain" class="h-4 w-4"></i> Mi Admisión
+        </a>
+        <a href="#" onclick="cambiarVista('vista-ajustes', event)" class="nav-link flex items-center gap-3 px-4 py-3 text-sm font-semibold text-slate-600 rounded-lg">
+          <i data-lucide="settings" class="h-4 w-4"></i> Cuenta
+        </a>
+      </div>
     </div>
   </nav>
 
@@ -102,13 +107,13 @@
 
         <div>
           <div class="flex items-center justify-between mb-2">
-            <h3 class="text-[12px] font-bold uppercase tracking-widest text-slate-600">Ingresos Netos</h3>
+            <h3 class="text-[12px] font-bold uppercase tracking-widest text-slate-600">SALDO PENDIENTE POR COBRAR</h3>
             <span class="p-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-500">
               <i data-lucide="wallet" class="h-5 w-5"></i>
             </span>
           </div>
-
-          <p id="ingresos-netos-display" class="text-4xl mt-16 font-extrabold tracking-tight font-mono text-slate-900 drop-shadow-sm my-2">
+          <p class="text-[10px] text-slate-400">Pendientes de pago por parte de administración.</p>
+          <p id="ingresos-netos-display" class="text-4xl mt-10 font-extrabold tracking-tight font-mono text-slate-900 drop-shadow-sm my-2">
             Bs. 0.00
           </p>
         </div>
@@ -145,7 +150,7 @@
           </div>
           <div class="col-span-2 md:col-span-1">
             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Placa / Matrícula</label>
-            <input type="text" id="postula-placa" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none transition-all" placeholder="Ej: AA111BB">
+            <input type="text" id="postula-placa" required maxlength="7" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none transition-all font-mono" placeholder="Ej: AA111BB">
           </div>
           <button type="submit" class="col-span-2 bg-slate-900 text-white font-bold py-3.5 rounded-xl text-sm hover:bg-slate-800 transition-all shadow-md">
             Registrar Inspección
@@ -274,13 +279,13 @@
       <table class="w-full text-sm text-left">
         <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
         <tr>
-          <th class="px-6 py-4">ID Pasajero</th>
+          <th class="px-6 py-4">ID Traslado</th>
+          <th class="px-6 py-4">Fecha</th>
           <th class="px-6 py-4">Pasajero</th>
           <th class="px-6 py-4">Ruta</th>
           <th class="px-6 py-4 text-center">Estado</th>
           <th class="px-6 py-4 text-right">Monto Total</th>
           <th class="px-6 py-4 text-right">Ganancia</th>
-          <th class="px-6 py-4 text-center">Acción</th>
         </tr>
         </thead>
         <tbody id="tabla-viajes-body" class="divide-y divide-slate-100">
@@ -289,100 +294,133 @@
     </div>
   </section>
 
-  <!-- SECCIÓN AJUSTES -->
-  <section id="vista-ajustes" class="vista-seccion hidden">
-    <h2 class="text-xl font-bold mb-6">Ajustes de Cuenta</h2>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <section id="vista-psicologica" class="vista-seccion hidden">
+    <h2 class="text-xl font-bold mb-6">Mi Proceso de Admisión</h2>
 
-      <!-- Formulario (2/3) -->
-      <div class="lg:col-span-2 bg-white border border-slate-300 rounded-xl p-8 shadow-sm">
-        <h3 class="font-bold text-slate-900 mb-6">Información Personal y Seguridad</h3>
-        <form id="form-ajustes-unificado" class="space-y-6" onsubmit="event.preventDefault(); guardarCambiosUnificado();">
-          <div class="grid grid-cols-2 gap-6">
-            <div>
-              <label class="block text-[10px] font-bold uppercase text-[#64748b]">Nombres</label>
-              <input type="text" id="ajuste-nombres" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed">
-            </div>
-            <div>
-              <label class="block text-[10px] font-bold uppercase text-[#64748b]">Apellidos</label>
-              <input type="text" id="ajuste-apellidos" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed">
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-6">
-            <div>
-              <label class="block text-[10px] font-bold uppercase text-[#64748b]">Cédula de Identidad</label>
-              <input type="text" id="ajuste-cedula" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed">
-            </div>
-            <div>
-              <label class="block text-[10px] font-bold uppercase text-[#64748b]">Teléfono</label>
-              <input type="tel" id="ajuste-tlf" class="mt-1 w-full border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none">
-            </div>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Banco</label>
-            <select id="ajuste-banco" required class="w-full border border-slate-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#0f172a] outline-none">
-              <option value="">Cargando bancos...</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Cuenta Bancaria (Pago Móvil / Transferencia)</label>
-            <input type="hidden" id="ajuste-cuenta-full">
-            <div class="flex">
-              <span id="ajuste-prefix" class="bg-slate-100 border border-slate-300 border-r-0 rounded-l-lg px-3 py-3 text-sm font-mono font-bold text-slate-600 select-none">0000</span>
-              <input type="text" id="ajuste-cuenta" required maxlength="16" pattern="\d{16}" title="Los 16 dígitos después del prefijo del banco." class="w-full border border-slate-300 rounded-r-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#0f172a] outline-none font-mono" placeholder="16 dígitos numéricos">
-            </div>
+    <div class="max-w-md">
+      <div class="bg-white border border-slate-300 rounded-xl p-8 shadow-sm">
+        <h3 class="font-bold text-slate-900 mb-6">Evaluación Psicológica</h3>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
+          <div id="badge-evaluacion-chofer" class="inline-block px-4 py-2 rounded-full text-xs font-bold uppercase border mb-5">
+            Sin evaluación
           </div>
 
-          <!-- Contactos de Emergencia -->
-          <div class="border-t border-slate-200 pt-4">
-            <div class="flex items-center gap-1.5 text-xs font-bold text-[#1e40af] uppercase tracking-wider mb-4">
-              <i data-lucide="shield-alert" class="h-3.5 w-3.5"></i>
-              <span>Contactos de Emergencia</span>
+          <div class="space-y-3 text-left">
+            <div class="flex justify-between items-center">
+              <span class="text-xs text-slate-500 font-semibold">Última Calificación</span>
+              <span id="nota-evaluacion-chofer" class="text-sm font-bold text-slate-800 font-mono">-- / 100</span>
             </div>
-            <div id="lista-contactos-emergencia" class="space-y-3">
-              <!-- Dynamic -->
+            <div class="flex justify-between items-center border-t border-slate-200 pt-3">
+              <span class="text-xs text-slate-500 font-semibold">Fecha de Evaluación</span>
+              <span id="fecha-evaluacion-chofer" class="text-sm font-bold text-slate-800">Sin fecha</span>
             </div>
-          </div>
-
-          <button type="submit" class="w-full bg-[#0f172a] text-white py-3 rounded-lg text-sm font-bold hover:bg-slate-800 transition-all">Guardar Cambios</button>
-        </form>
-      </div>
-
-      <!-- Estado de Admisión (1/3) -->
-      <div class="lg:col-span-1">
-        <div class="bg-white border border-slate-300 rounded-xl p-6 shadow-sm h-fit">
-          <h3 class="font-bold text-slate-900 mb-6">Estado de Admisión</h3>
-
-          <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
-            <p class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Evaluación Psicológica</p>
-            <div id="badge-evaluacion-chofer" class="inline-block px-4 py-2 rounded-full text-xs font-bold uppercase border mb-5">
-              Sin evaluación
-            </div>
-
-            <div class="space-y-3 text-left">
-              <div class="flex justify-between items-center">
-                <span class="text-xs text-slate-500 font-semibold">Última Calificación</span>
-                <span id="nota-evaluacion-chofer" class="text-sm font-bold text-slate-800 font-mono">-- / 100</span>
-              </div>
-              <div class="flex justify-between items-center border-t border-slate-200 pt-3">
-                <span class="text-xs text-slate-500 font-semibold">Fecha de Evaluación</span>
-                <span id="fecha-evaluacion-chofer" class="text-sm font-bold text-slate-800">Sin fecha</span>
-              </div>
-            </div>
-          </div>
-
-          <p class="text-[10px] text-slate-400 mt-4 text-center leading-relaxed">
-            La nota mínima aprobatoria para la evaluación psicológica es de <span class="font-bold text-slate-600">73 puntos</span>.
-          </p>
-
-          <div id="contenedor-btn-evaluacion" class="mt-5 hidden">
-            <button onclick="solicitarEvaluacionPsicologica()" class="w-full bg-red-600 text-white py-3 rounded-lg text-sm font-bold hover:bg-red-700 transition-all">
-              Solicitar Nueva Evaluación
-            </button>
           </div>
         </div>
-      </div>
 
+        <p class="text-xs text-slate-500 mt-6 text-center leading-relaxed bg-blue-50 text-blue-800 p-3 rounded-lg border border-blue-100">
+          <i data-lucide="info" class="inline w-4 h-4 mb-0.5"></i> La nota mínima aprobatoria exigida por el departamento de administración es de <span class="font-bold">73 puntos</span>.
+        </p>
+
+        <div id="contenedor-btn-evaluacion" class="mt-5 hidden">
+          <button onclick="solicitarEvaluacionPsicologica()" class="w-full bg-red-600 text-white py-3 rounded-lg text-sm font-bold hover:bg-red-700 transition-all shadow-sm">
+            Solicitar Nueva Evaluación
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN AJUSTES -->
+  <section id="vista-ajustes" class="vista-seccion hidden">
+    <h2 class="text-xl font-bold mb-6">Mi Cuenta</h2>
+    <div class="max-w-3xl bg-white border border-slate-300 rounded-xl p-8 shadow-sm">
+      <h3 class="font-bold text-slate-900 mb-6">Información Personal y Seguridad</h3>
+      <form id="form-ajustes-unificado" class="space-y-6" onsubmit="event.preventDefault(); guardarCambiosUnificado();">
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Nombres</label>
+            <input type="text" id="ajuste-nombres" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Apellidos</label>
+            <input type="text" id="ajuste-apellidos" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm text-slate-500 cursor-not-allowed">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Cédula de Identidad</label>
+            <input type="text" id="ajuste-cedula" readonly class="mt-1 w-full bg-slate-100 border border-slate-200 p-3 rounded-lg text-sm font-bold font-mono text-slate-500 cursor-not-allowed">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase text-[#64748b]">Teléfono</label>
+            <div class="flex gap-2 mt-1">
+              <select id="ajuste-tlf-prefijo" class="w-24 border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none bg-white">
+                <option value="0414">0414</option>
+                <option value="0424">0424</option>
+                <option value="0412">0412</option>
+                <option value="0416">0416</option>
+                <option value="0426">0426</option>
+              </select>
+              <input type="tel" id="ajuste-tlf" class="flex-1 border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none font-mono" placeholder="1234567" maxlength="7" pattern="\d{7}">
+            </div>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Banco Emisor</label>
+          <select id="ajuste-banco" required class="w-full border border-slate-300 rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#0f172a] outline-none">
+            <option value="">Cargando bancos...</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Cuenta Bancaria (Para recibir tus pagos)</label>
+          <input type="hidden" id="ajuste-cuenta-full">
+          <div class="flex">
+            <span id="ajuste-prefix" class="bg-slate-100 border border-slate-300 border-r-0 rounded-l-lg px-3 py-3 text-sm font-mono font-bold text-slate-600 select-none">0000</span>
+            <input type="text" id="ajuste-cuenta" required maxlength="16" pattern="\d{16}" title="Los 16 dígitos después del prefijo del banco." class="w-full border border-slate-300 rounded-r-lg px-4 py-3 text-sm focus:ring-2 focus:ring-[#0f172a] outline-none font-mono" placeholder="16 dígitos numéricos">
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-slate-200 space-y-4">
+          <h4 class="text-xs font-bold uppercase text-slate-900">Cambiar Contraseña</h4>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[10px] font-bold uppercase text-[#64748b]">Nueva Clave</label>
+              <div class="relative">
+                <input type="password" id="pass-nueva" placeholder="Dejar vacío si no cambia" class="w-full border border-slate-300 p-3 pr-10 rounded-lg text-sm">
+                <button type="button" onclick="togglePass('pass-nueva', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                  <i data-lucide="eye" class="h-4 w-4"></i>
+                </button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold uppercase text-[#64748b]">Confirmar</label>
+              <div class="relative">
+                <input type="password" id="pass-confirm" placeholder="Repetir clave" class="w-full border border-slate-300 p-3 pr-10 rounded-lg text-sm">
+                <button type="button" onclick="togglePass('pass-confirm', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                  <i data-lucide="eye" class="h-4 w-4"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contactos de Emergencia -->
+        <div class="border-t border-slate-200 pt-6">
+          <div class="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-5">
+            <i data-lucide="shield-alert" class="h-5 w-5 text-blue-600 shrink-0"></i>
+            <div>
+              <p class="text-xs font-bold text-blue-800 uppercase tracking-wider">Contactos de Emergencia</p>
+              <p class="text-[10px] text-blue-500 mt-0.5">Registra hasta 2 personas de confianza para situaciones de emergencia.</p>
+            </div>
+          </div>
+          <div id="lista-contactos-emergencia" class="space-y-4">
+            <!-- Dynamic -->
+          </div>
+        </div>
+
+        <button type="submit" class="w-full bg-[#0f172a] text-white py-3 rounded-lg text-sm font-bold hover:bg-slate-800 transition-all">Guardar Cambios</button>
+      </form>
     </div>
   </section>
 
@@ -425,6 +463,16 @@
 </main>
 
 <script>
+  function togglePass(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    const icon = btn.querySelector('i');
+    if (icon) {
+      icon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+      lucide.createIcons();
+    }
+  }
   // CONTROL MONETARIO GLOBAL
   let tasaBCV = 45.50;
   let ingresosNetosBsGlobal = 0.00;
@@ -440,6 +488,12 @@
   updateClock();
 
   window.addEventListener('DOMContentLoaded', () => {
+    ['postula-marca', 'postula-modelo', 'postula-placa'].forEach(id => {
+      document.getElementById(id).addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+      });
+    });
+
     Promise.all([
       obtenerTasaLocal(),
       cargarBancosCatalogoChofer()
@@ -504,10 +558,14 @@
     const elSaldo = document.getElementById('ingresos-netos-display');
 
     if (mostrarEnUSD) {
-      let saldoUSD = ingresosNetosBsGlobal / tasaBCV;
-      if (elSaldo) elSaldo.innerText = '$' + saldoUSD.toFixed(2) + ' USD';
+      let saldoUSD = Math.round(((ingresosNetosBsGlobal / tasaBCV) + Number.EPSILON) * 100) / 100;
+      if (elSaldo) {
+        elSaldo.innerText = '$' + saldoUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' USD';
+      }
     } else {
-      if (elSaldo) elSaldo.innerText = 'Bs. ' + ingresosNetosBsGlobal.toFixed(2).replace('.', ',');
+      if (elSaldo) {
+        elSaldo.innerText = 'Bs. ' + ingresosNetosBsGlobal.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      }
     }
   }
 
@@ -515,9 +573,7 @@
     fetch('../get-usuario.php')
       .then(res => res.json())
       .then(data => {
-        console.log("Respuesta de ../get-usuario.php:", data); // <--- MIRA ESTO EN LA CONSOLA (F12)
         if(data.error || data.rol !== 'chofer') {
-          console.warn("Fallo de validación: el rol no es chofer o hubo un error.");
           window.location.href = 'login.html';
           return;
         }
@@ -528,33 +584,46 @@
 
         document.getElementById('ajuste-nombres').value = data.nombres;
         document.getElementById('ajuste-apellidos').value = data.apellidos;
-        document.getElementById('ajuste-cedula').value = data.cedula;
-        document.getElementById('ajuste-tlf').value = data.tlf || '';
 
-        // --- SECCIÓN CORREGIDA PARA AUTO-SELECCIONAR EL BANCO ---
+        // CÉDULA V- MAGIA
+        let ciStr = (data.cedula || '').toString();
+        if (ciStr !== '' && !ciStr.includes('-')) { ciStr = 'V-' + ciStr; }
+        document.getElementById('ajuste-cedula').value = ciStr;
+
+        // TELÉFONO SEPARADO
+        let telefono = data.tlf || '';
+        if (telefono.length === 11) {
+          document.getElementById('ajuste-tlf-prefijo').value = telefono.substring(0, 4);
+          document.getElementById('ajuste-tlf').value = telefono.substring(4);
+        } else {
+          document.getElementById('ajuste-tlf-prefijo').value = '0414';
+          document.getElementById('ajuste-tlf').value = telefono;
+        }
+
         const bancoSelect = document.getElementById('ajuste-banco');
-        const bancoGuardado = data.banco || ''; // Trae el id_banco desde ../get-usuario.php
-
-        // Forzamos la selección del banco guardado
+        const bancoGuardado = data.banco || '';
         bancoSelect.value = bancoGuardado;
 
         const cuenta = data.nro_cuenta || '';
+        const opt = bancoSelect.options[bancoSelect.selectedIndex];
+        const prefijoReal = (opt && opt.getAttribute('data-prefijo')) || '0000';
+        const nombreBanco = (opt && opt.textContent.split(' - ')[0]) || 'Banco';
+
+        document.getElementById('ajuste-prefix').textContent = prefijoReal;
+
+        let cuentaLimpia = '';
         if (cuenta.length === 20) {
-          // Si la cuenta tiene los 20 dígitos, los separamos en prefijo (4) y número (16)
-          document.getElementById('ajuste-prefix').textContent = cuenta.substring(0, 4);
-          document.getElementById('ajuste-cuenta').value = cuenta.substring(4);
+          cuentaLimpia = cuenta.substring(4);
         } else {
-          // Si no tiene los 20, buscamos el prefijo que corresponda al banco que acabamos de seleccionar
-          const opt = bancoSelect.options[bancoSelect.selectedIndex];
-          const prefijo = (opt && opt.getAttribute('data-prefijo')) || '0000';
-          document.getElementById('ajuste-prefix').textContent = prefijo;
-          document.getElementById('ajuste-cuenta').value = cuenta;
+          cuentaLimpia = cuenta;
         }
-        // --------------------------------------------------------
 
-        document.getElementById('cuenta-destino-display').innerText = cuenta || "No registrada";
+        document.getElementById('ajuste-cuenta').value = cuentaLimpia;
 
-        // Render emergency contacts
+        // CORRECCIÓN CUENTA DESTINO: Muestra "Banco (0102-xxxxxxxx)" exacto
+        const cuentaDisplay = cuenta ? `${prefijoReal}-${cuentaLimpia}` : "No registrada";
+        document.getElementById('cuenta-destino-display').innerText = cuenta ? `${nombreBanco} (${cuentaDisplay})` : "No registrada";
+
         renderizarContactosEmergencia(data.contactos_emergencia || []);
 
         ingresosNetosBsGlobal = parseFloat(data.saldo);
@@ -853,7 +922,7 @@
 
           let btnActivar;
           if (estaActivo) {
-            btnActivar = `<button disabled class="bg-slate-100 text-slate-400 px-3 py-1.5 rounded-lg text-[10px] font-bold cursor-not-allowed">Ya activo</button>`;
+            btnActivar = `<button onclick="desactivarVehiculo(${v.id_vehiculo})" class="bg-amber-100 text-amber-700 px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-amber-200 transition">Desactivar</button>`;
           } else if (esApto) {
             btnActivar = `<button onclick="activarVehiculo(${v.id_vehiculo})" class="bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-emerald-200 transition">Activar</button>`;
           } else {
@@ -945,6 +1014,25 @@
       .catch(() => alert('Error de conexión al activar vehículo.'));
   }
 
+  function desactivarVehiculo(idVehiculo) {
+    if (!confirm('¿Desactivar este vehículo? No tendrás ningún vehículo activo hasta que actives uno.')) return;
+
+    const formData = new FormData();
+    formData.append('id_vehiculo', idVehiculo);
+
+    fetch('desactivar-vehiculo.php', { method: 'POST', body: formData })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          alert(res.message);
+          cargarVehiculosChofer();
+        } else {
+          alert('Error: ' + res.message);
+        }
+      })
+      .catch(() => alert('Error de conexión al desactivar vehículo.'));
+  }
+
   function reevaluarVehiculo(idVehiculo) {
     if (!confirm('¿Solicitar una nueva evaluación técnica para este vehículo?')) return;
 
@@ -1029,15 +1117,21 @@
     };
 
     filtrados.forEach(v => {
+      let fechaStr = '--';
+      if (v.fecha) {
+        const f = new Date(v.fecha);
+        fechaStr = f.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + f.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
+      }
+
       tbody.innerHTML += `
         <tr class="hover:bg-slate-50 border-b border-slate-100">
-          <td class="px-6 py-4 font-mono font-bold text-slate-900">#${v.id_pasajero}</td>
+          <td class="px-6 py-4 font-mono font-bold text-slate-900">#${String(v.id).padStart(4, '0')}</td>
+          <td class="px-6 py-4 text-slate-600 text-xs">${fechaStr}</td>
           <td class="px-6 py-4 font-bold text-slate-800">${v.pasajero}</td>
           <td class="px-6 py-4 text-slate-600">${v.origen} ➔ ${v.destino}</td>
           <td class="px-6 py-4 text-center">${badgeEstado(v.estado)}</td>
           <td class="px-6 py-4 text-right font-semibold text-slate-700">Bs. ${parseFloat(v.costo_total).toFixed(2)}</td>
           <td class="px-6 py-4 text-right font-bold text-green-600">Bs. ${parseFloat(v.ganancia).toFixed(2)}</td>
-          <td class="px-6 py-4 text-center"><span class="text-slate-400 italic text-[10px]">Finalizado</span></td>
         </tr>`;
     });
   }
@@ -1072,26 +1166,25 @@
     };
 
     lista.forEach(v => {
-      let acciones;
-      if (tabActiva === 'asignados') {
-        acciones = `<span class="text-blue-500 text-[10px] font-bold uppercase">En Curso</span>`;
-      } else {
-        acciones = `<span class="text-slate-400 italic text-[10px]">Finalizado</span>`;
-      }
-
       const pasajeroCell = (tabActiva === 'asignados' && v.estado === 'en_curso')
         ? `<td class="px-6 py-4 font-bold text-blue-600 cursor-pointer hover:underline" onclick="verDatosPasajero(${v.id})">${v.pasajero}</td>`
         : `<td class="px-6 py-4 font-bold text-slate-800">${v.pasajero}</td>`;
 
+      let fechaStr = '--';
+      if (v.fecha) {
+        const f = new Date(v.fecha);
+        fechaStr = f.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + f.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
+      }
+
       tbody.innerHTML += `
         <tr class="hover:bg-slate-50 border-b border-slate-100">
-          <td class="px-6 py-4 font-mono font-bold text-slate-900">#${v.id_pasajero}</td>
+          <td class="px-6 py-4 font-mono font-bold text-slate-900">#${String(v.id).padStart(4, '0')}</td>
+          <td class="px-6 py-4 text-slate-600 text-xs">${fechaStr}</td>
           ${pasajeroCell}
           <td class="px-6 py-4 text-slate-600">${v.origen} ➔ ${v.destino}</td>
           <td class="px-6 py-4 text-center">${badgeEstado(v.estado)}</td>
           <td class="px-6 py-4 text-right font-semibold text-slate-700">Bs. ${parseFloat(v.costo_total).toFixed(2)}</td>
           <td class="px-6 py-4 text-right font-bold text-green-600">Bs. ${parseFloat(v.ganancia).toFixed(2)}</td>
-          <td class="px-6 py-4 text-center">${acciones}</td>
         </tr>`;
     });
   }
@@ -1130,42 +1223,107 @@
       .catch(() => alert('Error de conexión al consultar pasajero.'));
   }
 
+  let contactosGuardados = [];
+
   function renderizarContactosEmergencia(contactos) {
+    contactosGuardados = (contactos || []).filter(c => c && c.nombre);
+    renderizarContactosUI();
+  }
+
+  function renderizarContactosUI() {
     const container = document.getElementById('lista-contactos-emergencia');
     const opcionesRelacion = ['Cónyuge/Pareja', 'Padre/Madre', 'Hijo/Hija', 'Familiar', 'Amigo/Amiga', 'Otro'];
+    const prefijos = ['0414','0424','0412','0416','0426'];
+    const badges = ['bg-blue-100 text-blue-700 border-blue-200', 'bg-purple-100 text-purple-700 border-purple-200'];
 
     let html = '';
-    for (let i = 0; i < 2; i++) {
-      const c = contactos[i] || {};
+    contactosGuardados.forEach((c, i) => {
       let optionsHtml = '<option value="">Seleccionar...</option>';
       opcionesRelacion.forEach(r => {
         const selected = c.relacion === r ? 'selected' : '';
         optionsHtml += `<option value="${r}" ${selected}>${r}</option>`;
       });
 
+      let prefijosHtml = prefijos.map(p => {
+        const sel = (c.telefono || '').startsWith(p) ? 'selected' : '';
+        return `<option value="${p}" ${sel}>${p}</option>`;
+      }).join('');
+
+      const telNum = (c.telefono || '').length >= 4 ? c.telefono.substring(4) : (c.telefono || '');
+
       html += `
-        <div class="grid grid-cols-3 gap-3 items-center bg-slate-50 p-3 rounded-xl border border-slate-200">
-          <input type="text" id="ec-nombre-${i}" value="${c.nombre || ''}" placeholder="Nombre" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm">
-          <select id="ec-relacion-${i}" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm cursor-pointer">
-            ${optionsHtml}
-          </select>
-          <div class="flex gap-1">
-            <select id="ec-tel-prefijo-${i}" class="bg-white border border-slate-200 rounded-lg px-1 py-2 text-[10px] text-slate-900 cursor-pointer w-16">
-              <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
-            </select>
-            <input type="text" id="ec-telefono-${i}" value="${(c.telefono || '').replace(/^\d{4}/, '')}" placeholder="1234567" maxlength="7" pattern="[0-9]{7}" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-2 text-sm text-slate-900 font-mono">
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-slate-300 transition-colors">
+          <div class="flex items-center justify-between mb-3">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${badges[i] || badges[0]}">Contacto ${i + 1}</span>
+            <button type="button" onclick="eliminarContacto(${i})" class="text-rose-400 hover:text-rose-600 hover:bg-rose-50 p-1 rounded-lg transition-colors" title="Eliminar contacto">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nombre</label>
+              <input type="text" data-ec-index="${i}" data-ec-field="nombre" value="${c.nombre || ''}" placeholder="Nombre completo" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Relación</label>
+              <select data-ec-index="${i}" data-ec-field="relacion" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm cursor-pointer focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                ${optionsHtml}
+              </select>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Teléfono</label>
+              <div class="flex gap-1.5">
+                <select data-ec-index="${i}" data-ec-field="prefijo" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-2.5 text-[11px] font-bold text-slate-700 cursor-pointer w-20 focus:ring-2 focus:ring-blue-500 outline-none">
+                  ${prefijosHtml}
+                </select>
+                <input type="text" data-ec-index="${i}" data-ec-field="telefono" value="${telNum}" placeholder="1234567" maxlength="7" pattern="[0-9]{7}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-900 font-mono focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+              </div>
+            </div>
           </div>
         </div>`;
-    }
-    container.innerHTML = html;
+    });
 
-    // Pre-select phone prefix from stored full number
-    for (let i = 0; i < 2; i++) {
-      const c = contactos[i] || {};
-      if (c.telefono && c.telefono.length >= 4) {
-        document.getElementById(`ec-tel-prefijo-${i}`).value = c.telefono.substring(0, 4);
-      }
+    if (contactosGuardados.length < 2) {
+      html += `
+        <button type="button" onclick="agregarContacto()" class="w-full border-2 border-dashed border-slate-300 rounded-xl py-4 text-sm font-bold text-slate-400 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50/50 transition-all flex items-center justify-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          Agregar contacto de emergencia
+        </button>`;
     }
+
+    container.innerHTML = html;
+  }
+
+  function agregarContacto() {
+    if (contactosGuardados.length >= 2) return;
+    contactosGuardados.push({ nombre: '', telefono: '', relacion: '' });
+    renderizarContactosUI();
+  }
+
+  function eliminarContacto(index) {
+    contactosGuardados.splice(index, 1);
+    renderizarContactosUI();
+  }
+
+  function recogerContactosUI() {
+    const contactos = [];
+    document.querySelectorAll('[data-ec-index]').forEach(el => {
+      const i = parseInt(el.dataset.ecIndex);
+      if (!contactos[i]) contactos[i] = { nombre: '', telefono: '', relacion: '' };
+      const field = el.dataset.ecField;
+      if (field === 'nombre') contactos[i].nombre = el.value.trim();
+      else if (field === 'relacion') contactos[i].relacion = el.value;
+      else if (field === 'prefijo') contactos[i]._prefijo = el.value;
+      else if (field === 'telefono') contactos[i]._num = el.value.trim();
+    });
+    contactos.forEach(c => {
+      if (c._prefijo || c._num) {
+        c.telefono = (c._prefijo || '0414') + (c._num || '');
+      }
+      delete c._prefijo;
+      delete c._num;
+    });
+    return contactos.filter(c => c.nombre || c.relacion || c.telefono);
   }
 
   function cambiarVista(idVista, event) {
@@ -1180,21 +1338,39 @@
   }
 
   function guardarCambiosUnificado() {
+    const pass1 = document.getElementById('pass-nueva').value;
+    const pass2 = document.getElementById('pass-confirm').value;
+    if (pass1 && pass1 !== pass2) {
+      alert('Las contraseñas no coinciden.');
+      return;
+    }
+
     const tlf = document.getElementById('ajuste-tlf').value;
     const banco = document.getElementById('ajuste-banco').value;
     const prefijo = document.getElementById('ajuste-prefix').textContent;
     const cuenta16 = document.getElementById('ajuste-cuenta').value;
     const cuenta = prefijo + cuenta16;
 
+    if (!tlf || !banco || !cuenta) {
+      alert('Completa todos los campos obligatorios.');
+      return;
+    }
+
+    const contactos = recogerContactosUI();
+    const contactosCompletos = contactos.filter(c => c.nombre && c.telefono && c.relacion);
+
+    if (contactosCompletos.length === 0) {
+      alert('Debes registrar al menos 1 contacto de emergencia completo (Nombre, Parentesco y Teléfono).');
+      return;
+    }
+
     let body = `tlf=${encodeURIComponent(tlf)}&banco=${encodeURIComponent(banco)}&cuenta=${encodeURIComponent(cuenta)}`;
 
-    // Include emergency contacts
     for (let i = 0; i < 2; i++) {
-      body += `&contacto_nombre_${i}=${encodeURIComponent((document.getElementById(`ec-nombre-${i}`)?.value || '').trim())}`;
-      const ecTelPrefijo = document.getElementById(`ec-tel-prefijo-${i}`)?.value || '0414';
-      const ecTelNum = document.getElementById(`ec-telefono-${i}`)?.value?.trim() || '';
-      body += `&contacto_telefono_${i}=${encodeURIComponent(ecTelPrefijo + ecTelNum)}`;
-      body += `&contacto_relacion_${i}=${encodeURIComponent(document.getElementById(`ec-relacion-${i}`)?.value || '')}`;
+      const c = contactosCompletos[i] || {};
+      body += `&contacto_nombre_${i}=${encodeURIComponent(c.nombre || '')}`;
+      body += `&contacto_telefono_${i}=${encodeURIComponent(c.telefono || '')}`;
+      body += `&contacto_relacion_${i}=${encodeURIComponent(c.relacion || '')}`;
     }
 
     fetch('actualizar-perfil-chofer.php', {
@@ -1205,10 +1381,22 @@
       .then(res => res.json())
       .then(data => {
         if(data.success) {
+          if (pass1) {
+            const fd = new FormData();
+            fd.append('password', pass1);
+            return fetch('../editar-usuario.php', { method: 'POST', body: fd })
+              .then(r => r.json())
+              .then(() => {
+                document.getElementById('pass-nueva').value = '';
+                document.getElementById('pass-confirm').value = '';
+                alert("Cambios guardados exitosamente.");
+                cargarDatosChofer();
+              });
+          }
           alert("Cambios guardados exitosamente.");
           cargarDatosChofer();
         } else {
-          alert("Error al actualizar.");
+          alert(data.msg || "Error al actualizar.");
         }
       });
   }

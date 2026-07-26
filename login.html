@@ -226,7 +226,7 @@
 
           <div class="flex items-center gap-1.5 text-xs font-bold text-[#1e40af] uppercase tracking-wider pt-2">
             <i data-lucide="shield-alert" class="h-3.5 w-3.5"></i>
-            <span>Contactos de Emergencia (Mínimo 2)</span>
+            <span>Contactos de Emergencia (1 o 2)</span>
           </div>
           <div class="space-y-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
             <div class="grid grid-cols-3 gap-2">
@@ -238,7 +238,7 @@
                 <select name="prefijo_contacto1" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
                   <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
                 </select>
-                <input id="reg-c1-tel" type="text" name="contacto1" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                <input id="reg-c1-tel" type="text" name="contacto1" pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
               </div>
             </div>
             <div class="grid grid-cols-3 gap-2">
@@ -250,7 +250,7 @@
                 <select name="prefijo_contacto2" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
                   <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
                 </select>
-                <input id="reg-c2-tel" type="text" name="contacto2" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                <input id="reg-c2-tel" type="text" name="contacto2" pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
               </div>
             </div>
           </div>
@@ -324,7 +324,7 @@
 
               <div class="flex items-center gap-1.5 text-xs font-bold text-[#1e40af] uppercase tracking-wider pt-2">
                 <i data-lucide="shield-alert" class="h-3.5 w-3.5"></i>
-                <span>Contactos de Emergencia (Mínimo 2)</span>
+                <span>Contactos de Emergencia (1 o 2)</span>
               </div>
               <div class="space-y-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <div class="grid grid-cols-3 gap-2">
@@ -336,7 +336,7 @@
                     <select name="prefijo_contacto1_ya" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
                       <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
                     </select>
-                    <input id="reg-c1-tel2" type="text" name="contacto1_ya" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                    <input id="reg-c1-tel2" type="text" name="contacto1_ya" pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
                   </div>
                 </div>
                 <div class="grid grid-cols-3 gap-2">
@@ -348,7 +348,7 @@
                     <select name="prefijo_contacto2_ya" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
                       <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
                     </select>
-                    <input id="reg-c2-tel2" type="text" name="contacto2_ya" required pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                    <input id="reg-c2-tel2" type="text" name="contacto2_ya" pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
                   </div>
                 </div>
               </div>
@@ -465,7 +465,7 @@
       });
 
       // Desactivar campos bancarios de chofer nuevo por si acaso
-      const inputsBancaNuevo = ['reg-banco', 'reg-cuenta', 'reg-c1-nom', 'reg-c1-tel', 'reg-c1-rel', 'reg-c2-nom', 'reg-c2-tel', 'reg-c2-rel'];
+      const inputsBancaNuevo = ['reg-banco', 'reg-cuenta'];
       inputsBancaNuevo.forEach(id => document.getElementById(id)?.removeAttribute('required'));
 
       // Bloqueamos el botón si estamos en "YA TENGO CUENTA" hasta validar
@@ -493,7 +493,7 @@
       });
 
       // Desactivar campos bancarios de ya tengo cuenta por si acaso
-      const inputsBancaBasico = ['reg-banco2', 'reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c1-rel2', 'reg-c2-nom2', 'reg-c2-tel2', 'reg-c2-rel2'];
+      const inputsBancaBasico = ['reg-banco2', 'reg-cuenta2'];
       inputsBancaBasico.forEach(id => document.getElementById(id)?.removeAttribute('required'));
 
       // Reactivamos el botón en "REGISTRO NUEVO"
@@ -513,7 +513,7 @@
     const rolSeleccionado = document.getElementById('reg-rol2').value;
     const camposVerificacion = document.getElementById('verificacion-usuario');
     const camposBanca = document.getElementById('campos-banca-chofer2');
-    const inputsBanca = ['reg-banco2', 'reg-cuenta2', 'reg-c1-nom2', 'reg-c1-tel2', 'reg-c1-rel2', 'reg-c2-nom2', 'reg-c2-tel2', 'reg-c2-rel2'];
+    const inputsBanca = ['reg-banco2', 'reg-cuenta2'];
 
     camposVerificacion.classList.remove('hidden');
 
@@ -538,7 +538,7 @@
   function evaluarCamposChofer() {
     const rolSeleccionado = document.getElementById('reg-rol').value;
     const seccionBancaria = document.getElementById('campos-banca-chofer');
-    const inputs = ['reg-banco', 'reg-cuenta', 'reg-c1-nom', 'reg-c1-tel', 'reg-c1-rel', 'reg-c2-nom', 'reg-c2-tel', 'reg-c2-rel'];
+    const inputs = ['reg-banco', 'reg-cuenta'];
 
     if (rolSeleccionado === 'chofer') {
       seccionBancaria.classList.remove('hidden');
@@ -549,15 +549,73 @@
     }
   }
 
+  function validarContactos(modo) {
+    const esNuevo = modo === 'nuevo';
+    let algunoCompleto = false;
+
+    for (let i = 1; i <= 2; i++) {
+      const nombre = document.getElementById(esNuevo ? `reg-c${i}-nom` : `reg-c${i}-nom2`);
+      const relacion = document.getElementById(esNuevo ? `reg-c${i}-rel` : `reg-c${i}-rel2`);
+      const telefono = document.getElementById(esNuevo ? `reg-c${i}-tel` : `reg-c${i}-tel2`);
+
+      const tieneNombre = nombre.value.trim() !== '';
+      const tieneRelacion = relacion.value !== '';
+      const tieneTelefono = telefono.value.trim() !== '';
+
+      const tieneAlguno = tieneNombre || tieneRelacion || tieneTelefono;
+      const tieneTodos = tieneNombre && tieneRelacion && tieneTelefono;
+
+      if (tieneTodos) algunoCompleto = true;
+
+      if (tieneAlguno && !tieneTodos) {
+        const faltantes = [];
+        if (!tieneNombre) faltantes.push('Nombre');
+        if (!tieneRelacion) faltantes.push('Parentesco');
+        if (!tieneTelefono) faltantes.push('Teléfono');
+        return `Contacto ${i}: completa los campos faltantes (${faltantes.join(', ')}).`;
+      }
+    }
+
+    if (!algunoCompleto) {
+      return 'Debes agregar al menos 1 contacto de emergencia completo.';
+    }
+
+    return null;
+  }
+
   // INTERCEPCIÓN ASÍNCRONA CON FETCH (AJAX)
   document.getElementById('ajax-registro-form').addEventListener('submit', function(e) {
     e.preventDefault();
     sincronizarCuentas();
 
+    const regErrorContainer = document.getElementById('reg-error-msg');
+    const regErrorText = document.getElementById('reg-error-text');
+    regErrorContainer.classList.add('hidden');
+
+    const modoReg = document.getElementById('input-modo').value;
+
+    // Validar contactos: si escriben en un campo, deben completar todos
+    if (modoReg === 'nuevo' && document.getElementById('reg-rol').value === 'chofer') {
+      const errorContacto = validarContactos('nuevo');
+      if (errorContacto) {
+        regErrorText.innerText = errorContacto;
+        regErrorContainer.classList.remove('hidden');
+        regErrorContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+      }
+    }
+    if (modoReg === 'rol' && document.getElementById('reg-rol2').value === 'chofer') {
+      const errorContacto = validarContactos('rol');
+      if (errorContacto) {
+        regErrorText.innerText = errorContacto;
+        regErrorContainer.classList.remove('hidden');
+        regErrorContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+      }
+    }
+
     const formData = new FormData(this);
 
-    // Combine cédula prefijo + número
-    const modoReg = document.getElementById('input-modo').value;
     if (modoReg === 'nuevo') {
       const pref = document.getElementById('reg-cedula-prefijo').value;
       const num = document.getElementById('reg-cedula-num').value.trim();
@@ -567,9 +625,6 @@
       const num = document.getElementById('reg-cedula-num-ya').value.trim();
       formData.set('cedula_ya', pref + num);
     }
-
-    const regErrorContainer = document.getElementById('reg-error-msg');
-    const regErrorText = document.getElementById('reg-error-text');
 
     fetch('registro.php', {
       method: 'POST',

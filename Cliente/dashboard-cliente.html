@@ -101,7 +101,7 @@
           <p class="text-[10px] font-bold uppercase text-[#64748b] tracking-wider">Saldo Disponible</p>
           <p id="saldo-bs" class="text-3xl font-extrabold mt-1 text-slate-900 font-mono text-balance">Bs. 0,00</p>
         </div>
-        <button onclick="document.getElementById('modal-recarga').classList.remove('hidden')" class="mt-6 w-full bg-[#0f172a] text-white py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors">Notificar Pago Móvil</button>
+        <button onclick="document.getElementById('modal-recarga').classList.remove('hidden')" class="mt-6 w-full bg-[#0f172a] text-white py-2.5 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors">Recargar Saldo</button>
       </div>
 
       <div class="lg:col-span-2 custom-card p-6 border-slate-300">
@@ -128,9 +128,10 @@
           <p class="text-2xl text-slate-900 font-extrabold mt-0.5 font-mono" id="valor-precio-bs">Bs. 0,00</p>
         </div>
 
-        <div id="resultado" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-sm">
-          <p class="font-bold text-[#059669] flex items-center gap-1.5"><i data-lucide="check" class="h-4 w-4"></i> ¡Conductor Local Asignado!</p>
-          <p id="datos-conductor-asignado" class="text-xs mt-1 text-emerald-800">Verificando estatus operativo en tiempo real...</p>
+        <div id="resultado" class="hidden mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg text-sm transition-all duration-500 ease-in-out">
+          <p class="font-bold text-[#059669] flex items-center gap-1.5 text-lg border-b border-emerald-200/60 pb-2"><i data-lucide="check-circle-2" class="h-5 w-5"></i> ¡Tu conductor está en camino!</p>
+          <div id="datos-conductor-asignado" class="mt-2">
+          </div>
         </div>
       </div>
     </div>
@@ -167,7 +168,7 @@
           <h2 class="font-bold text-lg text-slate-900">Control de Conciliaciones de Pago</h2>
           <p class="text-xs text-slate-500">Historial logístico de reportes monetarios en Bolívares.</p>
         </div>
-        <button onclick="document.getElementById('modal-recarga').classList.remove('hidden')" class="bg-[#0f172a] text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-800">Notificar Pago</button>
+        <button onclick="document.getElementById('modal-recarga').classList.remove('hidden')" class="bg-[#0f172a] text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-800">Recargar Saldo</button>
       </div>
 
       <div class="flex gap-3 mb-4">
@@ -257,7 +258,16 @@
           </div>
           <div>
             <label class="block text-[10px] font-bold uppercase text-[#64748b]">Teléfono</label>
-            <input type="tel" id="ajuste-tlf" class="mt-1 w-full border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none" placeholder="04140000000">
+            <div class="flex gap-2 mt-1">
+              <select id="ajuste-tlf-prefijo" class="w-24 border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none bg-white">
+                <option value="0414">0414</option>
+                <option value="0424">0424</option>
+                <option value="0412">0412</option>
+                <option value="0416">0416</option>
+                <option value="0426">0426</option>
+              </select>
+              <input type="tel" id="ajuste-tlf" class="flex-1 border border-slate-300 p-3 rounded-lg text-sm focus:ring-2 focus:ring-[#0f172a] outline-none font-mono" placeholder="1234567" maxlength="7" pattern="\d{7}">
+            </div>
           </div>
         </div>
         <div>
@@ -267,8 +277,18 @@
         <div class="pt-4 border-t border-slate-100 space-y-4">
           <h4 class="text-xs font-bold uppercase text-slate-900">Cambiar Contraseña</h4>
           <div class="grid grid-cols-2 gap-4">
-            <input type="password" id="pass-nueva" placeholder="Nueva clave" class="w-full border border-slate-300 p-3 rounded-lg text-sm">
-            <input type="password" id="pass-confirm" placeholder="Confirmar clave" class="w-full border border-slate-300 p-3 rounded-lg text-sm">
+            <div class="relative">
+              <input type="password" id="pass-nueva" placeholder="Nueva clave" class="w-full border border-slate-300 p-3 pr-10 rounded-lg text-sm">
+              <button type="button" onclick="togglePass('pass-nueva', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                <i data-lucide="eye" class="h-4 w-4"></i>
+              </button>
+            </div>
+            <div class="relative">
+              <input type="password" id="pass-confirm" placeholder="Confirmar clave" class="w-full border border-slate-300 p-3 pr-10 rounded-lg text-sm">
+              <button type="button" onclick="togglePass('pass-confirm', this)" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors">
+                <i data-lucide="eye" class="h-4 w-4"></i>
+              </button>
+            </div>
           </div>
         </div>
         <button type="submit" class="w-full bg-[#0f172a] text-white py-3 rounded-lg text-sm font-bold hover:bg-slate-800 transition-colors">Guardar Cambios</button>
@@ -284,7 +304,7 @@
     </button>
 
     <div class="mb-4">
-      <h3 class="font-bold text-slate-900">Reportar Pago Móvil / Transferencia</h3>
+      <h3 class="font-bold text-slate-900">Registrar Recarga de Saldo</h3>
     </div>
 
     <form id="form-notificar-pago" class="space-y-4" onsubmit="procesarNotificacionPago(event)">
@@ -317,12 +337,13 @@
 
       <div>
         <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Monto (Bs.)</label>
-        <input type="number" step="0.01" min="1" name="monto" id="recarga-monto-bs" required class="w-full border p-2.5 rounded-lg text-sm font-mono font-bold">
+        <input type="text" id="recarga-monto-visual" required placeholder="0,00" class="w-full border p-2.5 rounded-lg text-sm font-mono font-bold outline-none focus:ring-2 focus:ring-[#0f172a]">
+        <input type="hidden" name="monto" id="recarga-monto-oculto">
       </div>
 
       <div>
         <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Referencia (6 dígitos)</label>
-        <input type="text" name="nro_ref" id="recarga-referencia" required maxlength="6" pattern="\d{6}" class="w-full border p-2.5 rounded-lg text-sm font-mono">
+        <input type="text" name="nro_ref" id="recarga-referencia" required maxlength="7" placeholder="123-456" class="w-full border p-2.5 rounded-lg text-sm font-mono outline-none focus:ring-2 focus:ring-[#0f172a]">
       </div>
 
       <div>
@@ -335,7 +356,7 @@
           Salir
         </button>
         <input type="hidden" name="tipo" value="recarga">
-        <button type="submit" class="w-full bg-[#0f172a] text-white py-2.5 rounded-lg font-bold text-sm hover:bg-slate-800">Enviar Notificación</button>
+        <button type="submit" class="w-full bg-[#0f172a] text-white py-2.5 rounded-lg font-bold text-sm hover:bg-slate-800">Procesar Recarga</button>
       </div>
     </form>
   </div>
@@ -367,13 +388,23 @@
     <div id="contenido-detalle" class="space-y-3 text-sm">
     </div>
     <button onclick="document.getElementById('modal-detalle-viaje').classList.add('hidden')"
-            class="mt-6 w-full bg-slate-900 text-white py-2 rounded-lg font-bold text-sm">
-      Cerrar
+            class="mt-6 w-full bg-slate-900 text-white py-2 rounded-lg font-bold text-sm hover:bg-slate-800 transition-colors">
+    Cerrar
     </button>
   </div>
 </div>
 
 <script>
+  function togglePass(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const isPassword = input.type === 'password';
+    input.type = isPassword ? 'text' : 'password';
+    const icon = btn.querySelector('i');
+    if (icon) {
+      icon.setAttribute('data-lucide', isPassword ? 'eye-off' : 'eye');
+      lucide.createIcons();
+    }
+  }
   // VARIABLES GLOBAL DE CONTROL MONETARIO (ENTORNO OFFLINE VENEZUELA)
   let tasaBCV = 0.00;           // Tasa base predeterminada
   let saldoEnBsGlobal = 0.00;     // Saldo real plano en Bs (traído de la DB)
@@ -601,6 +632,12 @@
     document.getElementById('modal-recarga').classList.add('hidden');
     document.getElementById('panel-info-cuenta').classList.add('hidden');
     document.getElementById('select-cuenta-empresa').value = '';
+
+    document.getElementById('recarga-monto-visual').value = '';
+    document.getElementById('recarga-monto-oculto').value = '';
+    document.getElementById('recarga-referencia').value = '';
+
+    document.getElementById('form-notificar-pago').reset();
   }
 
   function mostrarInfoCuenta(idCuenta) {
@@ -719,14 +756,22 @@
     const elementoPrecio = document.getElementById('valor-precio-bs');
 
     if (mostrarEnUSD) {
-      let saldoUSD = saldoEnBsGlobal / tasaBCV;
-      let precioUSD = precioViajeBsGlobal / tasaBCV;
+      let saldoUSD = Math.round(((saldoEnBsGlobal / tasaBCV) + Number.EPSILON) * 100) / 100;
+      let precioUSD = Math.round(((precioViajeBsGlobal / tasaBCV) + Number.EPSILON) * 100) / 100;
 
-      if (elementoSaldo) elementoSaldo.innerText = '$' + saldoUSD.toFixed(2) + ' USD';
-      if (elementoPrecio) elementoPrecio.innerText = '$' + precioUSD.toFixed(2) + ' USD';
+      if (elementoSaldo) {
+        elementoSaldo.innerText = '$' + saldoUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' USD';
+      }
+      if (elementoPrecio) {
+        elementoPrecio.innerText = '$' + precioUSD.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' USD';
+      }
     } else {
-      if (elementoSaldo) elementoSaldo.innerText = 'Bs. ' + saldoEnBsGlobal.toFixed(2).replace('.', ',');
-      if (elementoPrecio) elementoPrecio.innerText = 'Bs. ' + precioViajeBsGlobal.toFixed(2).replace('.', ',');
+      if (elementoSaldo) {
+        elementoSaldo.innerText = 'Bs. ' + saldoEnBsGlobal.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      }
+      if (elementoPrecio) {
+        elementoPrecio.innerText = 'Bs. ' + precioViajeBsGlobal.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      }
     }
   }
 
@@ -736,12 +781,27 @@
       .then(data => {
         if (data.error) { window.location.href = 'login.html'; return; }
         document.getElementById('nombre-usuario').innerText = data.nombres.split(' ')[0] + ' ' + data.apellidos.split(' ')[0];
-        document.getElementById('ci-usuario').innerText = 'CI: ' + data.cedula;
+        document.getElementById('ci-usuario').innerText = `ID: #${String(data.id_cliente).padStart(3, '0')}`;
         document.getElementById('ajuste-nombres').value = data.nombres;
         document.getElementById('ajuste-apellidos').value = data.apellidos;
-        document.getElementById('ajuste-cedula').value = data.cedula;
         document.getElementById('ajuste-correo').value = data.correo;
-        document.getElementById('ajuste-tlf').value = data.tlf || '';
+
+        // Cédula formateada
+        let ciStr = (data.cedula || '').toString();
+        if (ciStr !== '' && !ciStr.includes('-')) {
+          ciStr = 'V-' + ciStr;
+        }
+        document.getElementById('ajuste-cedula').value = ciStr;
+
+        // Teléfono dividido
+        let telefono = data.tlf || '';
+        if (telefono.length === 11) {
+          document.getElementById('ajuste-tlf-prefijo').value = telefono.substring(0, 4);
+          document.getElementById('ajuste-tlf').value = telefono.substring(4);
+        } else {
+          document.getElementById('ajuste-tlf-prefijo').value = '0414';
+          document.getElementById('ajuste-tlf').value = telefono;
+        }
 
         saldoEnBsGlobal = parseFloat(data.saldo);
         renderizarMontos();
@@ -774,7 +834,13 @@
     const pass1 = document.getElementById('pass-nueva').value;
     const pass2 = document.getElementById('pass-confirm').value;
     if (pass1 !== pass2) { alert("Las contraseñas no coinciden."); return; }
-    alert("Simulación de guardado de ajustes.");
+
+    // Concatenar el prefijo y el número de teléfono para enviarlo completo
+    const prefijo = document.getElementById('ajuste-tlf-prefijo').value;
+    const tlf = document.getElementById('ajuste-tlf').value;
+    const fullTlf = prefijo + tlf;
+
+    alert("Simulación de guardado de ajustes. El teléfono a guardar es: " + fullTlf);
   }
 
   function renderizarMovimientos(lista) {
@@ -782,6 +848,11 @@
     if (!tbody) return;
 
     tbody.innerHTML = '';
+
+    if (lista.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-4 text-center text-slate-400 text-sm">No hay movimientos financieros.</td></tr>';
+      return;
+    }
 
     lista.forEach(m => {
       const esPositivo = m.monto > 0;
@@ -899,12 +970,25 @@
 
   $('#form-notificar-pago').on('submit', function(e) {
     e.preventDefault();
-    $.post('guardar_transaccion.php', $(this).serialize(), function(response) {
+
+    // Agarramos todos los datos del modal
+    let formData = $(this).serializeArray();
+
+    // Le quitamos el guion a la referencia para que tu PHP la reciba limpia
+    formData.forEach(item => {
+      if (item.name === 'nro_ref') {
+        item.value = item.value.replace('-', '');
+      }
+    });
+
+    $.post('guardar_transaccion.php', $.param(formData), function(response) {
       alert(response.message);
-      if(response.success) cerrarModalRecarga();
-      cargarDatosUsuario();
-      cargarHistorialFinanciero();
-      cargarHistorialPagos();
+      if(response.success) {
+        cerrarModalRecarga();
+        cargarHistorialPagos();
+        cargarHistorialFinanciero();
+        cargarDatosUsuario();
+      }
     }, 'json');
   });
 
@@ -922,6 +1006,14 @@
 
   $(document).ready(function() {
     $('.buscador-zonas').select2({ placeholder: "Buscar sector...", allowClear: false });
+
+    $('#origen, #destino').on('change', function() {
+      precioViajeBsGlobal = 0.00;
+      $('#resultado-precio').addClass('hidden');
+      $('#btn-asignar').addClass('hidden').prop('disabled', false).text('Confirmar y Solicitar Unidad');
+      $('#btn-calcular').removeClass('hidden');
+      renderizarMontos();
+    });
 
     $('#btn-calcular').on('click', function() {
       let origen = $('#origen').val();
@@ -945,14 +1037,15 @@
     $('#btn-asignar').on('click', function() {
       const id_origen = $('#origen').val();
       const id_destino = $('#destino').val();
-
-      const costoRaw = $('#valor-precio-bs').text();
-      const costo = parseFloat(costoRaw.replace('Bs.', '').replace(',', '.').trim());
+      const costo = precioViajeBsGlobal;
 
       if (!id_origen || !id_destino) {
         alert("Por favor, selecciona tanto el origen como el destino.");
         return;
       }
+
+      const btn = $(this);
+      btn.prop('disabled', true).text('Procesando solicitud...');
 
       $.ajax({
         url: 'solicitar_traslado.php',
@@ -967,30 +1060,112 @@
           if (response.success) {
             alert("¡Traslado solicitado con éxito! Estamos asignando un conductor.");
             $('#btn-asignar').addClass('hidden');
+            $('#resultado-precio').addClass('hidden');
+
+            const conductor = response.datos_viaje;
+            $('#datos-conductor-asignado').html(`
+              <div class="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-emerald-900 bg-white p-3 rounded-lg border border-emerald-100 shadow-sm">
+                <div>
+                  <p class="font-bold text-[10px] uppercase text-emerald-600 mb-0.5">Conductor Designado</p>
+                  <p class="font-semibold capitalize">${conductor.chofer}</p>
+                  <p class="text-xs mt-0.5"><i data-lucide="phone" class="inline h-3 w-3 mr-1 text-emerald-500"></i>${conductor.telefono}</p>
+                </div>
+                <div>
+                  <p class="font-bold text-[10px] uppercase text-emerald-600 mb-0.5">Unidad Operativa</p>
+                  <p class="font-semibold capitalize">${conductor.vehiculo}</p>
+                  <p class="text-xs font-mono bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded inline-block mt-0.5 border border-emerald-200">Placa: ${conductor.placa}</p>
+                </div>
+              </div>
+              <button type="button" onclick="resetearFormularioTraslado()" class="mt-4 w-full bg-emerald-600 text-white font-bold py-2.5 rounded-lg text-xs hover:bg-emerald-700 transition-colors shadow-sm">
+                Solicitar nuevo traslado
+              </button>
+            `);
+
+            lucide.createIcons();
             $('#resultado').removeClass('hidden');
             cargarHistorialTraslados();
             cargarDatosUsuario();
             cargarHistorialFinanciero();
           } else {
+            $('#btn-asignar').prop('disabled', false).text('Confirmar y Solicitar Unidad');
             alert("Error: " + response.message);
           }
         },
         error: function() {
+          $('#btn-asignar').prop('disabled', false).text('Confirmar y Solicitar Unidad');
           alert("Ocurrió un error al procesar la solicitud.");
         }
       });
     });
   });
 
-  window.addEventListener('DOMContentLoaded', () => {
-    Promise.all([obtenerTasaLocal(), cargarZonas()]).then(() => {
+  function resetearFormularioTraslado() {
+    $('#resultado').addClass('hidden');
+    $('#resultado-precio').addClass('hidden');
+    $('#btn-asignar').addClass('hidden').prop('disabled', false).text('Confirmar y Solicitar Unidad');
+    $('#btn-calcular').removeClass('hidden');
+
+    precioViajeBsGlobal = 0.00;
+    renderizarMontos();
+
+    $('#origen').val('').trigger('change');
+    $('#destino').val('').trigger('change');
+  }
+
+  function configurarMascaraMonto() {
+    const montoVisual = document.getElementById('recarga-monto-visual');
+    const montoOculto = document.getElementById('recarga-monto-oculto');
+
+    if (!montoVisual || !montoOculto) return;
+
+    montoVisual.addEventListener('input', function(e) {
+      let value = this.value.replace(/\D/g, ''); // Deja solo los números
+      if (!value) {
+        this.value = '';
+        montoOculto.value = '';
+        return;
+      }
+      let numero = parseFloat(value) / 100;
+      this.value = numero.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      montoOculto.value = numero.toFixed(2); // Valor crudo para la Base de Datos
+    });
+  }
+
+  function configurarMascaraReferencia() {
+    const refInput = document.getElementById('recarga-referencia');
+
+    if (!refInput) return;
+
+    refInput.addEventListener('input', function(e) {
+      let val = this.value.replace(/\D/g, '');
+      if (val.length > 3) {
+        val = val.substring(0, 3) + '-' + val.substring(3, 6);
+      }
+      this.value = val;
+    });
+  }
+
+  async function inicializarAplicacion() {
+    try {
+      // Esperamos a que carguen los datos críticos primero
+      await Promise.all([obtenerTasaLocal(), cargarZonas()]);
+
+      // Luego cargamos el resto de los módulos en paralelo o secuencial
       poblarFiltrosFechas();
       cargarDatosUsuario();
       cargarCuentasEmpresa();
       cargarHistorialFinanciero();
       cargarHistorialPagos();
       cargarHistorialTraslados();
-    });
+    } catch (error) {
+      console.error("Error al inicializar la aplicación:", error);
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    inicializarAplicacion();
+    configurarMascaraMonto();
+    configurarMascaraReferencia();
   });
 
 </script>

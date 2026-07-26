@@ -25,12 +25,16 @@ try {
                  ch.nro_cuenta,
                  u.nombres AS chofer_nombre,
                  u.apellidos AS chofer_apellidos,
+                 p.nombres AS personal_nombre,
+                 p.apellidos AS personal_apellidos,
+                 pc.id_personal,
                  b.nombre_banco
           FROM pago_chofer pc
           JOIN choferes ch ON pc.id_chofer = ch.id_chofer
           JOIN usuarios u ON ch.id_usuario = u.id_usuario
+          JOIN usuarios p ON pc.id_personal = p.id_usuario
           LEFT JOIN bancos b ON pc.id_banco = b.id_banco
-          WHERE DATE_FORMAT(pc.fecha, '%Y-%m') BETWEEN :desde AND :hasta";
+          WHERE DATE(pc.fecha) BETWEEN :desde AND :hasta";
 
   $params = [':desde' => $desde, ':hasta' => $hasta];
 
