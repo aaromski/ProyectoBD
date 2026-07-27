@@ -17,7 +17,6 @@ try {
   /** @var PDO $conn */
   $conn->beginTransaction();
 
-  // 1. Obtener el id_usuario del cliente que está solicitando el viaje
   $stmt_usuario_cliente = $conn->prepare("SELECT id_usuario, saldo FROM clientes WHERE id_cliente = ? FOR UPDATE");
   $stmt_usuario_cliente->execute([$id_cliente]);
   $cliente = $stmt_usuario_cliente->fetch(PDO::FETCH_ASSOC);
@@ -32,11 +31,9 @@ try {
 
   $id_usuario_cliente = $cliente['id_usuario'];
 
-  // Descontamos el saldo
   $conn->prepare("UPDATE clientes SET saldo = saldo - ? WHERE id_cliente = ?")->execute([$costo, $id_cliente]);
 
-  // 2. Seleccionar un chofer disponible EXCLUYENDO al usuario actual
-  $stmt_chofer = $conn->prepare("SELECT c.id_chofer, v.id_vehiculo,
+  $stmt_chofer = $conn->prepare("SELECT c.id_chofer, c.saldo AS saldo_chofer, v.id_vehiculo,
     u.nombres AS chofer_nombres,
     u.apellidos AS chofer_apellidos,
     u.telefono AS chofer_telefono,
@@ -47,7 +44,7 @@ try {
     INNER JOIN usuarios u ON u.id_usuario = c.id_usuario
     INNER JOIN vehiculos v ON v.id_chofer = c.id_chofer
     WHERE v.activo = 1
-      AND u.id_usuario != ? -- <--- EVITA QUE SE ASIGNE A SÍ MISMO
+      AND u.id_usuario != ?
       AND EXISTS (
         SELECT 1 FROM evaluaciones_choferes ec
         WHERE ec.id_chofer = c.id_chofer AND ec.estado = 'aprobado'
@@ -59,7 +56,6 @@ try {
     ORDER BY RAND()
     LIMIT 1");
 
-  // Pasamos el id_usuario del cliente para excluirlo
   $stmt_chofer->execute([$id_usuario_cliente]);
   $chofer = $stmt_chofer->fetch(PDO::FETCH_ASSOC);
 
@@ -67,9 +63,8 @@ try {
     throw new Exception("No hay choferes disponibles actualmente.");
   }
 
-  // Registrar el traslado
   $sql_traslado = "INSERT INTO traslados (id_cliente, id_chofer, id_zona_origen, id_zona_destino, costo, estado, id_vehiculo, fecha)
-                     VALUES (?, ?, ?, ?, ?, 'en_curso', ?, NOW())";
+                     VALUES (?, ?, ?, ?, ?, 'finalizado', ?, NOW())";
 
   $stmt_insert = $conn->prepare($sql_traslado);
   $stmt_insert->execute([
@@ -81,10 +76,13 @@ try {
     $chofer['id_vehiculo']
   ]);
 
+  $monto_chofer = $costo * 0.70;
+  $conn->prepare("UPDATE choferes SET saldo = saldo + ? WHERE id_chofer = ?")->execute([$monto_chofer, $chofer['id_chofer']]);
+
   $conn->commit();
   echo json_encode([
       'success' => true,
-      'message' => '¡Tu conductor está en camino!',
+      'message' => '¡Viaje completado exitosamente!',
       'datos_viaje' => [
           'chofer' => $chofer['chofer_nombres'] . ' ' . $chofer['chofer_apellidos'],
           'telefono' => $chofer['chofer_telefono'],

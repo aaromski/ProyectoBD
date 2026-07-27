@@ -173,7 +173,7 @@
             <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Cédula</label>
             <div class="flex gap-1.5">
               <select name="cedula_prefijo" id="reg-cedula-prefijo" class="bg-white/90 border border-slate-300 rounded-xl px-1.5 py-2 text-xs text-slate-900">
-                <option value="V-">V-</option><option value="J-">J-</option>
+                <option value="V-">V-</option><option value="E-">E-</option><option value="J-">J-</option>
               </select>
               <input type="text" name="cedula" id="reg-cedula-num" required pattern="[0-9]{7,8}" minlength="7" maxlength="8" title="7 u 8 dígitos numéricos" placeholder="12345678" class="w-full bg-white/90 border border-slate-300 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-[#1e40af]">
             </div>
@@ -226,34 +226,34 @@
 
           <div class="flex items-center gap-1.5 text-xs font-bold text-[#1e40af] uppercase tracking-wider pt-2">
             <i data-lucide="shield-alert" class="h-3.5 w-3.5"></i>
-            <span>Contactos de Emergencia (1 o 2)</span>
-          </div>
-          <div class="space-y-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <div class="grid grid-cols-3 gap-2">
-              <input id="reg-c1-nom" type="text" name="nombre_contacto1" placeholder="Nombre" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
-              <select id="reg-c1-rel" name="relacion_contacto1" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-[10px] text-slate-900 cursor-pointer">
-                <option value="">Parentesco</option><option value="Cónyuge/Pareja">Cónyuge/Pareja</option><option value="Padre/Madre">Padre/Madre</option><option value="Hijo/Hija">Hijo/Hija</option><option value="Familiar">Familiar</option><option value="Amigo/Amiga">Amigo/Amiga</option><option value="Otro">Otro</option>
-              </select>
-              <div class="flex gap-1">
-                <select name="prefijo_contacto1" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
-                  <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
-                </select>
-                <input id="reg-c1-tel" type="text" name="contacto1" pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                <span>Contactos de Emergencia (Mínimo 2 Obligatorios)</span>
               </div>
-            </div>
-            <div class="grid grid-cols-3 gap-2">
-              <input id="reg-c2-nom" type="text" name="nombre_contacto2" placeholder="Nombre" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
-              <select id="reg-c2-rel" name="relacion_contacto2" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-[10px] text-slate-900 cursor-pointer">
-                <option value="">Parentesco</option><option value="Cónyuge/Pareja">Cónyuge/Pareja</option><option value="Padre/Madre">Padre/Madre</option><option value="Hijo/Hija">Hijo/Hija</option><option value="Familiar">Familiar</option><option value="Amigo/Amiga">Amigo/Amiga</option><option value="Otro">Otro</option>
-              </select>
-              <div class="flex gap-1">
-                <select name="prefijo_contacto2" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
-                  <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
-                </select>
-                <input id="reg-c2-tel" type="text" name="contacto2" pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+              <div class="space-y-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <div class="grid grid-cols-3 gap-2">
+                  <input id="reg-c1-nom" type="text" name="nombre_contacto1" placeholder="Nombre" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+                  <select id="reg-c1-rel" name="relacion_contacto1" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-[10px] text-slate-900 cursor-pointer">
+                    <option value="">Parentesco</option><option value="Cónyuge/Pareja">Cónyuge/Pareja</option><option value="Padre/Madre">Padre/Madre</option><option value="Hijo/Hija">Hijo/Hija</option><option value="Familiar">Familiar</option><option value="Amigo/Amiga">Amigo/Amiga</option><option value="Otro">Otro</option>
+                  </select>
+                  <div class="flex gap-1">
+                    <select name="prefijo_contacto1" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
+                      <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+                    </select>
+                    <input id="reg-c1-tel" type="text" name="contacto1" pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                  </div>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                  <input id="reg-c2-nom" type="text" name="nombre_contacto2" placeholder="Nombre" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs">
+                  <select id="reg-c2-rel" name="relacion_contacto2" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-[10px] text-slate-900 cursor-pointer">
+                    <option value="">Parentesco</option><option value="Cónyuge/Pareja">Cónyuge/Pareja</option><option value="Padre/Madre">Padre/Madre</option><option value="Hijo/Hija">Hijo/Hija</option><option value="Familiar">Familiar</option><option value="Amigo/Amiga">Amigo/Amiga</option><option value="Otro">Otro</option>
+                  </select>
+                  <div class="flex gap-1">
+                    <select name="prefijo_contacto2" class="bg-white border border-slate-200 rounded-lg px-1 py-1.5 text-[10px] text-slate-900 cursor-pointer w-14">
+                      <option value="0414">0414</option><option value="0424">0424</option><option value="0412">0412</option><option value="0416">0416</option><option value="0426">0426</option>
+                    </select>
+                    <input id="reg-c2-tel" type="text" name="contacto2" pattern="[0-9]{7}" maxlength="7" placeholder="1234567" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-900 font-mono">
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
         </div>
         </div>
 
@@ -273,7 +273,7 @@
               <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase tracking-wider">Cédula</label>
               <div class="flex gap-1.5">
                 <select name="cedula_prefijo_ya" id="reg-cedula-prefijo-ya" class="bg-white/90 border border-slate-300 rounded-xl px-1.5 py-2 text-xs text-slate-900">
-                  <option value="V-">V-</option><option value="J-">J-</option>
+                  <option value="V-">V-</option><option value="E-">E-</option><option value="J-">J-</option>
                 </select>
                 <input type="text" name="cedula_ya" id="reg-cedula-num-ya" required pattern="[0-9]{7,8}" minlength="7" maxlength="8" title="7 u 8 dígitos numéricos" placeholder="12345678" class="w-full bg-white/90 border border-slate-300 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-[#1e40af]">
               </div>
@@ -332,7 +332,7 @@
 
               <div class="flex items-center gap-1.5 text-xs font-bold text-[#1e40af] uppercase tracking-wider pt-2">
                 <i data-lucide="shield-alert" class="h-3.5 w-3.5"></i>
-                <span>Contactos de Emergencia (1 o 2)</span>
+                <span>Contactos de Emergencia (Mínimo 2 Obligatorios)</span>
               </div>
               <div class="space-y-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <div class="grid grid-cols-3 gap-2">
@@ -538,18 +538,15 @@
     const btnCompletar = document.getElementById('btn-completar-registro');
     const btnNuevo = document.getElementById('btn-nuevo');
     const btnRol = document.getElementById('btn-rol');
+    const form = document.getElementById('ajax-registro-form');
 
-    // Arreglos de inputs para controlar sus atributos requeridos
     const inputsNuevo = ['nombres', 'apellidos', 'cedula', 'telefono', 'correo', 'registro-pass'];
     const inputsBasicos = ['cedula_ya', 'correo_ya', 'registro-ya'];
-
-    const form = document.getElementById('ajax-registro-form');
 
     if (modo === 'rol') {
       camposBasicos.classList.remove('hidden');
       registroNuevo.classList.add('hidden');
 
-      // 1. Forzar obligatorios en 'Ya tengo cuenta' y quitar a 'Registro nuevo'
       inputsBasicos.forEach(name => {
         if(name === 'registro-ya') document.getElementById('registro-ya')?.setAttribute('required', 'required');
         else form.querySelector(`[name="${name}"]`)?.setAttribute('required', 'required');
@@ -559,16 +556,22 @@
         else form.querySelector(`[name="${name}"]`)?.removeAttribute('required');
       });
 
-      // Desactivar campos bancarios de chofer nuevo por si acaso
       const inputsBancaNuevo = ['reg-banco', 'reg-cuenta'];
       inputsBancaNuevo.forEach(id => document.getElementById(id)?.removeAttribute('required'));
 
-      // Bloqueamos el botón si estamos en "YA TENGO CUENTA" hasta validar
+      // Limpiar campos de "Registro Nuevo"
+      form.querySelector('[name="nombres"]').value = '';
+      form.querySelector('[name="apellidos"]').value = '';
+      document.getElementById('reg-cedula-num').value = '';
+      form.querySelector('[name="telefono"]').value = '';
+      form.querySelector('[name="correo"]').value = '';
+      document.getElementById('registro-pass').value = '';
+      document.getElementById('campos-banca-chofer').classList.add('hidden');
+
       btnCompletar.disabled = true;
       btnCompletar.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
       btnCompletar.classList.remove('bg-slate-900', 'text-white');
 
-      // Resetear estado de verificación OTP
       telefonoVerificado = false;
       document.getElementById('bloque-codigo-confirmacion').classList.add('hidden');
       document.getElementById('validacion-exitosa').classList.add('hidden');
@@ -578,13 +581,11 @@
       btnRol.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm";
       btnNuevo.className = "flex-1 py-2 text-xs font-bold text-slate-500";
 
-      // Ejecutar lógica interna de roles existentes
       tengocuenta();
     } else {
       camposBasicos.classList.add('hidden');
       registroNuevo.classList.remove('hidden');
 
-      // 2. Forzar obligatorios en 'Registro nuevo' y liberar por completo 'Ya tengo cuenta'
       inputsNuevo.forEach(name => {
         if(name === 'registro-pass') document.getElementById('registro-pass')?.setAttribute('required', 'required');
         else form.querySelector(`[name="${name}"]`)?.setAttribute('required', 'required');
@@ -594,11 +595,16 @@
         else form.querySelector(`[name="${name}"]`)?.removeAttribute('required');
       });
 
-      // Desactivar campos bancarios de ya tengo cuenta por si acaso
       const inputsBancaBasico = ['reg-banco2', 'reg-cuenta2'];
       inputsBancaBasico.forEach(id => document.getElementById(id)?.removeAttribute('required'));
 
-      // Reactivamos el botón en "REGISTRO NUEVO"
+      // Limpiar campos de "Ya Tengo Cuenta"
+      document.getElementById('reg-cedula-num-ya').value = '';
+      form.querySelector('[name="correo_ya"]').value = '';
+      document.getElementById('registro-ya').value = '';
+      document.getElementById('campos-banca-chofer2').classList.add('hidden');
+      invalidarVerificacion();
+
       btnCompletar.disabled = false;
       btnCompletar.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
       btnCompletar.classList.add('bg-slate-900', 'text-white');
@@ -606,7 +612,6 @@
       btnNuevo.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm";
       btnRol.className = "flex-1 py-2 text-xs font-bold text-slate-500";
 
-      // Evaluar si requiere campos de chofer nuevo
       evaluarCamposChofer();
     }
   }
@@ -619,12 +624,31 @@
 
     camposVerificacion.classList.remove('hidden');
 
+    // Limpiar campos de verificación al cambiar de rol
+    document.getElementById('reg-cedula-num-ya').value = '';
+    document.getElementById('reg-cedula-prefijo-ya').selectedIndex = 0;
+    document.querySelector('#verificacion-usuario [name="correo_ya"]').value = '';
+    document.getElementById('registro-ya').value = '';
+    document.getElementById('reg-error-msg').classList.add('hidden');
+    invalidarVerificacion();
+
     if (rolSeleccionado === 'chofer' && document.getElementById('input-modo').value === 'rol') {
       camposBanca.classList.remove('hidden');
       inputsBanca.forEach(id => document.getElementById(id)?.setAttribute('required', 'required'));
     } else {
       camposBanca.classList.add('hidden');
       inputsBanca.forEach(id => document.getElementById(id)?.removeAttribute('required'));
+      // Limpiar campos de chofer al cambiar a pasajero
+      document.getElementById('reg-banco2').selectedIndex = 0;
+      document.getElementById('reg-cuenta2').value = '';
+      document.getElementById('reg-cuenta2-full').value = '';
+      document.getElementById('reg-prefix2').textContent = '0000';
+      document.getElementById('reg-c1-nom2').value = '';
+      document.getElementById('reg-c1-rel2').selectedIndex = 0;
+      document.getElementById('reg-c1-tel2').value = '';
+      document.getElementById('reg-c2-nom2').value = '';
+      document.getElementById('reg-c2-rel2').selectedIndex = 0;
+      document.getElementById('reg-c2-tel2').value = '';
     }
   }
 
@@ -635,6 +659,18 @@
     document.getElementById('form-registro').className = !isLogin ? "space-y-6 tab-fade-in" : "space-y-6 hidden";
     document.getElementById('btn-tab-login').className = isLogin ? "w-1/2 py-3 text-sm font-bold bg-black text-white rounded-xl cursor-pointer" : "w-1/2 py-3 text-sm font-bold text-slate-500 rounded-xl cursor-pointer";
     document.getElementById('btn-tab-registro').className = !isLogin ? "w-1/2 py-3 text-sm font-bold bg-black text-white rounded-xl cursor-pointer" : "w-1/2 py-3 text-sm font-bold text-slate-500 rounded-xl cursor-pointer";
+
+    document.getElementById('error-msg').classList.add('hidden');
+    document.getElementById('reg-error-msg').classList.add('hidden');
+
+    if (isLogin) {
+      document.getElementById('ajax-registro-form').reset();
+      document.getElementById('campos-banca-chofer').classList.add('hidden');
+      document.getElementById('campos-banca-chofer2').classList.add('hidden');
+      invalidarVerificacion();
+    } else {
+      document.querySelector('#form-login form').reset();
+    }
   }
 
   function evaluarCamposChofer() {
@@ -642,18 +678,39 @@
     const seccionBancaria = document.getElementById('campos-banca-chofer');
     const inputs = ['reg-banco', 'reg-cuenta'];
 
+    // Limpiar campos compartidos del formulario
+    const form = document.getElementById('ajax-registro-form');
+    form.querySelector('[name="nombres"]').value = '';
+    form.querySelector('[name="apellidos"]').value = '';
+    document.getElementById('reg-cedula-num').value = '';
+    form.querySelector('[name="telefono"]').value = '';
+    form.querySelector('[name="correo"]').value = '';
+    document.getElementById('registro-pass').value = '';
+    document.getElementById('reg-error-msg').classList.add('hidden');
+
     if (rolSeleccionado === 'chofer') {
       seccionBancaria.classList.remove('hidden');
       inputs.forEach(id => document.getElementById(id).setAttribute('required', 'required'));
     } else {
       seccionBancaria.classList.add('hidden');
       inputs.forEach(id => document.getElementById(id).removeAttribute('required'));
+      // Limpiar campos de chofer al cambiar a pasajero
+      document.getElementById('reg-banco').selectedIndex = 0;
+      document.getElementById('reg-cuenta').value = '';
+      document.getElementById('reg-cuenta-full').value = '';
+      document.getElementById('reg-prefix').textContent = '0000';
+      document.getElementById('reg-c1-nom').value = '';
+      document.getElementById('reg-c1-rel').selectedIndex = 0;
+      document.getElementById('reg-c1-tel').value = '';
+      document.getElementById('reg-c2-nom').value = '';
+      document.getElementById('reg-c2-rel').selectedIndex = 0;
+      document.getElementById('reg-c2-tel').value = '';
     }
   }
 
   function validarContactos(modo) {
     const esNuevo = modo === 'nuevo';
-    let algunoCompleto = false;
+    let completos = 0;
 
     for (let i = 1; i <= 2; i++) {
       const nombre = document.getElementById(esNuevo ? `reg-c${i}-nom` : `reg-c${i}-nom2`);
@@ -667,7 +724,7 @@
       const tieneAlguno = tieneNombre || tieneRelacion || tieneTelefono;
       const tieneTodos = tieneNombre && tieneRelacion && tieneTelefono;
 
-      if (tieneTodos) algunoCompleto = true;
+      if (tieneTodos) completos++;
 
       if (tieneAlguno && !tieneTodos) {
         const faltantes = [];
@@ -678,8 +735,8 @@
       }
     }
 
-    if (!algunoCompleto) {
-      return 'Debes agregar al menos 1 contacto de emergencia completo.';
+    if (completos < 2) {
+      return 'Debes completar ambos contactos de emergencia (Nombre, Parentesco y Teléfono).';
     }
 
     return null;

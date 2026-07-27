@@ -2,7 +2,6 @@
 include('../conexion.php');
 session_start();
 
-// Validamos directamente con el id_cliente de la sesión
 if (!isset($_SESSION['cliente_id'])) {
   die(json_encode(['success' => false, 'message' => 'No autorizado']));
 }
@@ -10,36 +9,35 @@ if (!isset($_SESSION['cliente_id'])) {
 /** @var PDO $conn */
 $id_cliente = $_SESSION['cliente_id'];
 $monto = $_POST['monto'];
-$id_cuenta_empresa = isset($_POST['id_cuenta_empresa']) ? (int)$_POST['id_cuenta_empresa'] : 1;
+$id_cuenta = isset($_POST['id_cuenta']) ? (int)$_POST['id_cuenta'] : 0;
 $fecha_pago = !empty($_POST['fecha']) ? $_POST['fecha'] : date('Y-m-d');
 
-$nro_ref = $_POST['nro_ref'];
+$nro_ref = trim($_POST['nro_ref']);
 if (!preg_match('/^\d{6}$/', $nro_ref)) {
   die(json_encode(['success' => false, 'message' => 'La referencia de recarga debe ser de 6 dígitos']));
 }
-$nro_ref_completo = 'REC-' . $nro_ref;
+
+if ($id_cuenta <= 0) {
+  die(json_encode(['success' => false, 'message' => 'Debe seleccionar una cuenta destino válida']));
+}
 
 try {
-  $stmt_banco = $conn->prepare("SELECT id_banco FROM cuentas_empresa WHERE id_cuenta = ?");
-  $stmt_banco->execute([$id_cuenta_empresa]);
-  $id_banco = $stmt_banco->fetchColumn();
-
-  if (!$id_banco) {
-      die(json_encode(['success' => false, 'message' => 'El banco asociado a la cuenta no existe']));
+  $stmt_check = $conn->prepare("SELECT id_cuenta FROM cuentas_empresa WHERE id_cuenta = ? AND estado = 'activo'");
+  $stmt_check->execute([$id_cuenta]);
+  if (!$stmt_check->fetchColumn()) {
+    die(json_encode(['success' => false, 'message' => 'La cuenta seleccionada no existe o está inactiva']));
   }
-
-  // Ya no necesitamos consultar la tabla clientes porque tenemos el id_cliente en la sesión
 
   $conn->beginTransaction();
 
-  $stmt = $conn->prepare("INSERT INTO recargas (id_cliente, id_banco, monto, nro_ref, fecha_pago) VALUES (?, ?, ?, ?, ?)");
-  $stmt->execute([$id_cliente, $id_banco, $monto, $nro_ref_completo, $fecha_pago]);
+  $stmt = $conn->prepare("INSERT INTO recargas (id_cliente, id_cuenta, monto, nro_ref, fecha_pago, fecha_registro) VALUES (?, ?, ?, ?, ?, NOW())");
+  $stmt->execute([$id_cliente, $id_cuenta, $monto, $nro_ref, $fecha_pago]);
 
   $conn->prepare("UPDATE clientes SET saldo = saldo + ? WHERE id_cliente = ?")->execute([$monto, $id_cliente]);
 
   $conn->commit();
 
-  echo json_encode(['success' => true, 'message' => 'Recarga registrada. Ref: ' . $nro_ref_completo]);
+  echo json_encode(['success' => true, 'message' => 'Recarga registrada. Ref: ' . $nro_ref]);
 } catch (PDOException $e) {
   $conn->rollBack();
   echo json_encode(['success' => false, 'message' => 'Error: La referencia ya existe o datos inválidos']);

@@ -1028,12 +1028,13 @@
              </span>`;
 
           const btnModificar = esActivo
-            ? `<button onclick="editarCuentaEmpresa(${cuenta.id_cuenta}, ${cuenta.id_banco}, '${cuenta.numero_cuenta}', '${cuenta.identificacion_titular.replace(/'/g, "\\'")}', '${cuenta.nombre_titular.replace(/'/g, "\\'")}', '${(cuenta.telefono || '').replace(/'/g, "\\'")}', '${cuenta.estado}')"
+            ? `<button disabled title="Desactiva la cuenta primero para poder modificarla"
+                     class="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-400 bg-transparent cursor-not-allowed rounded-md text-left">
+              <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Desactiva primero
+             </button>`
+            : `<button onclick="editarCuentaEmpresa(${cuenta.id_cuenta}, ${cuenta.id_banco}, '${cuenta.numero_cuenta}', '${cuenta.identificacion_titular.replace(/'/g, "\\'")}', '${cuenta.nombre_titular.replace(/'/g, "\\'")}', '${(cuenta.telefono || '').replace(/'/g, "\\'")}', '${cuenta.estado}')"
                      class="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 rounded-md transition text-left">
               <i data-lucide="pencil" class="w-3.5 h-3.5 text-blue-500"></i> Modificar
-             </button>`
-            : `<button disabled class="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-slate-400 bg-transparent cursor-not-allowed">
-              <i data-lucide="pencil" class="w-3.5 h-3.5"></i> Modificar (Desactiva primero)
              </button>`;
 
           const btnEstado = esActivo
@@ -1659,9 +1660,8 @@
     formData.append('numero_cuenta', document.getElementById('ab-numero-cuenta').value.trim());
     formData.append('identificacion_titular', formatearCedula(prefijo, numero));
     formData.append('nombre_titular', document.getElementById('ab-nombre-titular').value.trim());
-    const telPrefijo = document.getElementById('ab-telefono-prefijo').value;
     const telNumero = document.getElementById('ab-telefono').value.trim();
-    formData.append('telefono', telPrefijo + telNumero);
+    formData.append('telefono', telNumero ? document.getElementById('ab-telefono-prefijo').value + telNumero : '');
     formData.append('estado', 'inactivo');
 
     fetch('crear-cuenta-empresa.php', { method: 'POST', body: formData })
@@ -1728,7 +1728,7 @@
     formData.append('nombre_titular', document.getElementById('ec-nombre-titular').value.trim());
     const telPrefijo = document.getElementById('ec-telefono-prefijo').value;
     const telNumero = document.getElementById('ec-telefono').value.trim();
-    formData.append('telefono', telPrefijo + telNumero);
+    formData.append('telefono', telNumero ? telPrefijo + telNumero : '');
     formData.append('estado', document.getElementById('ec-estado').value);
 
     fetch('editar-cuenta-empresa.php', { method: 'POST', body: formData })

@@ -12,67 +12,54 @@ require_once '../conexion.php';
 try {
   /** @var PDO $conn */
   $id_usuario = $_SESSION['id_usuario'];
-  $movimientos = [];
 
-  // 1. Retiros del chofer (desde pago_chofer)
-  $stmtRetiros = $conn->prepare("
-    SELECT pc.nro_ref AS id_ref, pc.fecha, pc.monto, pc.detalles
-    FROM pago_chofer pc
-    JOIN choferes ch ON pc.id_chofer = ch.id_chofer
-    WHERE ch.id_usuario = ?
-    ORDER BY pc.fecha DESC
+  $sql = "
+    SELECT * FROM (
+      SELECT
+        CASE
+          WHEN pc.nro_ref IS NOT NULL AND pc.nro_ref != '' THEN CONCAT('Ref. ', pc.nro_ref)
+          ELSE CONCAT('PAG-', pc.id_pago)
+        END AS id_ref,
+        pc.fecha,
+        'PAGO CHOFER' AS tipo,
+        CAST(pc.monto AS DECIMAL(10,2)) AS monto,
+        COALESCE(pc.detalles, 'Retiro de fondos') AS detalles
+      FROM pago_chofer pc
+      INNER JOIN choferes ch ON pc.id_chofer = ch.id_chofer
+      WHERE ch.id_usuario = :id_usuario_1
+
+      UNION ALL
+
+      SELECT
+        CONCAT('TR-', tr.id_traslado) AS id_ref,
+        tr.fecha,
+        'PAGO VIAJE' AS tipo,
+        CAST((tr.costo * 0.70) AS DECIMAL(10,2)) AS monto,
+        CONCAT('Traslado de ', COALESCE(zo.nombre_zona, 'N/A'), ' a ', COALESCE(zd.nombre_zona, 'N/A')) AS detalles
+      FROM traslados tr
+      INNER JOIN choferes c ON tr.id_chofer = c.id_chofer
+      LEFT JOIN zonas zo ON tr.id_zona_origen = zo.id_zona
+      LEFT JOIN zonas zd ON tr.id_zona_destino = zd.id_zona
+      WHERE c.id_usuario = :id_usuario_2 AND LOWER(tr.estado) = 'finalizado'
+    ) AS movimientos
+    ORDER BY movimientos.fecha DESC
     LIMIT 10
-  ");
-  $stmtRetiros->execute([$id_usuario]);
-  foreach ($stmtRetiros->fetchAll(PDO::FETCH_ASSOC) as $row) {
+  ";
+
+  $stmt = $conn->prepare($sql);
+  $stmt->execute([':id_usuario_1' => $id_usuario, ':id_usuario_2' => $id_usuario]);
+  $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+  $movimientos = [];
+  foreach ($rows as $row) {
     $movimientos[] = [
       'id_ref'   => $row['id_ref'],
       'fecha'    => $row['fecha'],
-      'tipo'     => 'RETIRO',
-      'monto'    => $row['monto'],
-      'detalles' => $row['detalles'] ?: 'Retiro de fondos'
+      'tipo'     => $row['tipo'],
+      'monto'    => floatval($row['monto']),
+      'detalles' => $row['detalles']
     ];
   }
-
-  // 2. Pagos de viaje del chofer (desde traslados finalizados)
-  $stmtViajes = $conn->prepare("
-    SELECT
-        tr.id_traslado,
-        tr.fecha,
-        tr.costo,
-        zo.nombre_zona AS origen,
-        zd.nombre_zona AS destino
-    FROM traslados tr
-    INNER JOIN choferes c ON tr.id_chofer = c.id_chofer
-    LEFT JOIN zonas zo ON tr.id_zona_origen = zo.id_zona
-    LEFT JOIN zonas zd ON tr.id_zona_destino = zd.id_zona
-    WHERE c.id_usuario = ? AND tr.estado = 'finalizado'
-    ORDER BY tr.fecha DESC
-    LIMIT 10
-  ");
-  $stmtViajes->execute([$id_usuario]); // Ahora sí machea perfectamente gracias al JOIN
-
-  foreach ($stmtViajes->fetchAll(PDO::FETCH_ASSOC) as $row) {
-    $monto_chofer = $row['costo'] * 0.70;
-    $origen = $row['origen'] ?: 'N/A';
-    $destino = $row['destino'] ?: 'N/A';
-
-    $movimientos[] = [
-      'id_ref'   => '#' . $row['id_traslado'],
-      'fecha'    => $row['fecha'],
-      'tipo'     => 'PAGO VIAJE',
-      'monto'    => $monto_chofer,
-      'detalles' => 'Traslado de ' . $origen . ' a ' . $destino
-    ];
-  }
-
-
-
-  // Ordenar por fecha descendente y tomar los últimos 10
-  usort($movimientos, function($a, $b) {
-    return strtotime($b['fecha']) - strtotime($a['fecha']);
-  });
-  $movimientos = array_slice($movimientos, 0, 10);
 
   echo json_encode(['success' => true, 'data' => $movimientos]);
 } catch (PDOException $e) {

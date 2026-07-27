@@ -39,8 +39,26 @@ if($modo === 'nuevo') {
       }
   // -------------------------------------------------------------------------
 
-  // Encriptamos la contraseña de manera segura
+      // Encriptamos la contraseña de manera segura
       $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+      // Validar contactos de emergencia para chofer (deben ser exactamente 2 completos)
+      if ($rol_registro === 'chofer') {
+        $c1_nombre = trim($_POST['nombre_contacto1'] ?? '');
+        $c1_tel = trim(($_POST['prefijo_contacto1'] ?? '') . ($_POST['contacto1'] ?? ''));
+        $c1_rel = trim($_POST['relacion_contacto1'] ?? '');
+        $c2_nombre = trim($_POST['nombre_contacto2'] ?? '');
+        $c2_tel = trim(($_POST['prefijo_contacto2'] ?? '') . ($_POST['contacto2'] ?? ''));
+        $c2_rel = trim($_POST['relacion_contacto2'] ?? '');
+
+        $c1_completo = $c1_nombre && $c1_tel && $c1_rel;
+        $c2_completo = $c2_nombre && $c2_tel && $c2_rel;
+
+        if (!$c1_completo || !$c2_completo) {
+          echo json_encode(['success' => false, 'message' => 'Debes completar ambos contactos de emergencia (Nombre, Parentesco y Teléfono).']);
+          exit();
+        }
+      }
 
 
       $conn->beginTransaction();
@@ -103,8 +121,6 @@ if($modo === 'nuevo') {
   } else if ($modo === 'rol') {
     // 2. LÓGICA PARA "YA TENGO CUENTA"
     $cedula = trim($_POST['cedula_ya']);
-    // Strip V-/J- prefix for DB lookup compatibility with legacy records
-    $cedula = preg_replace('/^[VJ]-/', '', $cedula);
     $correo = trim($_POST['correo_ya']);
     $password = $_POST['password_ya']; // Se valida con password_verify
     $rol_nuevo = $_POST['reg_rol2'];
@@ -121,6 +137,24 @@ if($modo === 'nuevo') {
 
     if ($usuario && password_verify($password, $usuario['password'])) {
       $id_usuario = $usuario['id_usuario'];
+
+      // Validar contactos de emergencia para chofer en modo "Ya tengo cuenta"
+      if ($rol_nuevo === 'chofer') {
+        $c1_nombre = trim($_POST['nombre_contacto1_ya'] ?? '');
+        $c1_tel = trim(($_POST['prefijo_contacto1_ya'] ?? '') . ($_POST['contacto1_ya'] ?? ''));
+        $c1_rel = trim($_POST['relacion_contacto1_ya'] ?? '');
+        $c2_nombre = trim($_POST['nombre_contacto2_ya'] ?? '');
+        $c2_tel = trim(($_POST['prefijo_contacto2_ya'] ?? '') . ($_POST['contacto2_ya'] ?? ''));
+        $c2_rel = trim($_POST['relacion_contacto2_ya'] ?? '');
+
+        $c1_completo = $c1_nombre && $c1_tel && $c1_rel;
+        $c2_completo = $c2_nombre && $c2_tel && $c2_rel;
+
+        if (!$c1_completo || !$c2_completo) {
+          echo json_encode(['success' => false, 'message' => 'Debes completar ambos contactos de emergencia (Nombre, Parentesco y Teléfono).']);
+          exit();
+        }
+      }
 
       try {
 

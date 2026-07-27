@@ -2,7 +2,6 @@
 session_start();
 header('Content-Type: application/json');
 
-// Si prefieres usar la variable directa del cliente por rendimiento:
 if (!isset($_SESSION['cliente_id'])) {
   echo json_encode(['success' => false, 'message' => 'No autorizado']);
   exit();
@@ -17,20 +16,20 @@ try {
   $desde = $_GET['desde'] ?? null;
   $hasta = $_GET['hasta'] ?? null;
 
-  // Consulta directa usando el id_cliente de la sesión sin necesidad de JOIN extra con clientes
-  $sql = "SELECT r.id_recarga AS id, r.monto, r.nro_ref, r.fecha_registro AS fecha, b.nombre_banco
+  $sql = "SELECT r.id_recarga AS id, r.monto, r.nro_ref, r.fecha_registro AS fecha, b.nombre_banco, b.prefijo, ce.numero_cuenta
           FROM recargas r
-          LEFT JOIN bancos b ON r.id_banco = b.id_banco
+          LEFT JOIN cuentas_empresa ce ON r.id_cuenta = ce.id_cuenta
+          LEFT JOIN bancos b ON ce.id_banco = b.id_banco
           WHERE r.id_cliente = :id_cliente";
 
   $params = [':id_cliente' => $id_cliente];
 
-  if ($desde && preg_match('/^\d{4}-\d{2}$/', $desde)) {
-    $sql .= " AND DATE_FORMAT(r.fecha_registro, '%Y-%m') >= :desde";
+  if ($desde && preg_match('/^\d{4}-\d{2}-\d{2}$/', $desde)) {
+    $sql .= " AND DATE(r.fecha_registro) >= :desde";
     $params[':desde'] = $desde;
   }
-  if ($hasta && preg_match('/^\d{4}-\d{2}$/', $hasta)) {
-    $sql .= " AND DATE_FORMAT(r.fecha_registro, '%Y-%m') <= :hasta";
+  if ($hasta && preg_match('/^\d{4}-\d{2}-\d{2}$/', $hasta)) {
+    $sql .= " AND DATE(r.fecha_registro) <= :hasta";
     $params[':hasta'] = $hasta;
   }
 

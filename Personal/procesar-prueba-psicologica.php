@@ -26,7 +26,7 @@ $estado = ($nota >= 70) ? 'aprobado' : 'reprobado';
 try {
   /** @var PDO $conn */
   $sql = "UPDATE evaluaciones_choferes
-          SET nota_psicologica = :nota, estado = :estado, id_personal = :id_personal
+          SET nota_psicologica = :nota, estado = :estado, id_personal = :id_personal, observacion = :observacion
           WHERE id_evaluacion = :id";
 
   $stmt = $conn->prepare($sql);
@@ -34,6 +34,7 @@ try {
     ':nota' => $nota,
     ':estado' => $estado,
     ':id_personal' => $_SESSION['id_usuario'],
+    ':observacion' => $observacion,
     ':id' => $id_evaluacion
   ]);
 

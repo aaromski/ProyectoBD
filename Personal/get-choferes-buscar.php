@@ -17,7 +17,7 @@ try {
   $sql = "SELECT c.id_chofer, u.id_usuario, u.nombres, u.apellidos
           FROM choferes c
           INNER JOIN usuarios u ON c.id_usuario = u.id_usuario
-          WHERE u.nombres LIKE :q OR u.apellidos LIKE :q OR CAST(u.id_usuario AS CHAR) LIKE :q
+          WHERE u.nombres LIKE :q OR u.apellidos LIKE :q OR CAST(c.id_chofer AS CHAR) LIKE :q
           ORDER BY u.nombres ASC
           LIMIT 10";
 
