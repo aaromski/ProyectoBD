@@ -231,12 +231,13 @@
       <table class="w-full text-sm text-left">
         <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
         <tr>
+          <th class="px-6 py-4">ID Pago</th>
           <th class="px-6 py-4">Fecha</th>
           <th class="px-6 py-4">Banco</th>
           <th class="px-6 py-4">Nro Cuenta</th>
           <th class="px-6 py-4">Referencia</th>
           <th class="px-6 py-4 text-right">Monto</th>
-          <th class="px-6 py-4">Detalles</th>
+          <th class="px-6 py-4 text-center">Acción</th>
         </tr>
         </thead>
         <tbody id="tabla-historial-retiros" class="divide-y divide-slate-100">
@@ -250,29 +251,29 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
       <div>
         <h2 class="text-xl font-bold">Mis Viajes</h2>
-        <p class="text-sm text-slate-500">Gestiona tus servicios asignados y consulta tu historial.</p>
-      </div>
-      <div id="filtros-viajes-historial" class="hidden flex items-center gap-3">
-        <div>
-          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Desde</label>
-          <input type="date" id="filtro-viaje-desde" onchange="filtrarViajesHistorial()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
-        </div>
-        <div>
-          <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Hasta</label>
-          <input type="date" id="filtro-viaje-hasta" onchange="filtrarViajesHistorial()" class="border border-slate-300 rounded-lg text-xs p-2 bg-white outline-none">
-        </div>
-        <button onclick="limpiarFiltrosViajes()" class="mt-4 bg-slate-100 text-slate-600 px-3 py-2 rounded-lg text-xs font-bold hover:bg-slate-200 transition">Limpiar</button>
+        <p class="text-sm text-slate-500">Gestiona tus servicios y consulta tu historial de carreras.</p>
       </div>
     </div>
 
-    <!-- Tabs -->
-    <div class="flex gap-2 mb-6">
-      <button id="tab-asignados" onclick="cambiarTabViajes('asignados')" class="px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all bg-[#0f172a] text-white shadow-md">
-        Servicios Asignados <span id="badge-asignados" class="ml-1.5 bg-white text-[#0f172a] px-2 py-0.5 rounded-full text-[10px]">0</span>
-      </button>
-      <button id="tab-historial" onclick="cambiarTabViajes('historial')" class="px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all bg-slate-100 text-slate-500 hover:bg-slate-200">
-        Historial de Viajes
-      </button>
+    <!-- Filtros -->
+    <div class="flex flex-wrap items-end gap-3 mb-6">
+      <div>
+        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Estado de Pago</label>
+        <select id="filtro-estado-pago" onchange="filtrarViajes()" class="border border-slate-300 rounded-lg text-xs p-2.5 bg-white outline-none font-semibold text-slate-700">
+          <option value="todos">Todos los Estados</option>
+          <option value="pagados">Pagados</option>
+          <option value="pendientes">Pendientes</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Desde</label>
+        <input type="date" id="filtro-viaje-desde" onchange="filtrarViajes()" class="border border-slate-300 rounded-lg text-xs p-2.5 bg-white outline-none">
+      </div>
+      <div>
+        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Hasta</label>
+        <input type="date" id="filtro-viaje-hasta" onchange="filtrarViajes()" class="border border-slate-300 rounded-lg text-xs p-2.5 bg-white outline-none">
+      </div>
+      <button onclick="limpiarFiltrosViajes()" class="bg-slate-100 text-slate-600 px-3 py-2.5 rounded-lg text-xs font-bold hover:bg-slate-200 transition">Limpiar Filtros</button>
     </div>
 
     <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
@@ -286,6 +287,7 @@
           <th class="px-6 py-4 text-center">Estado</th>
           <th class="px-6 py-4 text-right">Monto Total</th>
           <th class="px-6 py-4 text-right">Ganancia</th>
+          <th class="px-6 py-4 text-center">Estado Pago</th>
         </tr>
         </thead>
         <tbody id="tabla-viajes-body" class="divide-y divide-slate-100">
@@ -411,7 +413,7 @@
             <i data-lucide="shield-alert" class="h-5 w-5 text-blue-600 shrink-0"></i>
             <div>
               <p class="text-xs font-bold text-blue-800 uppercase tracking-wider">Contactos de Emergencia</p>
-              <p class="text-[10px] text-blue-500 mt-0.5">Registra hasta 2 personas de confianza para situaciones de emergencia.</p>
+              <p class="text-[10px] text-blue-500 mt-0.5">Registra al menos 2 personas de confianza para situaciones de emergencia.</p>
             </div>
           </div>
           <div id="lista-contactos-emergencia" class="space-y-4">
@@ -457,6 +459,55 @@
         <p id="texto-observacion" class="text-sm text-slate-700 leading-relaxed">Sin observaciones registradas.</p>
       </div>
       <button onclick="document.getElementById('modal-observaciones').classList.add('hidden')" class="mt-5 w-full py-2 bg-slate-200 rounded-lg font-bold text-sm hover:bg-slate-300 transition-all">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- MODAL DETALLE PAGO -->
+  <div id="modal-detalle-pago" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
+    <div class="bg-white p-6 rounded-2xl w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-5">
+        <h3 class="font-bold text-lg text-slate-900" id="modal-detalle-pago-titulo">Detalle de Traslados Liquidados</h3>
+        <button onclick="cerrarModalDetallePago()" class="text-slate-400 hover:text-slate-600 transition-colors"><i data-lucide="x" class="h-5 w-5"></i></button>
+      </div>
+
+      <div class="border border-slate-200 rounded-xl overflow-hidden mb-5">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-200">
+          <tr>
+            <th class="px-4 py-3">ID Traslado</th>
+            <th class="px-4 py-3">Fecha</th>
+            <th class="px-4 py-3">Ruta</th>
+            <th class="px-4 py-3 text-right">Precio Total</th>
+            <th class="px-4 py-3 text-right">Monto Chofer (70%)</th>
+          </tr>
+          </thead>
+          <tbody id="modal-detalle-traslados" class="divide-y divide-slate-100">
+          </tbody>
+          <tfoot>
+          <tr class="bg-slate-100 border-t-2 border-slate-300">
+            <td colspan="4" class="px-4 py-3 text-sm font-extrabold text-slate-900 uppercase">Total Pagado</td>
+            <td class="px-4 py-3 text-right text-lg font-extrabold text-emerald-600" id="modal-detalle-total"></td>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
+        <div class="flex justify-between text-sm">
+          <span class="text-slate-500 font-medium">Referencia:</span>
+          <span id="modal-detalle-ref" class="font-mono font-bold text-slate-800"></span>
+        </div>
+        <div class="flex justify-between text-sm border-t border-slate-200 pt-2">
+          <span class="text-slate-500 font-medium">Fecha de Procesamiento:</span>
+          <span id="modal-detalle-fecha" class="font-bold text-slate-800"></span>
+        </div>
+        <div class="flex justify-between text-sm border-t border-slate-200 pt-2" id="modal-detalle-notas-row">
+          <span class="text-slate-500 font-medium">Observaciones:</span>
+          <span id="modal-detalle-notas" class="text-slate-700 text-right max-w-xs"></span>
+        </div>
+      </div>
+
+      <button onclick="cerrarModalDetallePago()" class="mt-5 w-full bg-slate-900 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-slate-800 transition-all">Cerrar</button>
     </div>
   </div>
 
@@ -541,10 +592,10 @@
       .then(res => res.json())
       .then(data => {
         if(data.tasa) tasaBCV = parseFloat(data.tasa);
-        document.getElementById('tasa-bcv-display').innerText = 'Bs. ' + tasaBCV.toFixed(2).replace('.', ',');
+        document.getElementById('tasa-bcv-display').innerText = 'Bs. ' + tasaBCV.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
       })
       .catch(() => {
-        document.getElementById('tasa-bcv-display').innerText = 'Bs. ' + tasaBCV.toFixed(2).replace('.', ',');
+        document.getElementById('tasa-bcv-display').innerText = 'Bs. ' + tasaBCV.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
       });
   }
 
@@ -745,7 +796,7 @@
           const fechaStr = fecha.toLocaleDateString('es-VE') + ' ' + fecha.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
 
           let tipoColor = 'bg-slate-100 text-slate-700';
-          if (m.tipo === 'RETIRO') tipoColor = 'bg-amber-100 text-amber-700';
+          if (m.tipo === 'PAGO CHOFER') tipoColor = 'bg-amber-100 text-amber-700';
           else if (m.tipo === 'PAGO VIAJE') tipoColor = 'bg-emerald-100 text-emerald-700';
 
           tbody.innerHTML += `
@@ -755,7 +806,7 @@
               <td class="px-6 py-4">
                 <span class="px-2.5 py-1 text-[10px] font-bold rounded-full uppercase ${tipoColor}">${m.tipo}</span>
               </td>
-              <td class="px-6 py-4 text-right font-bold text-slate-800 font-mono text-xs">Bs. ${parseFloat(m.monto).toFixed(2)}</td>
+              <td class="px-6 py-4 text-right font-bold text-slate-800 font-mono text-xs">Bs. ${parseFloat(m.monto).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
               <td class="px-6 py-4 text-slate-600 text-xs">${m.detalles}</td>
             </tr>`;
         });
@@ -811,7 +862,7 @@
     tbody.innerHTML = '';
 
     if (lista.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="px-6 py-10 text-center text-slate-400 text-sm">No hay pagos registrados.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-10 text-center text-slate-400 text-sm">No hay pagos registrados.</td></tr>';
       return;
     }
 
@@ -819,12 +870,12 @@
       const fecha = new Date(r.fecha);
       const fechaStr = fecha.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' });
       const horaStr = fecha.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
-      const montoBs = parseFloat(r.monto).toFixed(2);
+      const montoBs = parseFloat(r.monto).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
       const cuenta = (r.prefijo ? r.prefijo + '-' : '') + (r.numero_cuenta || 'N/A');
-      const ultimo = index === lista.length - 1;
 
       tbody.innerHTML += `
-        <tr class="hover:bg-slate-50 transition-colors ${ultimo ? '' : 'border-b border-slate-100'}">
+        <tr class="hover:bg-slate-50 transition-colors border-b border-slate-100">
+          <td class="px-6 py-4 font-mono font-bold text-slate-900 text-xs">#${String(r.id_pago).padStart(4, '0')}</td>
           <td class="px-6 py-4">
             <div class="flex flex-col">
               <span class="text-xs font-semibold text-slate-800">${fechaStr}</span>
@@ -842,7 +893,11 @@
           <td class="px-6 py-4 text-right">
             <span class="font-bold text-slate-900 font-mono text-xs">Bs. ${montoBs}</span>
           </td>
-          <td class="px-6 py-4 text-slate-500 text-xs max-w-[180px] truncate" title="${(r.detalles || '—').replace(/"/g, '&quot;')}">${r.detalles || '—'}</td>
+          <td class="px-6 py-4 text-center">
+            <button onclick="abrirModalDetallePago(${r.id_pago})" class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-slate-200 transition-all border border-slate-200">
+              <i data-lucide="eye" class="w-3.5 h-3.5"></i> Ver Carreras
+            </button>
+          </td>
         </tr>`;
     });
 
@@ -1052,41 +1107,29 @@
       .catch(() => alert('Error de conexión al solicitar reevaluación.'));
   }
 
-  let viajesAsignados = [];
-  let viajesHistorial = [];
-  let tabActiva = 'asignados';
+  let viajesListaCompleta = [];
 
-  function cambiarTabViajes(tab) {
-    tabActiva = tab;
-    const tabAsignados = document.getElementById('tab-asignados');
-    const tabHistorial = document.getElementById('tab-historial');
-    const filtrosHistorial = document.getElementById('filtros-viajes-historial');
-
-    if (tab === 'asignados') {
-      tabAsignados.className = 'px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all bg-[#0f172a] text-white shadow-md';
-      tabHistorial.className = 'px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all bg-slate-100 text-slate-500 hover:bg-slate-200';
-      filtrosHistorial.classList.add('hidden');
-    } else {
-      tabHistorial.className = 'px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all bg-[#0f172a] text-white shadow-md';
-      tabAsignados.className = 'px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all bg-slate-100 text-slate-500 hover:bg-slate-200';
-      filtrosHistorial.classList.remove('hidden');
-    }
-
-    renderizarTablaViajes();
-  }
-
-  function filtrarViajesHistorial() {
+  function filtrarViajes() {
+    const estado = document.getElementById('filtro-estado-pago').value;
     const desde = document.getElementById('filtro-viaje-desde').value;
     const hasta = document.getElementById('filtro-viaje-hasta').value;
 
-    let filtrados = viajesHistorial;
+    let filtrados = viajesListaCompleta;
+
+    if (estado !== 'todos') {
+      filtrados = filtrados.filter(v => {
+        if (estado === 'pagados') return v.id_pago_chofer != null;
+        if (estado === 'pendientes') return v.id_pago_chofer == null;
+        return true;
+      });
+    }
 
     if (desde) {
       const fechaDesde = new Date(desde);
       fechaDesde.setHours(0, 0, 0, 0);
       filtrados = filtrados.filter(v => {
-        const fechaViaje = v.fecha ? new Date(v.fecha) : null;
-        return fechaViaje && fechaViaje >= fechaDesde;
+        const f = v.fecha ? new Date(v.fecha) : null;
+        return f && f >= fechaDesde;
       });
     }
 
@@ -1094,16 +1137,27 @@
       const fechaHasta = new Date(hasta);
       fechaHasta.setHours(23, 59, 59, 999);
       filtrados = filtrados.filter(v => {
-        const fechaViaje = v.fecha ? new Date(v.fecha) : null;
-        return fechaViaje && fechaViaje <= fechaHasta;
+        const f = v.fecha ? new Date(v.fecha) : null;
+        return f && f <= fechaHasta;
       });
     }
 
+    renderizarTablaViajes(filtrados);
+  }
+
+  function limpiarFiltrosViajes() {
+    document.getElementById('filtro-estado-pago').value = 'todos';
+    document.getElementById('filtro-viaje-desde').value = '';
+    document.getElementById('filtro-viaje-hasta').value = '';
+    renderizarTablaViajes(viajesListaCompleta);
+  }
+
+  function renderizarTablaViajes(lista) {
     const tbody = document.getElementById('tabla-viajes-body');
     tbody.innerHTML = '';
 
-    if (filtrados.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" class="px-6 py-10 text-center text-slate-400 text-sm">No se encontraron viajes en el rango seleccionado.</td></tr>';
+    if (lista.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" class="px-6 py-10 text-center text-slate-400 text-sm">No se encontraron viajes con los filtros seleccionados.</td></tr>';
       return;
     }
 
@@ -1116,7 +1170,14 @@
       return `<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase ${styles[estado] || 'bg-slate-100 text-slate-500'}">${estado.replace('_', ' ')}</span>`;
     };
 
-    filtrados.forEach(v => {
+    const badgeEstadoPago = (id_pago) => {
+      if (id_pago != null) {
+        return '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-700">Pagado</span>';
+      }
+      return '<span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-amber-100 text-amber-700">Pendiente</span>';
+    };
+
+    lista.forEach(v => {
       let fechaStr = '--';
       if (v.fecha) {
         const f = new Date(v.fecha);
@@ -1130,61 +1191,9 @@
           <td class="px-6 py-4 font-bold text-slate-800">${v.pasajero}</td>
           <td class="px-6 py-4 text-slate-600">${v.origen} ➔ ${v.destino}</td>
           <td class="px-6 py-4 text-center">${badgeEstado(v.estado)}</td>
-          <td class="px-6 py-4 text-right font-semibold text-slate-700">Bs. ${parseFloat(v.costo_total).toFixed(2)}</td>
-          <td class="px-6 py-4 text-right font-bold text-green-600">Bs. ${parseFloat(v.ganancia).toFixed(2)}</td>
-        </tr>`;
-    });
-  }
-
-  function limpiarFiltrosViajes() {
-    document.getElementById('filtro-viaje-desde').value = '';
-    document.getElementById('filtro-viaje-hasta').value = '';
-    renderizarTablaViajes();
-  }
-
-  function renderizarTablaViajes() {
-    const tbody = document.getElementById('tabla-viajes-body');
-    const lista = tabActiva === 'asignados' ? viajesAsignados : viajesHistorial;
-    tbody.innerHTML = '';
-
-    if (lista.length === 0) {
-      const msg = tabActiva === 'asignados'
-        ? 'No tienes viajes asignados actualmente.'
-        : 'No se encontraron registros en el historial.';
-      const cols = tabActiva === 'asignados' ? 7 : 7;
-      tbody.innerHTML = `<tr><td colspan="${cols}" class="px-6 py-10 text-center text-slate-400 text-sm">${msg}</td></tr>`;
-      return;
-    }
-
-    const badgeEstado = (estado) => {
-      const styles = {
-        en_curso: 'bg-blue-100 text-blue-700',
-        finalizado: 'bg-green-100 text-green-700',
-        cancelado: 'bg-red-100 text-red-700',
-      };
-      return `<span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase ${styles[estado] || 'bg-slate-100 text-slate-500'}">${estado.replace('_', ' ')}</span>`;
-    };
-
-    lista.forEach(v => {
-      const pasajeroCell = (tabActiva === 'asignados' && v.estado === 'en_curso')
-        ? `<td class="px-6 py-4 font-bold text-blue-600 cursor-pointer hover:underline" onclick="verDatosPasajero(${v.id})">${v.pasajero}</td>`
-        : `<td class="px-6 py-4 font-bold text-slate-800">${v.pasajero}</td>`;
-
-      let fechaStr = '--';
-      if (v.fecha) {
-        const f = new Date(v.fecha);
-        fechaStr = f.toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + f.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
-      }
-
-      tbody.innerHTML += `
-        <tr class="hover:bg-slate-50 border-b border-slate-100">
-          <td class="px-6 py-4 font-mono font-bold text-slate-900">#${String(v.id).padStart(4, '0')}</td>
-          <td class="px-6 py-4 text-slate-600 text-xs">${fechaStr}</td>
-          ${pasajeroCell}
-          <td class="px-6 py-4 text-slate-600">${v.origen} ➔ ${v.destino}</td>
-          <td class="px-6 py-4 text-center">${badgeEstado(v.estado)}</td>
-          <td class="px-6 py-4 text-right font-semibold text-slate-700">Bs. ${parseFloat(v.costo_total).toFixed(2)}</td>
-          <td class="px-6 py-4 text-right font-bold text-green-600">Bs. ${parseFloat(v.ganancia).toFixed(2)}</td>
+          <td class="px-6 py-4 text-right font-semibold text-slate-700">Bs. ${parseFloat(v.costo_total).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+          <td class="px-6 py-4 text-right font-bold text-green-600">Bs. ${parseFloat(v.ganancia).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+          <td class="px-6 py-4 text-center">${badgeEstadoPago(v.id_pago_chofer)}</td>
         </tr>`;
     });
   }
@@ -1194,10 +1203,8 @@
       .then(res => res.json())
       .then(res => {
         if (res.success) {
-          viajesAsignados = res.asignados || [];
-          viajesHistorial = res.historial || [];
-          document.getElementById('badge-asignados').textContent = viajesAsignados.length;
-          renderizarTablaViajes();
+          viajesListaCompleta = res.data || [];
+          renderizarTablaViajes(viajesListaCompleta);
         }
       });
   }
@@ -1234,7 +1241,7 @@
     const container = document.getElementById('lista-contactos-emergencia');
     const opcionesRelacion = ['Cónyuge/Pareja', 'Padre/Madre', 'Hijo/Hija', 'Familiar', 'Amigo/Amiga', 'Otro'];
     const prefijos = ['0414','0424','0412','0416','0426'];
-    const badges = ['bg-blue-100 text-blue-700 border-blue-200', 'bg-purple-100 text-purple-700 border-purple-200'];
+    const badges = ['bg-blue-100 text-blue-700 border-blue-200', 'bg-purple-100 text-purple-700 border-purple-200', 'bg-emerald-100 text-emerald-700 border-emerald-200', 'bg-amber-100 text-amber-700 border-amber-200', 'bg-rose-100 text-rose-700 border-rose-200'];
 
     let html = '';
     contactosGuardados.forEach((c, i) => {
@@ -1254,10 +1261,8 @@
       html += `
         <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-slate-300 transition-colors">
           <div class="flex items-center justify-between mb-3">
-            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${badges[i] || badges[0]}">Contacto ${i + 1}</span>
-            <button type="button" onclick="eliminarContacto(${i})" class="text-rose-400 hover:text-rose-600 hover:bg-rose-50 p-1 rounded-lg transition-colors" title="Eliminar contacto">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            </button>
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${badges[i % badges.length]}">Contacto ${i + 1}</span>
+            ${contactosGuardados.length > 2 ? `<button type="button" onclick="eliminarContacto(${i})" class="text-rose-400 hover:text-rose-600 hover:bg-rose-50 p-1 rounded-lg transition-colors" title="Eliminar contacto"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></button>` : ''}
           </div>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div>
@@ -1283,24 +1288,25 @@
         </div>`;
     });
 
-    if (contactosGuardados.length < 2) {
-      html += `
-        <button type="button" onclick="agregarContacto()" class="w-full border-2 border-dashed border-slate-300 rounded-xl py-4 text-sm font-bold text-slate-400 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50/50 transition-all flex items-center justify-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-          Agregar contacto de emergencia
-        </button>`;
-    }
+    html += `
+      <button type="button" onclick="agregarContacto()" class="w-full border-2 border-dashed border-slate-300 rounded-xl py-4 text-sm font-bold text-slate-400 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50/50 transition-all flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        Agregar contacto de emergencia
+      </button>`;
 
     container.innerHTML = html;
   }
 
   function agregarContacto() {
-    if (contactosGuardados.length >= 2) return;
     contactosGuardados.push({ nombre: '', telefono: '', relacion: '' });
     renderizarContactosUI();
   }
 
   function eliminarContacto(index) {
+    if (contactosGuardados.length <= 2) {
+      alert('Debes mantener al menos 2 contactos de emergencia registrados.');
+      return;
+    }
     contactosGuardados.splice(index, 1);
     renderizarContactosUI();
   }
@@ -1337,6 +1343,69 @@
     event.currentTarget.classList.add('bg-[#0f172a]', 'text-white');
   }
 
+  function abrirModalDetallePago(idPago) {
+    const tbody = document.getElementById('modal-detalle-traslados');
+    tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 italic text-xs">Cargando traslados...</td></tr>';
+    document.getElementById('modal-detalle-total').textContent = 'Bs. 0,00';
+    document.getElementById('modal-detalle-pago-titulo').textContent = 'Detalle de Traslados Liquidados';
+    document.getElementById('modal-detalle-ref').textContent = '---';
+    document.getElementById('modal-detalle-fecha').textContent = '---';
+    document.getElementById('modal-detalle-notas').textContent = '---';
+    document.getElementById('modal-detalle-notas-row').style.display = 'flex';
+
+    document.getElementById('modal-detalle-pago').classList.remove('hidden');
+    lucide.createIcons();
+
+    fetch(`get-detalle-pago-chofer.php?id_pago=${idPago}`)
+      .then(res => res.json())
+      .then(res => {
+        if (!res.success) {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-red-400 text-xs">Error: ' + res.message + '</td></tr>';
+          return;
+        }
+
+        const p = res.pago;
+        document.getElementById('modal-detalle-pago-titulo').textContent = `Detalle de Traslados Liquidados - #${String(p.id_pago).padStart(4, '0')}`;
+        document.getElementById('modal-detalle-ref').textContent = p.nro_ref || 'Sin referencia';
+
+        const fechaPago = new Date(p.fecha);
+        document.getElementById('modal-detalle-fecha').textContent = fechaPago.toLocaleDateString('es-VE', { day: '2-digit', month: 'long', year: 'numeric' }) + ' ' + fechaPago.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
+
+        if (p.detalles && p.detalles.trim() !== '') {
+          document.getElementById('modal-detalle-notas').textContent = p.detalles;
+          document.getElementById('modal-detalle-notas-row').style.display = 'flex';
+        } else {
+          document.getElementById('modal-detalle-notas-row').style.display = 'none';
+        }
+
+        if (res.traslados.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 italic text-xs">No se encontraron traslados vinculados a este pago.</td></tr>';
+          document.getElementById('modal-detalle-total').textContent = 'Bs. 0,00';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        res.traslados.forEach(t => {
+          const fechaFmt = new Date(t.fecha).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' });
+          tbody.innerHTML += `
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="px-4 py-3 font-mono text-xs text-slate-400">#${String(t.id_traslado).padStart(4, '0')}</td>
+              <td class="px-4 py-3 text-slate-700">${fechaFmt}</td>
+              <td class="px-4 py-3 text-slate-700"><span class="font-semibold">${t.origen}</span> <span class="text-slate-400">&rarr;</span> <span class="font-semibold">${t.destino}</span></td>
+              <td class="px-4 py-3 text-right font-semibold text-slate-700">Bs. ${parseFloat(t.precio_total).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+              <td class="px-4 py-3 text-right font-semibold text-slate-700">Bs. ${parseFloat(t.monto_chofer).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            </tr>`;
+        });
+
+        document.getElementById('modal-detalle-total').textContent = 'Bs. ' + parseFloat(p.monto).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      });
+  }
+
+  function cerrarModalDetallePago() {
+    document.getElementById('modal-detalle-pago').classList.add('hidden');
+  }
+
+
   function guardarCambiosUnificado() {
     const pass1 = document.getElementById('pass-nueva').value;
     const pass2 = document.getElementById('pass-confirm').value;
@@ -1359,18 +1428,18 @@
     const contactos = recogerContactosUI();
     const contactosCompletos = contactos.filter(c => c.nombre && c.telefono && c.relacion);
 
-    if (contactosCompletos.length === 0) {
-      alert('Debes registrar al menos 1 contacto de emergencia completo (Nombre, Parentesco y Teléfono).');
+    if (contactosCompletos.length < 2) {
+      alert('Debes registrar al menos 2 contactos de emergencia completos (Nombre, Parentesco y Teléfono).');
       return;
     }
 
     let body = `tlf=${encodeURIComponent(tlf)}&banco=${encodeURIComponent(banco)}&cuenta=${encodeURIComponent(cuenta)}`;
 
-    for (let i = 0; i < 2; i++) {
-      const c = contactosCompletos[i] || {};
-      body += `&contacto_nombre_${i}=${encodeURIComponent(c.nombre || '')}`;
-      body += `&contacto_telefono_${i}=${encodeURIComponent(c.telefono || '')}`;
-      body += `&contacto_relacion_${i}=${encodeURIComponent(c.relacion || '')}`;
+    for (let i = 0; i < contactosCompletos.length; i++) {
+      const c = contactosCompletos[i];
+      body += `&contacto_nombre_${i}=${encodeURIComponent(c.nombre)}`;
+      body += `&contacto_telefono_${i}=${encodeURIComponent(c.telefono)}`;
+      body += `&contacto_relacion_${i}=${encodeURIComponent(c.relacion)}`;
     }
 
     fetch('actualizar-perfil-chofer.php', {
@@ -1400,6 +1469,7 @@
         }
       });
   }
+
 
   const btnPerfil = document.getElementById('btn-perfil');
   const menuPerfil = document.getElementById('menu-perfil');

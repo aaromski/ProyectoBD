@@ -12,7 +12,7 @@ try {
   $stmt1 = $conn->query("SELECT COUNT(*) FROM evaluaciones_choferes WHERE estado = 'pendiente'");
   $choferes_pendientes = $stmt1->fetchColumn();
 
-  $stmt2 = $conn->query("SELECT COUNT(*) FROM choferes WHERE saldo > 0");
+  $stmt2 = $conn->query("SELECT COUNT(DISTINCT id_chofer) FROM traslados WHERE estado = 'finalizado' AND id_pago_chofer IS NULL");
   $pagos_pendientes = $stmt2->fetchColumn();
 
   $stmt3 = $conn->query("SELECT COUNT(*) FROM evaluaciones_vehiculos WHERE estado = 'pendiente'");

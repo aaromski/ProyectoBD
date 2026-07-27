@@ -39,15 +39,28 @@ try {
     if ($id_chofer) {
         $conn->prepare("DELETE FROM contactos_emergencia WHERE id_chofer = ?")->execute([$id_chofer]);
 
-        for ($i = 0; $i < 2; $i++) {
-            $c_nombre = trim($_POST["contacto_nombre_$i"] ?? '');
-            $c_telefono = trim($_POST["contacto_telefono_$i"] ?? '');
-            $c_relacion = trim($_POST["contacto_relacion_$i"] ?? '');
-
-            if ($c_nombre && $c_telefono && $c_relacion) {
-                $conn->prepare("INSERT INTO contactos_emergencia (id_chofer, nombre, telefono, relacion) VALUES (?, ?, ?, ?)")
-                    ->execute([$id_chofer, $c_nombre, $c_telefono, $c_relacion]);
+        $validContacts = [];
+        foreach ($_POST as $key => $value) {
+            if (preg_match('/^contacto_nombre_(\d+)$/', $key, $m)) {
+                $idx = $m[1];
+                $c_nombre = trim($value);
+                $c_telefono = trim($_POST["contacto_telefono_$idx"] ?? '');
+                $c_relacion = trim($_POST["contacto_relacion_$idx"] ?? '');
+                if ($c_nombre && $c_telefono && $c_relacion) {
+                    $validContacts[] = [$c_nombre, $c_telefono, $c_relacion];
+                }
             }
+        }
+
+        if (count($validContacts) < 2) {
+            $conn->rollBack();
+            echo json_encode(['success' => false, 'msg' => 'Debes registrar al menos 2 contactos de emergencia válidos.']);
+            exit();
+        }
+
+        $stmt_insert = $conn->prepare("INSERT INTO contactos_emergencia (id_chofer, nombre, telefono, relacion) VALUES (?, ?, ?, ?)");
+        foreach ($validContacts as $c) {
+            $stmt_insert->execute([$id_chofer, $c[0], $c[1], $c[2]]);
         }
     }
 

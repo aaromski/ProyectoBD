@@ -98,31 +98,56 @@
 
   <section id="vista-principal" class="vista-seccion">
     <header class="flex justify-between items-center mb-8">
-      <h1 class="text-xl font-bold mb-6">PANEL DE CONTROL OPERATIVO</h1>
-      <div class="bg-white border border-slate-300 px-4 py-2 rounded-lg text-sm font-bold text-[#475569]">
+      <div>
+        <h1 class="text-xl font-extrabold text-slate-900">Panel de Control Operativo</h1>
+        <p class="text-slate-500 text-sm mt-1">Resumen general del sistema en tiempo real.</p>
+      </div>
+      <div class="bg-white border border-slate-300 px-4 py-2.5 rounded-xl text-sm font-bold text-[#475569] flex items-center gap-2 shadow-sm">
+        <i data-lucide="clock" class="h-4 w-4 text-slate-400"></i>
         <span id="reloj">--:--:--</span>
       </div>
     </header>
 
-    <div class="grid grid-cols-3 gap-6 mb-8">
-      <div class="bg-white p-6 rounded-xl border border-slate-200">
-        <p class="text-xs text-slate-500 uppercase">Choferes Pendientes</p>
-        <h3 id="stat-choferes" class="text-3xl font-bold mt-2">Cargando...</h3>
+    <div class="grid grid-cols-3 gap-5 mb-8">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:border-slate-300">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Choferes Pendientes</h3>
+          <span class="p-2 bg-amber-50 border border-amber-200 rounded-xl">
+            <i data-lucide="users" class="h-5 w-5 text-amber-600"></i>
+          </span>
+        </div>
+        <h3 id="stat-choferes" class="text-3xl font-extrabold text-slate-900 tracking-tight">Cargando...</h3>
+        <p class="text-[10px] text-slate-400 mt-1">Postulantes sin evaluación aprobada</p>
       </div>
 
-      <div class="bg-white p-6 rounded-xl border border-slate-200">
-        <p class="text-xs text-slate-500 uppercase">Pagos por Verificar</p>
-        <h3 id="stat-pagos" class="text-3xl font-bold mt-2">Cargando...</h3>
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:border-slate-300">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Pagos por Verificar</h3>
+          <span class="p-2 bg-rose-50 border border-rose-200 rounded-xl">
+            <i data-lucide="receipt" class="h-5 w-5 text-rose-600"></i>
+          </span>
+        </div>
+        <h3 id="stat-pagos" class="text-3xl font-extrabold text-rose-600 tracking-tight">Cargando...</h3>
+        <p class="text-[10px] text-slate-400 mt-1">Traslados finalizados sin liquidar</p>
       </div>
 
-      <div class="bg-white p-6 rounded-xl border border-slate-200">
-        <p class="text-xs text-slate-500 uppercase">Inspecciones Técnicas</p>
-        <h3 id="stat-vehiculos" class="text-3xl font-bold mt-2">Cargando...</h3>
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 hover:border-slate-300">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Inspecciones Técnicas</h3>
+          <span class="p-2 bg-blue-50 border border-blue-200 rounded-xl">
+            <i data-lucide="wrench" class="h-5 w-5 text-blue-600"></i>
+          </span>
+        </div>
+        <h3 id="stat-vehiculos" class="text-3xl font-extrabold text-blue-600 tracking-tight">Cargando...</h3>
+        <p class="text-[10px] text-slate-400 mt-1">Vehículos esperando revisión</p>
       </div>
     </div>
 
-    <div class="bg-white rounded-xl border border-slate-300 p-6">
-      <h2 class="font-bold text-sm mb-5">Historial de Evaluaciones Recientes</h2>
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+      <div class="flex items-center gap-2 mb-5">
+        <i data-lucide="activity" class="h-4 w-4 text-slate-400"></i>
+        <h2 class="font-bold text-sm text-slate-900">Historial de Evaluaciones Recientes</h2>
+      </div>
       <div id="feed-evaluaciones" class="space-y-0">
         <p class="text-center text-slate-400 text-xs py-6">Cargando evaluaciones...</p>
       </div>
@@ -435,14 +460,13 @@
   </div>
 
   <div id="modal-aprobar-pago" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4">
-    <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-xl">
+    <div class="bg-white p-6 rounded-xl w-full max-w-2xl shadow-xl max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center mb-5">
         <h3 class="font-bold text-lg text-slate-900">Aprobar Pago a Chofer</h3>
         <button onclick="cerrarModalPago()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="h-5 w-5"></i></button>
       </div>
 
       <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-5 space-y-3">
-        <!-- Chofer y Cédula -->
         <div class="flex justify-between items-start text-sm">
           <span class="text-slate-500 font-medium">Chofer:</span>
           <div class="text-right">
@@ -450,21 +474,35 @@
             <span id="modal-pago-ci" class="text-xs text-slate-400 font-mono"></span>
           </div>
         </div>
-
-        <!-- Banco y Cuenta -->
         <div class="flex justify-between items-start text-sm border-t border-slate-200 pt-2">
-          <span class="text-slate-500 font-medium">Cuenta:</span>
+          <span class="text-slate-500 font-medium">Cuenta Destino:</span>
           <div class="text-right">
             <span id="modal-pago-banco" class="font-bold text-slate-800 block text-xs uppercase"></span>
             <span id="modal-pago-cuenta" class="font-mono text-sm text-slate-600"></span>
           </div>
         </div>
+      </div>
 
-        <!-- Monto -->
-        <div class="flex justify-between items-center text-sm border-t border-slate-200 pt-2">
-          <span class="text-slate-500 font-medium">Monto a Pagar:</span>
-          <span id="modal-pago-monto" class="font-bold text-emerald-600 text-base"></span>
-        </div>
+      <div class="border border-slate-200 rounded-lg overflow-hidden mb-5">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-slate-50 text-slate-500 text-[10px] uppercase font-bold border-b border-slate-200">
+          <tr>
+            <th class="px-4 py-3">ID Traslado</th>
+            <th class="px-4 py-3">Fecha</th>
+            <th class="px-4 py-3">Ruta</th>
+            <th class="px-4 py-3 text-right">Precio Total</th>
+            <th class="px-4 py-3 text-right">Monto Chofer (70%)</th>
+          </tr>
+          </thead>
+          <tbody id="modal-pago-traslados" class="divide-y divide-slate-100">
+          </tbody>
+          <tfoot>
+          <tr class="bg-slate-100 border-t-2 border-slate-300">
+            <td colspan="4" class="px-4 py-3 text-sm font-extrabold text-slate-900 uppercase">Total a Pagar</td>
+            <td class="px-4 py-3 text-right text-lg font-extrabold text-emerald-600" id="modal-pago-monto"></td>
+          </tr>
+          </tfoot>
+        </table>
       </div>
 
       <form id="form-aprobar-pago" class="space-y-4">
@@ -476,7 +514,7 @@
         </div>
 
         <div>
-          <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Detalles (Opcional)</label>
+          <label class="block text-[10px] font-bold uppercase text-slate-500 mb-1">Notas u Observaciones (Opcional)</label>
           <textarea id="modal-pago-detalle" rows="3" class="w-full border border-slate-300 p-2.5 rounded-lg text-sm" placeholder="Notas internas, observaciones..."></textarea>
         </div>
 
@@ -710,7 +748,7 @@
                <p class="text-xs font-bold text-slate-500 uppercase">${p.nombre_banco}</p>
                <p class="font-mono text-sm">${p.numero_cuenta}</p>
             </td>
-            <td class="px-6 py-4 font-bold text-slate-900 font-mono text-lg text-rose-600">Bs. ${parseFloat(p.saldo).toFixed(2)}</td>
+             <td class="px-6 py-4 font-bold text-slate-900 font-mono text-lg text-rose-600">Bs. ${parseFloat(p.saldo).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
             <td class="px-6 py-4 text-right">
                <button onclick="abrirModalPago(${p.id_chofer}, '${esc(p.nombres)}', '${esc(p.apellidos)}', '${esc(p.cedula)}', '${esc(p.numero_cuenta)}', '${esc(p.nombre_banco)}', ${p.saldo})"
                     class="bg-emerald-600 text-white px-4 py-1.5 rounded text-[10px] font-bold hover:bg-emerald-700">
@@ -727,19 +765,48 @@
     document.getElementById('modal-pago-id').value = id;
     document.getElementById('modal-pago-chofer').textContent = nombre + ' ' + apellido;
     document.getElementById('modal-pago-ci').textContent = 'CI: ' + cedula;
-
-    // Separamos el banco de la cuenta
     document.getElementById('modal-pago-banco').textContent = banco || 'Banco no especificado';
     document.getElementById('modal-pago-cuenta').textContent = nroCuenta || 'N/A';
 
-    document.getElementById('modal-pago-monto').textContent = 'Bs. ' + parseFloat(monto).toFixed(2);
+    document.getElementById('modal-pago-ref').value = '';
+    document.getElementById('modal-pago-detalle').value = '';
 
-    const ultimos6 = nroRef ? nroRef.replace(/\D/g, '').slice(-6) : '';
-    document.getElementById('modal-pago-ref').value = ultimos6;
-    document.getElementById('modal-pago-detalle').value = detalles || '';
+    const tbody = document.getElementById('modal-pago-traslados');
+        tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 italic text-xs">Cargando traslados pendientes...</td></tr>';
+    document.getElementById('modal-pago-monto').textContent = 'Bs. 0.00';
 
     document.getElementById('modal-aprobar-pago').classList.remove('hidden');
     lucide.createIcons();
+
+    fetch(`get-pago-chofer-modal.php?id_chofer=${id}`)
+      .then(res => res.json())
+      .then(res => {
+        if (!res.success) {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-red-400 text-xs">Error: ' + res.message + '</td></tr>';
+          return;
+        }
+
+        if (res.traslados.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="px-4 py-6 text-center text-slate-400 italic text-xs">No hay traslados pendientes de pago.</td></tr>';
+          document.getElementById('modal-pago-monto').textContent = 'Bs. 0.00';
+          return;
+        }
+
+        tbody.innerHTML = '';
+        res.traslados.forEach(t => {
+          const fechaFmt = new Date(t.fecha).toLocaleDateString('es-VE', { day: '2-digit', month: 'short', year: 'numeric' });
+          tbody.innerHTML += `
+            <tr class="hover:bg-slate-50 transition-colors">
+              <td class="px-4 py-3 font-mono text-xs text-slate-400">#${String(t.id_traslado).padStart(4, '0')}</td>
+              <td class="px-4 py-3 text-slate-700">${fechaFmt}</td>
+              <td class="px-4 py-3 text-slate-700"><span class="font-semibold">${t.origen}</span> <span class="text-slate-400">&rarr;</span> <span class="font-semibold">${t.destino}</span></td>
+              <td class="px-4 py-3 text-right font-semibold text-slate-700">Bs. ${parseFloat(t.costo).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+              <td class="px-4 py-3 text-right font-semibold text-slate-700">Bs. ${parseFloat(t.monto_chofer).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            </tr>`;
+        });
+
+        document.getElementById('modal-pago-monto').textContent = 'Bs. ' + parseFloat(res.total).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+      });
   }
 
   function cerrarModalPago() {
@@ -749,7 +816,7 @@
   document.getElementById('form-aprobar-pago').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const id = document.getElementById('modal-pago-id').value;
+    const id_chofer = document.getElementById('modal-pago-id').value;
     const nroRef = document.getElementById('modal-pago-ref').value.trim();
     const detalles = document.getElementById('modal-pago-detalle').value.trim();
 
@@ -758,20 +825,20 @@
       return;
     }
 
-    fetch('aprobar-pago.php', {
+    fetch('procesar-pago-chofer.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: parseInt(id), nro_ref: nroRef, detalles: detalles || null })
+      body: JSON.stringify({ id_chofer: parseInt(id_chofer), nro_ref: nroRef, detalles: detalles || '' })
     })
       .then(res => res.json())
       .then(res => {
         if (res.success) {
-          alert("¡Pago aprobado con éxito!");
+          alert(res.message);
           cerrarModalPago();
           cargarPagosPendientes();
           cargarEstadisticas();
         } else {
-          alert("Error: " + res.message);
+          alert('Error: ' + res.message);
         }
       });
   });
@@ -995,7 +1062,7 @@
               <tr class="hover:bg-slate-50">
                 ${esTodos ? `<td class="p-3 font-semibold text-slate-800">${p.chofer_nombre.split(' ')[0]} ${p.chofer_apellidos.split(' ')[0]}</td>` : ''}
                 <td class="p-3 font-mono text-xs">${p.nro_ref}</td>
-                <td class="p-3 font-semibold">Bs. ${parseFloat(p.monto).toFixed(2)}</td>
+                <td class="p-3 font-semibold">Bs. ${parseFloat(p.monto).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 <td class="p-3 text-slate-600">${p.fecha}</td>
                 <td class="p-3">
                   <span class="font-semibold text-slate-800 text-sm">${p.personal_nombre.split(' ')[0]} ${p.personal_apellidos.split(' ')[0]}</span>
@@ -1006,7 +1073,7 @@
 
           html += `</tbody></table>
             <div class="mt-4 pt-3 border-t border-slate-200 flex justify-end">
-              <span class="text-sm font-bold text-slate-700">Total: <span class="text-emerald-600">Bs. ${totalMonto.toFixed(2)}</span></span>
+              <span class="text-sm font-bold text-slate-700">Total: <span class="text-emerald-600">Bs. ${totalMonto.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span></span>
             </div>`;
           container.innerHTML = html;
         } else {
@@ -1021,8 +1088,8 @@
       .then(res => res.json())
       .then(data => {
         if (!data.error) {
-          document.getElementById('stat-ganancia-historica').innerText = 'Bs. ' + parseFloat(data.ganancia_historica).toFixed(2);
-          document.getElementById('stat-ganancia-mes').innerText = 'Bs. ' + parseFloat(data.ganancia_mes_actual).toFixed(2);
+          document.getElementById('stat-ganancia-historica').innerText = 'Bs. ' + parseFloat(data.ganancia_historica).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          document.getElementById('stat-ganancia-mes').innerText = 'Bs. ' + parseFloat(data.ganancia_mes_actual).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2});
           document.getElementById('stat-carreras').innerText = data.carreras_completadas;
         }
       });
@@ -1144,8 +1211,8 @@
                   <span class="font-semibold">${t.ruta}</span>
                 </td>
                 <td class="p-3 text-slate-600">${t.fecha}</td>
-                <td class="p-3 text-right font-semibold text-slate-700">Bs. ${parseFloat(t.costo).toFixed(2)}</td>
-                <td class="p-3 text-right font-semibold text-emerald-600">Bs. ${parseFloat(t.comision).toFixed(2)}</td>
+                <td class="p-3 text-right font-semibold text-slate-700">Bs. ${parseFloat(t.costo).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <td class="p-3 text-right font-semibold text-emerald-600">Bs. ${parseFloat(t.comision).toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
               </tr>`;
           });
 
@@ -1153,7 +1220,7 @@
               <tfoot>
                 <tr class="bg-slate-100 border-t-2 border-slate-300">
                   <td colspan="4" class="p-3 text-sm font-extrabold text-slate-900 uppercase">Total Ganancia en el Periodo</td>
-                  <td class="p-3 text-right text-lg font-extrabold text-emerald-600">Bs. ${totalComision.toFixed(2)}</td>
+                  <td class="p-3 text-right text-lg font-extrabold text-emerald-600">Bs. ${totalComision.toLocaleString('es-VE', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                 </tr>
               </tfoot>
             </table>`;

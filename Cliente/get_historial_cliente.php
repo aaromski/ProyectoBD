@@ -3,19 +3,18 @@ session_start();
 header('Content-Type: application/json');
 require_once '../conexion.php';
 
-// Validamos que exista la sesión del cliente
 if (!isset($_SESSION['cliente_id'])) {
   echo json_encode(['success' => false, 'message' => 'No autorizado']);
   exit();
 }
 
-$id_cliente = $_SESSION['cliente_id']; // Usamos directamente el ID de la tabla clientes
+$id_cliente = $_SESSION['cliente_id'];
 
 $desde = $_GET['desde'] ?? null;
 $hasta = $_GET['hasta'] ?? null;
 
 /** @var PDO $conn */
-$sql = "SELECT t.id_traslado, t.costo, t.estado, t.fecha,
+$sql = "SELECT t.id_traslado, t.costo, t.estado, t.fecha, t.id_pago_chofer,
                z1.nombre_zona AS nombre_origen,
                z2.nombre_zona AS nombre_destino
         FROM traslados t
@@ -25,12 +24,12 @@ $sql = "SELECT t.id_traslado, t.costo, t.estado, t.fecha,
 
 $params = [$id_cliente];
 
-if ($desde && preg_match('/^\d{4}-\d{2}$/', $desde)) {
-  $sql .= " AND DATE_FORMAT(t.fecha, '%Y-%m') >= ?";
+if ($desde && preg_match('/^\d{4}-\d{2}-\d{2}$/', $desde)) {
+  $sql .= " AND DATE(t.fecha) >= ?";
   $params[] = $desde;
 }
-if ($hasta && preg_match('/^\d{4}-\d{2}$/', $hasta)) {
-  $sql .= " AND DATE_FORMAT(t.fecha, '%Y-%m') <= ?";
+if ($hasta && preg_match('/^\d{4}-\d{2}-\d{2}$/', $hasta)) {
+  $sql .= " AND DATE(t.fecha) <= ?";
   $params[] = $hasta;
 }
 
