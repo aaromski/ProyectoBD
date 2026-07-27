@@ -4,7 +4,7 @@ header('Content-Type: application/json');
 
 try {
   /** @var PDO $conn */
-  $stmt = $conn->prepare("SELECT id_zona, nombre_zona FROM zonas ORDER BY nombre_zona ASC");
+  $stmt = $conn->prepare("SELECT id_zona, nombre_zona FROM zonas WHERE activo = 1 ORDER BY nombre_zona ASC");
   $stmt->execute();
   $zonas = $stmt->fetchAll(PDO::FETCH_ASSOC);
 

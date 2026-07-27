@@ -291,13 +291,21 @@
               </button>
             </div>
 
-            <div id="bloque-codigo-confirmacion" class="space-y-4 border-t pt-4">
-              <p class="text-xs text-slate-600">Se enviará un código al: <b id="telefono-enmascarado">0414-15****</b></p>
+            <button type="button" onclick="validarDatosUsuario()" id="btn-validar-datos" class="w-full bg-blue-600 text-white py-2.5 rounded-xl text-xs font-bold hover:bg-blue-700 transition-all cursor-pointer flex items-center justify-center gap-2">
+              <i data-lucide="shield-check" class="h-3.5 w-3.5"></i> Validar Datos
+            </button>
+            <div id="validacion-exitosa" class="hidden text-xs text-green-600 font-semibold flex items-center gap-1.5 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
+              <i data-lucide="check-circle" class="h-3.5 w-3.5"></i> Datos verificados correctamente
+            </div>
+
+            <div id="bloque-codigo-confirmacion" class="space-y-4 border-t border-slate-200 pt-4 hidden">
+              <p class="text-xs text-slate-600">Se enviará un código de verificación al: <b id="telefono-enmascarado" class="font-mono text-slate-800"></b></p>
 
               <div class="flex gap-2">
-                <input type="text" id="codigo-ingresado" placeholder="123456" class="w-full border-2 border-slate-300 rounded-xl px-4 py-3 text-sm font-bold text-center">
-                <button type="button" onclick="verificarCodigo()" class="bg-blue-600 text-white px-4 rounded-xl text-xs font-bold hover:bg-blue-700">VERIFICAR</button>
+                <input type="text" id="codigo-ingresado" placeholder="123456" maxlength="6" class="w-full border-2 border-slate-300 rounded-xl px-4 py-3 text-sm font-bold text-center font-mono tracking-widest focus:border-blue-500 outline-none">
+                <button type="button" onclick="verificarCodigo()" id="btn-verificar-codigo" class="bg-slate-900 text-white px-5 rounded-xl text-xs font-bold hover:bg-slate-800 transition-all cursor-pointer whitespace-nowrap">VERIFICAR</button>
               </div>
+              <p id="otp-error-msg" class="hidden text-xs text-red-500 font-medium">Código incorrecto. Intenta de nuevo.</p>
             </div>
 
             <div id="campos-banca-chofer2" class="border-t border-slate-200 pt-4 space-y-4 hidden">
@@ -413,6 +421,18 @@
     });
   });
 
+  // Invalidar verificación OTP si el usuario cambia cédula, correo o contraseña
+  ['reg-cedula-num-ya', 'registro-ya'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', invalidarVerificacion);
+  });
+  const corrYa = document.querySelector('#verificacion-usuario [name="correo_ya"]');
+  if (corrYa) corrYa.addEventListener('input', invalidarVerificacion);
+  const cedYa = document.getElementById('reg-cedula-prefijo-ya');
+  if (cedYa) cedYa.addEventListener('change', invalidarVerificacion);
+
+  let telefonoVerificado = false;
+
   function togglePasswordVisibility(inputId, iconId) {
     const passwordInput = document.getElementById(inputId);
     const eyeIcon = document.getElementById(iconId);
@@ -421,19 +441,94 @@
     lucide.createIcons();
   }
 
+  function validarDatosUsuario() {
+    const cedulaPrefijo = document.getElementById('reg-cedula-prefijo-ya').value;
+    const cedulaNum     = document.getElementById('reg-cedula-num-ya').value.trim();
+    const correo        = document.querySelector('#verificacion-usuario [name="correo_ya"]').value.trim();
+    const password      = document.getElementById('registro-ya').value;
+    const btnValidar    = document.getElementById('btn-validar-datos');
+    const otpBlock      = document.getElementById('bloque-codigo-confirmacion');
+    const exitoMsg      = document.getElementById('validacion-exitosa');
+    const otpError      = document.getElementById('otp-error-msg');
+
+    if (!cedulaNum || !correo || !password) {
+      alert('Completa cédula, correo y contraseña antes de validar.');
+      return;
+    }
+
+    btnValidar.disabled = true;
+    btnValidar.innerHTML = '<svg class="animate-spin h-3.5 w-3.5" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Verificando...';
+
+    const fd = new FormData();
+    fd.append('cedula', cedulaPrefijo + cedulaNum);
+    fd.append('correo', correo);
+    fd.append('password', password);
+
+    fetch('verificar-usuario-otp.php', { method: 'POST', body: fd })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('telefono-enmascarado').textContent = data.telefono_enmascarado;
+          otpBlock.classList.remove('hidden');
+          otpError.classList.add('hidden');
+          exitoMsg.classList.remove('hidden');
+          telefonoVerificado = false;
+          lucide.createIcons();
+        } else {
+          otpBlock.classList.add('hidden');
+          exitoMsg.classList.add('hidden');
+          telefonoVerificado = false;
+          alert(data.message || 'No se pudo validar. Verifica tus datos.');
+        }
+      })
+      .catch(() => {
+        alert('Error de conexión con el servidor.');
+      })
+      .finally(() => {
+        btnValidar.disabled = false;
+        btnValidar.innerHTML = '<i data-lucide="shield-check" class="h-3.5 w-3.5"></i> Validar Datos';
+        lucide.createIcons();
+      });
+  }
+
   function verificarCodigo() {
-    const codigoInput = document.getElementById('codigo-ingresado').value;
+    const codigoInput  = document.getElementById('codigo-ingresado').value.trim();
     const btnCompletar = document.getElementById('btn-completar-registro');
+    const otpError     = document.getElementById('otp-error-msg');
+    const exitoMsg     = document.getElementById('validacion-exitosa');
+
+    if (codigoInput.length !== 6) {
+      otpError.textContent = 'El código debe tener 6 dígitos.';
+      otpError.classList.remove('hidden');
+      return;
+    }
 
     if (codigoInput === "123456") {
+      telefonoVerificado = true;
+      otpError.classList.add('hidden');
       btnCompletar.disabled = false;
-      // Quitamos los estilos de deshabilitado
       btnCompletar.classList.remove('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
       btnCompletar.classList.add('bg-slate-900', 'text-white');
-      alert("Código verificado correctamente.");
+      exitoMsg.innerHTML = '<i data-lucide="check-circle" class="h-3.5 w-3.5"></i> Datos y teléfono verificados correctamente';
+      lucide.createIcons();
     } else {
-      alert("Código incorrecto.");
+      telefonoVerificado = false;
+      otpError.textContent = 'Código incorrecto. Intenta de nuevo.';
+      otpError.classList.remove('hidden');
     }
+  }
+
+  function invalidarVerificacion() {
+    if (!telefonoVerificado) return;
+    telefonoVerificado = false;
+    document.getElementById('bloque-codigo-confirmacion').classList.add('hidden');
+    document.getElementById('validacion-exitosa').classList.add('hidden');
+    document.getElementById('otp-error-msg').classList.add('hidden');
+    document.getElementById('codigo-ingresado').value = '';
+    const btn = document.getElementById('btn-completar-registro');
+    btn.disabled = true;
+    btn.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
+    btn.classList.remove('bg-slate-900', 'text-white');
   }
 
   function setModo(modo) {
@@ -472,6 +567,13 @@
       btnCompletar.disabled = true;
       btnCompletar.classList.add('bg-slate-300', 'text-slate-500', 'cursor-not-allowed');
       btnCompletar.classList.remove('bg-slate-900', 'text-white');
+
+      // Resetear estado de verificación OTP
+      telefonoVerificado = false;
+      document.getElementById('bloque-codigo-confirmacion').classList.add('hidden');
+      document.getElementById('validacion-exitosa').classList.add('hidden');
+      document.getElementById('otp-error-msg').classList.add('hidden');
+      document.getElementById('codigo-ingresado').value = '';
 
       btnRol.className = "flex-1 py-2 text-xs font-bold rounded-lg bg-white shadow-sm";
       btnNuevo.className = "flex-1 py-2 text-xs font-bold text-slate-500";
@@ -593,6 +695,14 @@
     regErrorContainer.classList.add('hidden');
 
     const modoReg = document.getElementById('input-modo').value;
+
+    // En modo "YA TENGO CUENTA", solo permitir enviar si OTP fue verificado
+    if (modoReg === 'rol' && !telefonoVerificado) {
+      regErrorText.innerText = 'Debes validar tus datos y verificar el código OTP antes de continuar.';
+      regErrorContainer.classList.remove('hidden');
+      regErrorContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      return;
+    }
 
     // Validar contactos: si escriben en un campo, deben completar todos
     if (modoReg === 'nuevo' && document.getElementById('reg-rol').value === 'chofer') {
