@@ -10,7 +10,7 @@ if (!isset($_SESSION['id_usuario']) || !isset($_SESSION['rol'])) {
 
 require_once '../conexion.php';
 
-$id_usuario = isset($_GET['id_usuario']) ? intval($_GET['id_usuario']) : 0;
+$id_chofer = isset($_GET['id_chofer']) ? intval($_GET['id_chofer']) : 0;
 $desde = isset($_GET['desde']) ? trim($_GET['desde']) : '';
 $hasta = isset($_GET['hasta']) ? trim($_GET['hasta']) : '';
 
@@ -38,9 +38,9 @@ try {
 
   $params = [':desde' => $desde, ':hasta' => $hasta];
 
-  if ($id_usuario > 0) {
-    $sql .= " AND ch.id_usuario = :id_usuario";
-    $params[':id_usuario'] = $id_usuario;
+  if ($id_chofer > 0) {
+    $sql .= " AND pc.id_chofer = :id_chofer";
+    $params[':id_chofer'] = $id_chofer;
   }
 
   $sql .= " ORDER BY pc.fecha DESC";
@@ -52,7 +52,7 @@ try {
   echo json_encode([
     'success' => true,
     'data' => $data,
-    'id_buscado' => $id_usuario > 0 ? $id_usuario : null
+    'id_buscado' => $id_chofer > 0 ? $id_chofer : null
   ]);
 } catch (PDOException $e) {
   echo json_encode(['success' => false, 'message' => 'Error en el servidor.']);

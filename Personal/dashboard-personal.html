@@ -983,10 +983,10 @@
             res.data.forEach(c => {
               const div = document.createElement('div');
               div.className = 'px-3 py-2 text-sm cursor-pointer hover:bg-slate-100';
-              div.innerHTML = `<span class="font-semibold">${c.nombres.split(' ')[0]} ${c.apellidos.split(' ')[0]}</span> <span class="text-slate-400 text-xs">#${String(c.id_usuario).padStart(3, '0')}</span>`;
+              div.innerHTML = `<span class="font-semibold">${c.nombres.split(' ')[0]} ${c.apellidos.split(' ')[0]}</span> <span class="text-slate-400 text-xs">#${String(c.id_chofer).padStart(3, '0')}</span>`;
               div.addEventListener('click', () => {
-                inputBuscador.value = `${c.nombres.split(' ')[0]} ${c.apellidos.split(' ')[0]} (#${String(c.id_usuario).padStart(3, '0')})`;
-                inputBuscadorId.value = c.id_usuario;
+                inputBuscador.value = `${c.nombres.split(' ')[0]} ${c.apellidos.split(' ')[0]} (#${String(c.id_chofer).padStart(3, '0')})`;
+                inputBuscadorId.value = c.id_chofer;
                 dropdownChof.classList.add('hidden');
               });
               dropdownChof.appendChild(div);
@@ -1015,12 +1015,12 @@
   // --- GENERAR INFORME DE PAGOS ---
   function generarInformePagos() {
     const esTodos = checkTodos.checked;
-    const idUsuario = esTodos ? '0' : inputBuscadorId.value;
+    const idChof = esTodos ? '0' : inputBuscadorId.value;
     const desde = document.getElementById('mes-reporte-desde').value;
     const hasta = document.getElementById('mes-reporte-hasta').value;
     const container = document.getElementById('resultados-reporte-pagos');
 
-    if (!esTodos && !idUsuario) {
+    if (!esTodos && !idChof) {
       alert('Seleccione un chofer válido del buscador o active "Todos".');
       return;
     }
@@ -1034,9 +1034,9 @@
     }
 
     const params = `desde=${encodeURIComponent(desde)}&hasta=${encodeURIComponent(hasta)}`;
-    const fetchUrl = esTodos || !idUsuario
+    const fetchUrl = esTodos || !idChof
       ? `get-reporte-pagos.php?${params}`
-      : `get-reporte-pagos.php?id_usuario=${idUsuario}&${params}`;
+      : `get-reporte-pagos.php?id_chofer=${idChof}&${params}`;
 
     fetch(fetchUrl)
       .then(res => res.json())
