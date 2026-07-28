@@ -173,7 +173,8 @@ CREATE TABLE `evaluaciones_choferes` (
   `id_personal` int(11) DEFAULT NULL,
   `id_chofer` int(11) NOT NULL,
   `nota_psicologica` decimal(5,2) DEFAULT NULL,
-  `fecha` datetime NOT NULL,
+  `fecha_creacion` datetime NOT NULL,
+  `fecha_evaluacion` date DEFAULT NULL,
   `estado` enum('pendiente','aprobado','reprobado') NOT NULL,
   `observacion` text DEFAULT NULL,
   PRIMARY KEY (`id_evaluacion`),
@@ -181,7 +182,7 @@ CREATE TABLE `evaluaciones_choferes` (
   KEY `fk_evaluaciones_usuarios1_idx` (`id_personal`),
   CONSTRAINT `fk_evaluaciones_choferes1` FOREIGN KEY (`id_chofer`) REFERENCES `choferes` (`id_chofer`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_evaluaciones_usuarios1` FOREIGN KEY (`id_personal`) REFERENCES `usuarios` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -190,7 +191,7 @@ CREATE TABLE `evaluaciones_choferes` (
 
 LOCK TABLES `evaluaciones_choferes` WRITE;
 /*!40000 ALTER TABLE `evaluaciones_choferes` DISABLE KEYS */;
-INSERT INTO `evaluaciones_choferes` VALUES (1,2,1,80.00,'2026-07-27 11:53:54','aprobado',NULL),(2,2,2,80.00,'2026-07-27 11:58:45','aprobado','bien'),(3,NULL,3,NULL,'2026-07-27 13:27:01','pendiente',NULL),(4,NULL,4,NULL,'2026-07-27 13:29:43','pendiente',NULL),(6,NULL,6,NULL,'2026-07-27 13:38:44','pendiente',NULL),(7,NULL,7,NULL,'2026-07-27 13:49:10','pendiente',NULL),(8,NULL,8,NULL,'2026-07-27 13:50:14','pendiente',NULL);
+INSERT INTO `evaluaciones_choferes` VALUES (1,2,1,80.00,'2026-07-24 11:53:54','2026-07-28','aprobado',NULL),(2,2,2,80.00,'2026-07-26 11:58:45','2026-07-28','aprobado','bien'),(3,2,3,20.00,'2026-07-26 13:27:01','2026-07-28','reprobado','Encontramos temperamento dudoso'),(4,2,4,90.00,'2026-07-26 13:29:43','2026-07-28','aprobado','good'),(6,NULL,6,NULL,'2026-07-27 13:38:44',NULL,'pendiente',NULL),(7,NULL,7,NULL,'2026-07-27 13:49:10',NULL,'pendiente',NULL),(8,NULL,8,NULL,'2026-07-27 13:50:14',NULL,'pendiente',NULL),(9,NULL,3,NULL,'2026-07-28 03:29:09',NULL,'pendiente',NULL);
 /*!40000 ALTER TABLE `evaluaciones_choferes` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -206,7 +207,8 @@ CREATE TABLE `evaluaciones_vehiculos` (
   `id_personal` int(11) DEFAULT NULL,
   `id_vehiculo` int(11) NOT NULL,
   `nota_tecnica` decimal(5,2) DEFAULT NULL,
-  `fecha` datetime NOT NULL,
+  `fecha_creacion` datetime NOT NULL,
+  `fecha_evaluacion` date DEFAULT NULL,
   `estado` enum('pendiente','apto','no_apto') NOT NULL,
   `observacion` text DEFAULT NULL,
   PRIMARY KEY (`id_evaluacion`),
@@ -214,7 +216,7 @@ CREATE TABLE `evaluaciones_vehiculos` (
   KEY `fk_evaluaciones_usuarios1_idx` (`id_personal`),
   CONSTRAINT `fk_evaluaciones_usuarios10` FOREIGN KEY (`id_personal`) REFERENCES `usuarios` (`id_usuario`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_evaluaciones_vehiculos10` FOREIGN KEY (`id_vehiculo`) REFERENCES `vehiculos` (`id_vehiculo`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -223,7 +225,7 @@ CREATE TABLE `evaluaciones_vehiculos` (
 
 LOCK TABLES `evaluaciones_vehiculos` WRITE;
 /*!40000 ALTER TABLE `evaluaciones_vehiculos` DISABLE KEYS */;
-INSERT INTO `evaluaciones_vehiculos` VALUES (1,2,1,100.00,'2026-07-27 11:54:48','apto','Todo correcto'),(2,2,2,100.00,'2026-07-27 11:59:04','apto','bien'),(3,2,3,80.00,'2026-07-27 11:59:21','apto',''),(4,2,4,50.00,'2026-07-27 11:59:47','no_apto','Modelo del carro incorrecto');
+INSERT INTO `evaluaciones_vehiculos` VALUES (1,2,1,100.00,'2026-07-27 11:54:48','2026-07-28','apto','Todo correcto'),(2,2,2,100.00,'2026-07-27 11:59:04',NULL,'apto','bien'),(3,2,3,80.00,'2026-07-27 11:59:21',NULL,'apto',''),(4,2,4,50.00,'2026-07-27 11:59:47',NULL,'no_apto','Modelo del carro incorrecto'),(5,NULL,5,NULL,'2026-07-28 03:36:01',NULL,'pendiente',NULL),(6,NULL,6,NULL,'2026-07-28 03:36:16',NULL,'pendiente',NULL);
 /*!40000 ALTER TABLE `evaluaciones_vehiculos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -419,7 +421,7 @@ CREATE TABLE `vehiculos` (
   UNIQUE KEY `placa_UNIQUE` (`placa`),
   KEY `fk_carros_choferes_idx` (`id_chofer`),
   CONSTRAINT `fk_carros_choferes` FOREIGN KEY (`id_chofer`) REFERENCES `choferes` (`id_chofer`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -428,7 +430,7 @@ CREATE TABLE `vehiculos` (
 
 LOCK TABLES `vehiculos` WRITE;
 /*!40000 ALTER TABLE `vehiculos` DISABLE KEYS */;
-INSERT INTO `vehiculos` VALUES (1,'AA12VAS','TOYOTA','HILUX',2006,1,1),(2,'DAS1D6A','HYUNDAI','ELANTRA',2006,2,0),(3,'1SD1AS3','MITSUBISHI','SIGNO',2001,2,1),(4,'1S3A1D3','TOYOTA','HOONDA',2006,2,0);
+INSERT INTO `vehiculos` VALUES (1,'AA12VAS','TOYOTA','HILUX',2006,1,1),(2,'DAS1D6A','HYUNDAI','ELANTRA',2006,2,0),(3,'1SD1AS3','MITSUBISHI','SIGNO',2001,2,1),(4,'1S3A1D3','TOYOTA','HOONDA',2006,2,0),(5,'2ASD1AS','TOYOTA','YARIS',2021,1,0),(6,'AD2ASD2','CORSA','HOONDA',2006,1,0);
 /*!40000 ALTER TABLE `vehiculos` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -468,4 +470,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-07-27 13:51:45
+-- Dump completed on 2026-07-28  4:09:24

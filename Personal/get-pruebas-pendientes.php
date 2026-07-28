@@ -12,13 +12,13 @@ require_once '../conexion.php';
 
 try {
   /** @var PDO $conn */
-  $sql = "SELECT e.id_evaluacion, e.id_chofer, e.fecha,
-                 u.nombres, u.apellidos, u.id_usuario
+  $sql = "SELECT e.id_evaluacion, e.id_chofer, e.fecha_creacion,
+                 u.nombres, u.apellidos, u.id_usuario, u.cedula
           FROM evaluaciones_choferes e
           INNER JOIN choferes c ON e.id_chofer = c.id_chofer
           INNER JOIN usuarios u ON c.id_usuario = u.id_usuario
           WHERE e.estado = 'pendiente' AND e.nota_psicologica IS NULL
-          ORDER BY e.fecha ASC";
+          ORDER BY e.fecha_creacion ASC";
 
   $stmt = $conn->prepare($sql);
   $stmt->execute();

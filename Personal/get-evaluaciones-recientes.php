@@ -20,7 +20,7 @@ try {
                           ' ', UPPER(SUBSTRING(SUBSTRING_INDEX(up.apellidos, ' ', 1), 1, 1)), LOWER(SUBSTRING(SUBSTRING_INDEX(up.apellidos, ' ', 1), 2))) AS evaluador,
                    ec.nota_psicologica AS nota,
                    ec.estado,
-                   ec.fecha,
+                   ec.fecha_evaluacion AS fecha,
                    NULL AS observacion
             FROM evaluaciones_choferes ec
             INNER JOIN choferes ch ON ec.id_chofer = ch.id_chofer
@@ -35,7 +35,7 @@ try {
                           ' ', UPPER(SUBSTRING(SUBSTRING_INDEX(up.apellidos, ' ', 1), 1, 1)), LOWER(SUBSTRING(SUBSTRING_INDEX(up.apellidos, ' ', 1), 2))) AS evaluador,
                    ev.nota_tecnica AS nota,
                    ev.estado,
-                   ev.fecha,
+                   ev.fecha_evaluacion AS fecha,
                    ev.observacion
             FROM evaluaciones_vehiculos ev
             INNER JOIN vehiculos v ON ev.id_vehiculo = v.id_vehiculo

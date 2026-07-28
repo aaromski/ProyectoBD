@@ -8,15 +8,15 @@ if (!isset($_SESSION['id_usuario'])) {
 }
 
 try {
-  $sql = "SELECT ev.id_evaluacion, ev.estado, ev.fecha AS fecha_solicitud, ev.nota_tecnica,
+  $sql = "SELECT ev.id_evaluacion, ev.estado, ev.fecha_creacion AS fecha_solicitud, ev.nota_tecnica,
                    v.marca, v.modelo, v.placa,
-                   u.nombres, u.apellidos
+                   u.nombres, u.apellidos, c.id_chofer, u.cedula
             FROM evaluaciones_vehiculos ev
             INNER JOIN vehiculos v ON ev.id_vehiculo = v.id_vehiculo
             INNER JOIN choferes c ON v.id_chofer = c.id_chofer
             INNER JOIN usuarios u ON c.id_usuario = u.id_usuario
             WHERE ev.estado = 'pendiente'
-            ORDER BY ev.fecha ASC";
+            ORDER BY ev.fecha_creacion ASC";
 
   /** @var PDO $conn */
   $stmt = $conn->query($sql);

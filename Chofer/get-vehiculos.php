@@ -36,17 +36,18 @@ try {
                 e.id_evaluacion,
                 e.nota_tecnica,
                 COALESCE(e.estado, 'pendiente') AS estado_evaluacion,
-                e.fecha AS fecha_evaluacion,
+                e.fecha_evaluacion,
+                e.fecha_creacion,
                 e.observacion AS observacion_evaluacion
             FROM vehiculos v
             LEFT JOIN (
                 SELECT ev1.*
                 FROM evaluaciones_vehiculos ev1
                 INNER JOIN (
-                    SELECT id_vehiculo, MAX(fecha) AS max_fecha
+                    SELECT id_vehiculo, MAX(id_evaluacion) AS max_id
                     FROM evaluaciones_vehiculos
                     GROUP BY id_vehiculo
-                ) ev2 ON ev1.id_vehiculo = ev2.id_vehiculo AND ev1.fecha = ev2.max_fecha
+                ) ev2 ON ev1.id_vehiculo = ev2.id_vehiculo AND ev1.id_evaluacion = ev2.max_id
             ) e ON v.id_vehiculo = e.id_vehiculo
             WHERE v.id_chofer = :id_chofer
             ORDER BY v.id_vehiculo DESC";
