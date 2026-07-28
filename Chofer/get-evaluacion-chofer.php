@@ -13,11 +13,15 @@ try {
   /** @var PDO $conn */
   $id_usuario = $_SESSION['id_usuario'];
 
-  $stmt = $conn->prepare("SELECT e.nota_psicologica, e.fecha, e.estado, e.observacion
+  $stmt = $conn->prepare("SELECT e.nota_psicologica,
+  e.fecha_evaluacion,
+  e.fecha_creacion,
+  e.estado,
+  e.observacion
     FROM evaluaciones_choferes e
     INNER JOIN choferes c ON e.id_chofer = c.id_chofer
     WHERE c.id_usuario = ?
-    ORDER BY e.fecha DESC, e.id_evaluacion DESC
+    ORDER BY e.fecha_creacion DESC, e.id_evaluacion DESC
     LIMIT 1");
 
   $stmt->execute([$id_usuario]);

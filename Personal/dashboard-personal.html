@@ -308,10 +308,17 @@
   <section id="vista-vehiculos" class="vista-seccion hidden p-8">
       <h2 class="text-2xl font-bold mb-6">Vehículos Pendientes de Revisión</h2>
 
+      <div class="bg-white rounded-xl border border-slate-200 p-4 mb-4">
+        <div class="flex gap-4 items-center">
+          <input type="text" id="filtro-cedula-vehiculos" placeholder="Buscar por cédula..." class="w-64 border border-slate-300 rounded-lg p-2 text-sm bg-slate-50">
+        </div>
+      </div>
+
       <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
         <table class="w-full text-left">
           <thead class="bg-slate-50 border-b border-slate-200">
           <tr>
+            <th class="p-4 text-sm font-semibold text-slate-700">ID Chofer</th>
             <th class="p-4 text-sm font-semibold text-slate-700">Chofer</th>
             <th class="p-4 text-sm font-semibold text-slate-700">Vehículo</th>
             <th class="p-4 text-sm font-semibold text-slate-700">Placa</th>
@@ -328,12 +335,18 @@
   <section id="vista-pruebas" class="vista-seccion hidden p-8">
     <h2 class="text-2xl font-bold mb-6">Postulantes Pendientes de Evaluación Psicológica</h2>
 
+    <div class="bg-white rounded-xl border border-slate-200 p-4 mb-4">
+      <div class="flex gap-4 items-center">
+        <input type="text" id="filtro-cedula-pruebas" placeholder="Buscar por cédula..." class="w-64 border border-slate-300 rounded-lg p-2 text-sm bg-slate-50">
+      </div>
+    </div>
+
     <div class="bg-white rounded-xl border border-slate-200 overflow-hidden">
       <table class="w-full text-left">
         <thead class="bg-slate-50 border-b border-slate-200">
         <tr>
+          <th class="p-4 text-sm font-semibold text-slate-700">ID Chofer</th>
           <th class="p-4 text-sm font-semibold text-slate-700">Chofer</th>
-          <th class="p-4 text-sm font-semibold text-slate-700">ID Usuario</th>
           <th class="p-4 text-sm font-semibold text-slate-700">Fecha Solicitud</th>
           <th class="p-4 text-sm font-semibold text-slate-700 text-center">Acción</th>
         </tr>
@@ -428,6 +441,9 @@
         <label class="block text-sm font-medium mb-1">Calificación (0-100):</label>
         <input type="number" id="nota-tecnica" class="w-full border rounded p-2 mb-3" min="0" max="100" required>
 
+        <label class="block text-sm font-medium mb-1">Fecha de Evaluación:</label>
+        <input type="date" id="fecha-evaluacion-revision" class="w-full border rounded p-2 mb-3" required>
+
         <label class="block text-sm font-medium mb-1">Observaciones:</label>
         <textarea id="observacion" class="w-full border rounded p-2 mb-4" placeholder="Detalles de la falla o estado..."></textarea>
 
@@ -447,6 +463,9 @@
 
         <label class="block text-sm font-medium mb-1">Calificación (0-100):</label>
         <input type="number" id="nota-psicologica" class="w-full border rounded p-2 mb-3" min="0" max="100" required>
+
+        <label class="block text-sm font-medium mb-1">Fecha de Evaluación:</label>
+        <input type="date" id="fecha-evaluacion-psicologica" class="w-full border rounded p-2 mb-3" required>
 
         <label class="block text-sm font-medium mb-1">Observaciones:</label>
         <textarea id="observacion-psicologica" class="w-full border rounded p-2 mb-4" placeholder="Detalles de la entrevista o conducta detectada..."></textarea>
@@ -695,35 +714,42 @@
     fetch('get-vehiculos-pendientes.php')
       .then(res => res.json())
       .then(res => {
-        const tbody = document.getElementById('tabla-vehiculos-pendientes');
-        tbody.innerHTML = ''; // Limpiar tabla
+        window._dataVehiculos = res.success ? res.data : [];
+        renderizarVehiculos(window._dataVehiculos);
+      });
+  }
 
-        if (res.success && res.data.length > 0) {
-          res.data.forEach(v => {
-            tbody.innerHTML += `
+  function renderizarVehiculos(data) {
+    const filtro = (document.getElementById('filtro-cedula-vehiculos').value || '').trim().toLowerCase();
+    const tbody = document.getElementById('tabla-vehiculos-pendientes');
+    tbody.innerHTML = '';
+
+    const filtrados = filtro ? data.filter(v => (v.cedula || '').toLowerCase().includes(filtro)) : data;
+
+    if (filtrados.length > 0) {
+      filtrados.forEach(v => {
+        tbody.innerHTML += `
                 <tr class="border-b border-slate-100 hover:bg-slate-50">
+                    <td class="p-4 font-mono font-bold">#${String(v.id_chofer).padStart(3, '0')}</td>
                     <td class="p-4">${v.nombres} ${v.apellidos}</td>
-
                     <td class="p-4">${v.marca} ${v.modelo}</td>
-
                     <td class="p-4 font-mono font-bold">${v.placa}</td>
-
                     <td class="p-4 text-sm text-slate-600">${v.fecha_solicitud}</td>
-
                     <td class="p-4 text-center">
-                        <button onclick="revisarVehiculo(${v.id_evaluacion})"
+                        <button onclick="revisarVehiculo(${v.id_evaluacion}, '${v.fecha_solicitud}')"
                                 class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition">
                             Revisar
                         </button>
                     </td>
                 </tr>
             `;
-          });
-        } else {
-          tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">No hay vehículos pendientes.</td></tr>';
-        }
       });
+    } else {
+      tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">No hay vehículos pendientes.</td></tr>';
+    }
   }
+
+  document.getElementById('filtro-cedula-vehiculos').addEventListener('input', () => renderizarVehiculos(window._dataVehiculos || []));
 
   function cargarPagosPendientes() {
     fetch('get-pagos-pendientes.php')
@@ -843,8 +869,13 @@
       });
   });
 
-  function revisarVehiculo(id) {
+  function revisarVehiculo(id, fechaCreacion) {
     document.getElementById('id-evaluacion-input').value = id;
+    const dateInput = document.getElementById('fecha-evaluacion-revision');
+    const minDate = fechaCreacion.split(' ')[0];
+    dateInput.min = minDate;
+    dateInput.max = new Date().toISOString().split('T')[0];
+    dateInput.value = dateInput.max;
     document.getElementById('modal-revision').classList.remove('hidden');
   }
 
@@ -858,7 +889,8 @@
     const data = {
       id: document.getElementById('id-evaluacion-input').value,
       nota: document.getElementById('nota-tecnica').value,
-      observacion: document.getElementById('observacion').value
+      observacion: document.getElementById('observacion').value,
+      fecha_evaluacion: document.getElementById('fecha-evaluacion-revision').value
     };
 
     fetch('procesar-revision.php', {
@@ -880,39 +912,55 @@
     fetch('get-pruebas-pendientes.php')
       .then(res => res.json())
       .then(res => {
-        const tbody = document.getElementById('tabla-pruebas-pendientes');
-        tbody.innerHTML = '';
+        window._dataPruebas = res.success ? res.data : [];
+        renderizarPruebas(window._dataPruebas);
+      });
+  }
 
-        if (res.success && res.data.length > 0) {
-          res.data.forEach(p => {
-            tbody.innerHTML += `
+  function renderizarPruebas(data) {
+    const filtro = (document.getElementById('filtro-cedula-pruebas').value || '').trim().toLowerCase();
+    const tbody = document.getElementById('tabla-pruebas-pendientes');
+    tbody.innerHTML = '';
+
+    const filtrados = filtro ? data.filter(p => (p.cedula || '').toLowerCase().includes(filtro)) : data;
+
+    if (filtrados.length > 0) {
+      filtrados.forEach(p => {
+        tbody.innerHTML += `
                 <tr class="border-b border-slate-100 hover:bg-slate-50">
+                    <td class="p-4 font-mono font-bold">#${String(p.id_chofer).padStart(3, '0')}</td>
                     <td class="p-4">${p.nombres.split(' ')[0]} ${p.apellidos.split(' ')[0]}</td>
-                    <td class="p-4 font-mono font-bold">#${String(p.id_usuario).padStart(3, '0')}</td>
-                    <td class="p-4 text-sm text-slate-600">${p.fecha}</td>
+                    <td class="p-4 text-sm text-slate-600">${p.fecha_creacion}</td>
                     <td class="p-4 text-center">
-                        <button onclick="evaluarChoferPsicologico(${p.id_evaluacion})"
+                        <button onclick="evaluarChoferPsicologico(${p.id_evaluacion}, '${p.fecha_creacion}')"
                                 class="bg-blue-600 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition">
                             Evaluar
                         </button>
                     </td>
                 </tr>
             `;
-          });
-        } else {
-          tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">No hay postulantes pendientes de evaluación psicológica.</td></tr>';
-        }
       });
+    } else {
+      tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">No hay postulantes pendientes de evaluación psicológica.</td></tr>';
+    }
   }
 
-  function evaluarChoferPsicologico(id) {
+  document.getElementById('filtro-cedula-pruebas').addEventListener('input', () => renderizarPruebas(window._dataPruebas || []));
+
+  function evaluarChoferPsicologico(id, fechaCreacion) {
     document.getElementById('id-psicologico-input').value = id;
     document.getElementById('nota-psicologica').value = '';
     document.getElementById('observacion-psicologica').value = '';
+    const dateInput = document.getElementById('fecha-evaluacion-psicologica');
+    const minDate = fechaCreacion.split(' ')[0];
+    dateInput.min = minDate;
+    dateInput.max = new Date().toISOString().split('T')[0];
+    dateInput.value = dateInput.max;
     document.getElementById('modal-psicologico').classList.remove('hidden');
   }
 
   function cerrarModalPsicologico() {
+    document.getElementById('form-psicologico').reset();
     document.getElementById('modal-psicologico').classList.add('hidden');
   }
 
@@ -921,7 +969,8 @@
     const data = {
       id: document.getElementById('id-psicologico-input').value,
       nota: document.getElementById('nota-psicologica').value,
-      observacion: document.getElementById('observacion-psicologica').value
+      observacion: document.getElementById('observacion-psicologica').value,
+      fecha_evaluacion: document.getElementById('fecha-evaluacion-psicologica').value
     };
 
     fetch('procesar-prueba-psicologica.php', {

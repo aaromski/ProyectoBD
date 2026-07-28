@@ -27,7 +27,7 @@ try {
   $id_chofer = $chofer['id_chofer'];
 
   // Paso 2: Insertar la nueva evaluación usando el id_chofer real
-  $stmt = $conn->prepare("INSERT INTO evaluaciones_choferes (id_chofer, fecha, estado) VALUES (?, NOW(), 'pendiente')");
+  $stmt = $conn->prepare("INSERT INTO evaluaciones_choferes (id_chofer, fecha_creacion, estado) VALUES (?, NOW(), 'pendiente')");
   $stmt->execute([$id_chofer]);
 
   echo json_encode(['success' => true, 'message' => 'Solicitud de evaluación psicológica registrada. Pendiente de revisión por personal.']);

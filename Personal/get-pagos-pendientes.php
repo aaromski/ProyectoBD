@@ -11,7 +11,9 @@ $sql = "SELECT
             u.cedula,
             b.nombre_banco,
             c.nro_cuenta AS numero_cuenta,
-            ROUND(SUM(t.costo * 0.70), 2) AS saldo
+            ROUND(SUM(t.costo * 0.70), 2) AS saldo,
+            MIN(t.fecha) AS primer_viaje_pendiente,
+            COUNT(t.id_traslado) AS total_viajes_pendientes
         FROM choferes c
         JOIN usuarios u ON c.id_usuario = u.id_usuario
         JOIN bancos b ON c.id_banco = b.id_banco
@@ -20,7 +22,7 @@ $sql = "SELECT
           AND t.id_pago_chofer IS NULL
         GROUP BY c.id_chofer, u.nombres, u.apellidos, u.cedula, b.nombre_banco, c.nro_cuenta
         HAVING saldo > 0
-        ORDER BY saldo DESC";
+        ORDER BY primer_viaje_pendiente ASC";
 
 $stmt = $conn->prepare($sql);
 $stmt->execute();

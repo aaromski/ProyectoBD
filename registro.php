@@ -93,7 +93,7 @@ if($modo === 'nuevo') {
         }
 
         // Crear registro en evaluaciones
-        $conn->prepare("INSERT INTO evaluaciones_choferes (id_chofer, id_personal, nota_psicologica, fecha, estado) VALUES (?, NULL, NULL, NOW(), 'pendiente')")
+        $conn->prepare("INSERT INTO evaluaciones_choferes (id_chofer, id_personal, nota_psicologica, fecha_creacion, estado) VALUES (?, NULL, NULL, NOW(), 'pendiente')")
           ->execute([$id_chofer_nuevo]);
 
         // Asignar rol en roles_asignados
@@ -207,7 +207,7 @@ if($modo === 'nuevo') {
                 ->execute([$id_chofer_nuevo, trim($_POST['nombre_contacto2_ya']), $contacto2_ya, $relacion2_ya]);
             }
 
-            $conn->prepare("INSERT INTO evaluaciones_choferes (id_chofer, id_personal, nota_psicologica, fecha, estado) VALUES (?, NULL, NULL, NOW(), 'pendiente')")->execute([$id_chofer_nuevo]);
+            $conn->prepare("INSERT INTO evaluaciones_choferes (id_chofer, id_personal, nota_psicologica, fecha_creacion, estado) VALUES (?, NULL, NULL, NOW(), 'pendiente')")->execute([$id_chofer_nuevo]);
 
             // Asignar rol
             $conn->prepare("INSERT INTO roles_asignados (id_usuario, tipo_rol) VALUES (?, 'chofer')")->execute([$id_usuario]);

@@ -57,8 +57,8 @@ try {
   $id_vehiculo = $conn->lastInsertId();
 
   // 2. Creamos la orden técnica inicial en estado 'Pendiente'
-  $sqlEvaluacion = "INSERT INTO evaluaciones_vehiculos (id_vehiculo, id_personal, nota_tecnica, estado, fecha)
-                    VALUES (:id_vehiculo, NULL, NULL, 'Pendiente', NOW())";
+  $sqlEvaluacion = "INSERT INTO evaluaciones_vehiculos (id_vehiculo, id_personal, nota_tecnica, estado, fecha_creacion)
+                    VALUES (:id_vehiculo, NULL, NULL, 'pendiente', NOW())";
   $stmtE = $conn->prepare($sqlEvaluacion);
   $stmtE->execute([
     ':id_vehiculo' => $id_vehiculo

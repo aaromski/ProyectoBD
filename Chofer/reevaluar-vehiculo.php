@@ -36,7 +36,7 @@ try {
     exit;
   }
 
-  $stmt = $conn->prepare("INSERT INTO evaluaciones_vehiculos (id_vehiculo, fecha, estado) VALUES (?, NOW(), 'pendiente')");
+  $stmt = $conn->prepare("INSERT INTO evaluaciones_vehiculos (id_vehiculo, fecha_creacion, estado) VALUES (?, NOW(), 'pendiente')");
   $stmt->execute([$id_vehiculo]);
 
   echo json_encode(['success' => true, 'message' => 'Solicitud de reevaluación registrada. Pendiente de evaluación por personal.']);

@@ -720,9 +720,18 @@
         const notaVal = res.data.nota_psicologica;
         nota.textContent = (notaVal !== null && notaVal !== undefined) ? notaVal + ' / 100' : '-- / 100';
 
-        if (res.data.fecha) {
-          const d = new Date(res.data.fecha);
-          fecha.textContent = d.toLocaleDateString('es-VE') + ' ' + d.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
+        // 🛠️ FIX DE FECHA: Procesar String directo sin desfase de zona horaria
+        let d = null;
+        if (res.data.fecha_evaluacion) {
+          // Separa la fecha quitando posible hora y dividiendo por '-'
+          const fechaPura = res.data.fecha_evaluacion.split(' ')[0];
+          const [year, month, day] = fechaPura.split('-');
+
+          // Pinta la fecha exacta tal cual viene de la Base de Datos
+          fecha.textContent = `${parseInt(day)}/${parseInt(month)}/${year}`;
+
+          // Crea el objeto Date con hora local exacta (año, mes - 1, día) para cálculos
+          d = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
         } else {
           fecha.textContent = 'Sin fecha';
         }
@@ -731,8 +740,7 @@
         let puedeReevaluar = false;
         if (estado === 'reprobado') {
           puedeReevaluar = true;
-        } else if (estado === 'aprobado' && res.data.fecha) {
-          const d = new Date(res.data.fecha);
+        } else if (estado === 'aprobado' && d) {
           const unAnoDespues = new Date(d);
           unAnoDespues.setFullYear(unAnoDespues.getFullYear() + 1);
           puedeReevaluar = hoy >= unAnoDespues;
@@ -936,16 +944,16 @@
         const thead = tbody.closest('table').querySelector('thead');
         if (thead) {
           thead.innerHTML = `
-          <tr>
-            <th class="px-6 py-3">Marca / Modelo</th>
-            <th class="px-6 py-3">Placa</th>
-            <th class="px-6 py-3 text-center">Puntaje</th>
-            <th class="px-6 py-3">Fecha</th>
-            <th class="px-6 py-3 text-center">Estatus Operativo</th>
-            <th class="px-6 py-3 text-center">Estado</th>
-            <th class="px-6 py-3 text-center">Acciones</th>
-          </tr>
-        `;
+        <tr>
+          <th class="px-6 py-3">Marca / Modelo</th>
+          <th class="px-6 py-3">Placa</th>
+          <th class="px-6 py-3 text-center">Puntaje</th>
+          <th class="px-6 py-3">Fecha de Evaluación</th>
+          <th class="px-6 py-3 text-center">Estatus Operativo</th>
+          <th class="px-6 py-3 text-center">Estado</th>
+          <th class="px-6 py-3 text-center">Acciones</th>
+        </tr>
+      `;
         }
 
         let html = '';
@@ -987,23 +995,29 @@
           const fechaEval = v.fecha_evaluacion || null;
           let fechaMostrar = 'Sin evaluación';
           let puedeReevaluar = false;
+          let objDateEval = null;
 
-          if (estadoNormalizado === 'pendiente') {
-            puedeReevaluar = false;
-            if (fechaEval) {
-              const d = new Date(fechaEval);
-              fechaMostrar = d.toLocaleDateString('es-VE') + ' ' + d.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
+          // 🛠️ Procesamiento directo de la fecha sin desfase horario
+          if (fechaEval) {
+            const fechaPura = fechaEval.split(' ')[0]; // Toma solo la fecha en caso de venir con hora
+            const [year, month, day] = fechaPura.split('-');
+
+            if (year && month && day) {
+              // Formato exacto de salida: DD/MM/YYYY
+              fechaMostrar = `${parseInt(day)}/${parseInt(month)}/${year}`;
+
+              // Instancia local para la lógica de comparación de reevaluación
+              objDateEval = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
             }
-          } else if (fechaEval) {
-            const d = new Date(fechaEval);
-            fechaMostrar = d.toLocaleDateString('es-VE') + ' ' + d.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
-            if (estadoNormalizado === 'no_apto') {
-              puedeReevaluar = true;
-            } else if (estadoNormalizado === 'apto') {
-              const unAnoDespues = new Date(d);
-              unAnoDespues.setFullYear(unAnoDespues.getFullYear() + 1);
-              puedeReevaluar = hoy >= unAnoDespues;
-            }
+          }
+
+          // Lógica de reevaluación
+          if (estadoNormalizado === 'no_apto' && fechaEval) {
+            puedeReevaluar = true;
+          } else if (estadoNormalizado === 'apto' && objDateEval) {
+            const unAnoDespues = new Date(objDateEval);
+            unAnoDespues.setFullYear(unAnoDespues.getFullYear() + 1);
+            puedeReevaluar = hoy >= unAnoDespues;
           }
 
           const btnReevaluar = puedeReevaluar
@@ -1015,34 +1029,34 @@
             : `<button disabled class="bg-slate-100 text-slate-400 px-3 py-1.5 rounded-lg text-[10px] font-bold cursor-not-allowed ml-1">Detalles</button>`;
 
           html += `
-          <tr class="hover:bg-slate-50 border-b border-slate-100 transition-colors">
-            <td class="px-6 py-4">
-              <div class="flex flex-col">
-                <span class="font-semibold text-slate-900 capitalize">${v.marca} ${v.modelo}</span>
-                <span class="text-xs text-slate-400 font-mono">${v.anio || 'N/A'}</span>
-              </div>
-            </td>
-            <td class="px-6 py-4 font-mono text-slate-600 text-xs uppercase">${v.placa}</td>
-            <td class="px-6 py-4 text-center">
-              ${v.nota_tecnica != null
-                ? `<span class="inline-flex items-center px-3 py-1.5 text-xs font-bold rounded-full ${parseFloat(v.nota_tecnica) >= 73 ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-100 text-rose-700 border border-rose-200'}">${parseFloat(v.nota_tecnica).toFixed(1)}</span>`
-                : `<span class="text-xs text-slate-400 italic">—</span>`}
-            </td>
-            <td class="px-6 py-4 text-slate-600 text-sm">${fechaMostrar}</td>
-            <td class="px-6 py-4 text-center">
-              <span class="px-2.5 py-1 text-[10px] font-bold rounded-full uppercase border ${badgeColor}">
-                ${estadoTexto}
-              </span>
-            </td>
-            <td class="px-6 py-4 text-center">${badgeActivo}</td>
-            <td class="px-6 py-4 text-center">
-              <div class="flex justify-center gap-1">
-                ${btnActivar}
-                ${btnReevaluar}
-                ${btnDetalles}
-              </div>
-            </td>
-          </tr>`;
+        <tr class="hover:bg-slate-50 border-b border-slate-100 transition-colors">
+          <td class="px-6 py-4">
+            <div class="flex flex-col">
+              <span class="font-semibold text-slate-900 capitalize">${v.marca} ${v.modelo}</span>
+              <span class="text-xs text-slate-400 font-mono">${v.anio || 'N/A'}</span>
+            </div>
+          </td>
+          <td class="px-6 py-4 font-mono text-slate-600 text-xs uppercase">${v.placa}</td>
+          <td class="px-6 py-4 text-center">
+            ${v.nota_tecnica != null
+            ? `<span class="inline-flex items-center px-3 py-1.5 text-xs font-bold rounded-full ${parseFloat(v.nota_tecnica) >= 65 ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-rose-100 text-rose-700 border border-rose-200'}">${parseFloat(v.nota_tecnica).toFixed(1)}</span>`
+            : `<span class="text-xs text-slate-400 italic">—</span>`}
+          </td>
+          <td class="px-6 py-4 text-slate-600 text-sm">${fechaMostrar}</td>
+          <td class="px-6 py-4 text-center">
+            <span class="px-2.5 py-1 text-[10px] font-bold rounded-full uppercase border ${badgeColor}">
+              ${estadoTexto}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-center">${badgeActivo}</td>
+          <td class="px-6 py-4 text-center">
+            <div class="flex justify-center gap-1">
+              ${btnActivar}
+              ${btnReevaluar}
+              ${btnDetalles}
+            </div>
+          </td>
+        </tr>`;
         });
 
         tbody.innerHTML = html || '<tr><td colspan="7" class="p-4 text-center text-xs text-slate-400">No posees unidades vinculadas.</td></tr>';
