@@ -37,6 +37,15 @@ if($modo === 'nuevo') {
         echo json_encode(['success' => false, 'message' => 'El Correo Electrónico ya se encuentra registrado por otro usuario.']);
         exit();
       }
+
+  // 3. Validar si el TELÉFONO ya existe en el sistema
+      $check_tel_sql = "SELECT id_usuario FROM usuarios WHERE telefono = :telefono";
+      $check_tel_stmt = $conn->prepare($check_tel_sql);
+      $check_tel_stmt->execute([':telefono' => $telefono]);
+      if ($check_tel_stmt->fetch()) {
+        echo json_encode(['success' => false, 'message' => 'El número de teléfono ya se encuentra registrado por otro usuario.']);
+        exit();
+      }
   // -------------------------------------------------------------------------
 
       // Encriptamos la contraseña de manera segura

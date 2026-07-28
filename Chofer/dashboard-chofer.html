@@ -146,7 +146,7 @@
           </div>
           <div class="col-span-2 md:col-span-1">
             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Año</label>
-            <input type="text" id="postula-anio" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none transition-all" placeholder="Ej: 2020">
+            <input type="number" id="postula-anio" required min="2000" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-900 outline-none transition-all" placeholder="Ej: 2020">
           </div>
           <div class="col-span-2 md:col-span-1">
             <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2">Placa / Matrícula</label>
@@ -539,6 +539,7 @@
   updateClock();
 
   window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('postula-anio').max = new Date().getFullYear();
     ['postula-marca', 'postula-modelo', 'postula-placa'].forEach(id => {
       document.getElementById(id).addEventListener('input', function() {
         this.value = this.value.toUpperCase();
