@@ -1,0 +1,7 @@
+Error 400: SyntaxError: Parse error on line 48:
+... INT zona_origen_id FK        INT zona_
+-----------------------^
+Expecting 'ATTRIBUTE_WORD', got 'ATTRIBUTE_KEY'
+Error: Syntax error in graph
+    at Worker.convert (file:///usr/local/kroki/src/worker.js:103:15)
+    at async file:///usr/local/kroki/src/index.js:36:28

@@ -1,0 +1,120 @@
+%% Diagrama E-R del proyecto ProyectoBD
+erDiagram
+    USUARIO {
+        INT id PK
+        VARCHAR nombre
+        VARCHAR email
+        VARCHAR telefono
+        VARCHAR rol
+        VARCHAR estado
+        DATETIME creado_en
+    }
+
+    CUENTA_EMPRESA {
+        INT id PK
+        VARCHAR nombre
+        VARCHAR rif
+        VARCHAR numero_cuenta
+        INT banco_id FK
+        INT creado_por_usuario_id FK
+        VARCHAR estado
+    }
+
+    BANCO {
+        INT id PK
+        VARCHAR nombre
+        VARCHAR codigo
+    }
+
+    ZONA {
+        INT id PK
+        VARCHAR nombre
+        VARCHAR descripcion
+        VARCHAR estado
+    }
+
+    VEHICULO {
+        INT id PK
+        VARCHAR placa
+        VARCHAR modelo
+        VARCHAR marca
+        VARCHAR estado
+        INT chofer_id FK
+    }
+
+    VIAJE {
+        INT id PK
+        INT cliente_id FK
+        INT chofer_id FK NULL
+        INT zona_origen_id FK
+        INT zona_destino_id FK
+        DECIMAL precio
+        VARCHAR estado
+        DATETIME solicitado_en
+        DATETIME finalizado_en NULL
+    }
+
+    TRANSACCION {
+        INT id PK
+        INT viaje_id FK
+        INT cuenta_empresa_id FK
+        DECIMAL monto
+        VARCHAR metodo_pago
+        VARCHAR estado
+        DATETIME creado_en
+    }
+
+    PAGO_CHOFER {
+        INT id PK
+        INT chofer_id FK
+        INT transaccion_id FK NULL
+        DECIMAL monto
+        VARCHAR estado
+        DATETIME procesado_en
+    }
+
+    EVALUACION {
+        INT id PK
+        INT viaje_id FK
+        INT chofer_id FK
+        INT puntaje
+        TEXT comentario
+        DATETIME creado_en
+    }
+
+    PRUEBA_PSICOLOGICA {
+        INT id PK
+        INT chofer_id FK
+        VARCHAR resultado
+        VARCHAR estado
+        DATETIME fecha_realizacion
+    }
+
+    REVISION_VEHICULO {
+        INT id PK
+        INT vehiculo_id FK
+        VARCHAR resultado
+        VARCHAR estado
+        DATETIME fecha
+    }
+
+    TASA {
+        INT id PK
+        DECIMAL valor
+        DATETIME fecha_actualizacion
+        VARCHAR origen
+    }
+
+    %% Relaciones
+    USUARIO ||--o{ CUENTA_EMPRESA : "crea"
+    BANCO ||--o{ CUENTA_EMPRESA : "provee"
+    USUARIO ||--o{ VEHICULO : "posee/asigna (chofer)"
+    USUARIO ||--o{ VIAJE : "solicita (cliente)"
+    USUARIO ||--o{ PAGO_CHOFER : "recibe (chofer)"
+    ZONA ||--o{ VIAJE : "origen/destino"
+    VIAJE ||--o{ EVALUACION : "genera"
+    VIAJE ||--|| TRANSACCION : "paga -> registra"
+    TRANSACCION ||--o{ PAGO_CHOFER : "origina pagos chofer"
+    VEHICULO ||--o{ REVISION_VEHICULO : "sometido a"
+    USUARIO ||--o{ PRUEBA_PSICOLOGICA : "se realiza a (chofer)"
+    TASA ||--|| TRANSACCION : "referencia (opcional)"
