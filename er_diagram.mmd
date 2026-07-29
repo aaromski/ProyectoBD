@@ -1,101 +1,133 @@
-%% Diagrama E-R del proyecto ProyectoBD
+%% Diagrama E-R del proyecto ProyectoBD (actualizado desde Dump20260728.sql)
 erDiagram
-    USUARIO {
-        INT id PK
-        VARCHAR nombre
+    USUARIOS {
+        INT id_usuario PK
         VARCHAR email
+        VARCHAR password
+        VARCHAR nombre
         VARCHAR telefono
-        VARCHAR rol
         VARCHAR estado
         DATETIME creado_en
     }
 
-    CUENTA_EMPRESA {
-        INT id PK
-        VARCHAR nombre
-        VARCHAR rif
-        VARCHAR numero_cuenta
-        INT banco_id FK
-        INT creado_por_usuario_id FK
-        VARCHAR estado
-    }
-
-    BANCO {
-        INT id PK
+    BANCOS {
+        INT id_banco PK
         VARCHAR nombre
         VARCHAR codigo
+        VARCHAR estado
     }
 
-    ZONA {
-        INT id PK
+    CUENTAS_EMPRESA {
+        INT id_cuenta PK
+        INT id_banco FK
+        VARCHAR numero_cuenta
+        VARCHAR rif
+        VARCHAR razon_social
+        VARCHAR telefono
+        VARCHAR estado
+    }
+
+    ROLES_ASIGNADOS {
+        INT id_rol PK
+        INT id_usuario FK
+        VARCHAR rol
+    }
+
+    CHOFERES {
+        INT id_chofer PK
+        INT id_usuario FK
+        INT id_banco FK NULL
+        VARCHAR nro_cuenta_banco
+        DECIMAL saldo
+    }
+
+    CLIENTES {
+        INT id_cliente PK
+        INT id_usuario FK
+        DECIMAL saldo
+    }
+
+    CONTACTOS_EMERGENCIA {
+        INT id_contacto PK
+        INT id_chofer FK
         VARCHAR nombre
-        VARCHAR descripcion
-        VARCHAR estado
+        VARCHAR telefono
+        VARCHAR relacion
     }
 
-    VEHICULO {
-        INT id PK
+    VEHICULOS {
+        INT id_vehiculo PK
         VARCHAR placa
-        VARCHAR modelo
         VARCHAR marca
-        VARCHAR estado
-        INT chofer_id FK
+        VARCHAR modelo
+        INT ano
+        INT id_chofer FK
+        TINYINT activo
     }
 
-    VIAJE {
-        INT id PK
-        INT cliente_id FK
-        INT chofer_id FK NULL
-        INT zona_origen_id FK
-        INT zona_destino_id FK
+    ZONAS {
+        INT id_zona PK
+        VARCHAR nombre
+        DECIMAL lat
+        DECIMAL lng
+        TINYINT activo
+    }
+
+    TRASLADOS {
+        INT id_traslado PK
+        INT id_cliente FK
+        INT id_chofer FK NULL
+        INT id_pago_chofer FK NULL
+        INT id_vehiculo FK NULL
+        INT id_zona_origen FK
+        INT id_zona_destino FK
         DECIMAL precio
-        VARCHAR estado
         DATETIME solicitado_en
-        DATETIME finalizado_en NULL
-    }
-
-    TRANSACCION {
-        INT id PK
-        INT viaje_id FK
-        INT cuenta_empresa_id FK
-        DECIMAL monto
-        VARCHAR metodo_pago
         VARCHAR estado
-        DATETIME creado_en
+        INT distancia
     }
 
     PAGO_CHOFER {
-        INT id PK
-        INT chofer_id FK
-        INT transaccion_id FK NULL
+        INT id_pago PK
+        INT id_banco FK
+        INT id_chofer FK
+        INT id_personal_fk FK
+        VARCHAR nro_cuenta
         DECIMAL monto
-        VARCHAR estado
-        DATETIME procesado_en
-    }
-
-    EVALUACION {
-        INT id PK
-        INT viaje_id FK
-        INT chofer_id FK
-        INT puntaje
-        TEXT comentario
-        DATETIME creado_en
-    }
-
-    PRUEBA_PSICOLOGICA {
-        INT id PK
-        INT chofer_id FK
-        VARCHAR resultado
-        VARCHAR estado
-        DATETIME fecha_realizacion
-    }
-
-    REVISION_VEHICULO {
-        INT id PK
-        INT vehiculo_id FK
-        VARCHAR resultado
-        VARCHAR estado
+        VARCHAR referencia
         DATETIME fecha
+    }
+
+    EVALUACIONES_CHOFERES {
+        INT id_evaluacion PK
+        INT id_chofer FK
+        INT id_personal FK
+        DECIMAL puntaje
+        DATETIME creado_en
+        DATE fecha_revision
+        VARCHAR estado
+        TEXT comentario
+    }
+
+    EVALUACIONES_VEHICULOS {
+        INT id_evaluacionv PK
+        INT id_vehiculo FK
+        INT id_personal FK
+        DECIMAL puntaje
+        DATETIME creado_en
+        DATE fecha_revision
+        VARCHAR estado
+        TEXT comentario
+    }
+
+    RECARGAS {
+        INT id_recarga PK
+        INT id_cliente FK
+        INT id_cuenta FK
+        DECIMAL monto
+        VARCHAR referencia
+        DATE fecha
+        DATETIME creado_en
     }
 
     TASA {
@@ -105,16 +137,23 @@ erDiagram
         VARCHAR origen
     }
 
-    %% Relaciones
-    USUARIO ||--o{ CUENTA_EMPRESA : "crea"
-    BANCO ||--o{ CUENTA_EMPRESA : "provee"
-    USUARIO ||--o{ VEHICULO : "posee/asigna (chofer)"
-    USUARIO ||--o{ VIAJE : "solicita (cliente)"
-    USUARIO ||--o{ PAGO_CHOFER : "recibe (chofer)"
-    ZONA ||--o{ VIAJE : "origen/destino"
-    VIAJE ||--o{ EVALUACION : "genera"
-    VIAJE ||--|| TRANSACCION : "paga -> registra"
-    TRANSACCION ||--o{ PAGO_CHOFER : "origina pagos chofer"
-    VEHICULO ||--o{ REVISION_VEHICULO : "sometido a"
-    USUARIO ||--o{ PRUEBA_PSICOLOGICA : "se realiza a (chofer)"
-    TASA ||--|| TRANSACCION : "referencia (opcional)"
+    %% Relaciones (basadas en claves foráneas del dump)
+    USUARIOS ||--o{ ROLES_ASIGNADOS : "asigna"
+    USUARIOS ||--o{ CHOFERES : "perfil"
+    USUARIOS ||--o{ CLIENTES : "perfil"
+    BANCOS ||--o{ CUENTAS_EMPRESA : "provee"
+    BANCOS ||--o{ CHOFERES : "banco"
+    CUENTAS_EMPRESA ||--o{ RECARGAS : "recibe"
+    CLIENTES ||--o{ RECARGAS : "realiza"
+    CHOFERES ||--o{ CONTACTOS_EMERGENCIA : "tiene"
+    CHOFERES ||--o{ VEHICULOS : "opera"
+    ZONAS ||--o{ TRASLADOS : "origen/destino"
+    CLIENTES ||--o{ TRASLADOS : "solicita"
+    CHOFERES ||--o{ TRASLADOS : "ejecuta"
+    TRASLADOS ||--o{ PAGO_CHOFER : "puede generar"
+    PAGO_CHOFER ||--|| CHOFERES : "paga"
+    PAGO_CHOFER ||--o{ TRASLADOS : "asocia (opcional)"
+    TRASLADOS ||--|| RECARGAS : "no_directa"
+    TRASLADOS ||--o{ EVALUACIONES_CHOFERES : "genera"
+    VEHICULOS ||--o{ EVALUACIONES_VEHICULOS : "genera"
+    TASA ||--|| RECARGAS : "referencia (opcional)"
